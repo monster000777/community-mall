@@ -60,7 +60,7 @@ const routes = [
     {
         path: '/admin',
         component: () => import('@/layouts/AdminLayout.vue'),
-        meta: {requiresAuth: true, requiresAdmin: false},
+        meta: {requiresAuth: true, requiresAdmin: true},
         children: [
             {
                 path: '',
@@ -94,15 +94,37 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const userStore = useUserStore()
 
+    const isLoggedIn = !!userStore.token
+    const isAdmin = userStore.isAdmin && userStore.isAdmin()
+
+    if ((to.path === '/login' || to.path === '/register') && isLoggedIn) {
+        if (isAdmin) {
+            next('/admin')
+        } else {
+            next('/')
+        }
+        return
+    }
+
     // 需要登录的页面
-    if (to.meta.requiresAuth && !userStore.token) {
-        next('/login')
+    if (to.meta.requiresAuth && !isLoggedIn) {
+        next({
+            path: '/login',
+            query: { redirect: to.fullPath }
+        })
         return
     }
 
     // 需要管理员权限的页面
-    if (to.meta.requiresAdmin && !userStore.isAdmin()) {
-        next('/')
+    if (to.meta.requiresAdmin && !isAdmin) {
+        if (!isLoggedIn) {
+            next({
+                path: '/login',
+                query: { redirect: to.fullPath }
+            })
+        } else {
+            next('/')
+        }
         return
     }
 

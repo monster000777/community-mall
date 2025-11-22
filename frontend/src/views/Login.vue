@@ -95,7 +95,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { NIcon } from 'naive-ui'
 import {
@@ -114,6 +114,7 @@ import {
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 
 const loginForm = reactive({
@@ -144,7 +145,14 @@ async function handleLogin() {
   try {
     await userStore.login(loginForm.username, loginForm.password)
     message.success('登录成功')
-    router.push('/')
+    const redirect = route.query.redirect
+    if (typeof redirect === 'string' && redirect) {
+      router.push(redirect)
+    } else if (userStore.isAdmin && userStore.isAdmin()) {
+      router.push('/admin')
+    } else {
+      router.push('/')
+    }
   } catch (error) {
     console.error('登录失败', error)
   } finally {
