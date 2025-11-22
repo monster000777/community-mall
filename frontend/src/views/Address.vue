@@ -8,9 +8,14 @@
         </a-button>
       </template>
 
-      <a-empty v-if="addressList.length === 0" description="还没有收货地址，快去添加吧" />
+      <a-empty v-if="!loading && addressList.length === 0" description="还没有收货地址，快去添加吧" />
 
-      <a-list v-else :grid="{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3 }" :data-source="addressList">
+      <a-list
+        v-else
+        :grid="{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3 }"
+        :data-source="addressList"
+        :loading="loading"
+      >
         <template #renderItem="{ item }">
           <a-list-item>
             <a-card hoverable :class="{ 'default-address': item.isDefault === 1 }">
@@ -58,6 +63,7 @@
       :title="editId ? '编辑地址' : '新增地址'"
       width="600px"
       @ok="handleSubmit"
+      :confirm-loading="submitLoading"
     >
       <a-form :model="formState" :label-col="{ span: 5 }">
         <a-form-item label="收货人" required>
@@ -115,6 +121,8 @@ import {
 const addressList = ref([])
 const modalVisible = ref(false)
 const editId = ref(null)
+const loading = ref(false)
+const submitLoading = ref(false)
 
 const formState = ref({
   receiverName: '',
@@ -131,11 +139,15 @@ onMounted(() => {
 })
 
 async function loadAddressList() {
+  loading.value = true
   try {
     const res = await getAddressList()
     addressList.value = res.data || []
   } catch (error) {
     console.error('加载地址列表失败', error)
+    message.error('加载地址列表失败，请稍后重试')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -183,6 +195,7 @@ async function handleSubmit() {
   }
 
   try {
+    submitLoading.value = true
     if (editId.value) {
       await updateAddress(editId.value, formState.value)
       message.success('更新成功')
@@ -194,6 +207,9 @@ async function handleSubmit() {
     loadAddressList()
   } catch (error) {
     console.error('提交失败', error)
+    message.error('提交失败，请稍后重试')
+  } finally {
+    submitLoading.value = false
   }
 }
 
@@ -208,6 +224,7 @@ function handleSetDefault(id) {
         loadAddressList()
       } catch (error) {
         console.error('设置失败', error)
+        message.error('设置失败，请稍后重试')
       }
     }
   })
@@ -224,6 +241,7 @@ function handleDelete(id) {
         loadAddressList()
       } catch (error) {
         console.error('删除失败', error)
+        message.error('删除失败，请稍后重试')
       }
     }
   })

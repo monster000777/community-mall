@@ -57,6 +57,8 @@
         row-key="id"
         @change="handleTableChange"
         :scroll="{ x: 1400 }"
+        :loading="loading"
+        :locale="{ emptyText: '暂无订单' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'orderNo'">
@@ -129,7 +131,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { Modal } from 'ant-design-vue'
+import { Modal, message } from 'ant-design-vue'
 import { NIcon } from 'naive-ui'
 import {
   ReceiptOutline,
@@ -149,6 +151,7 @@ import { getOrderList } from '@/api/order'
 const orders = ref([])
 const detailVisible = ref(false)
 const currentOrder = ref(null)
+const loading = ref(false)
 
 const pagination = ref({
   current: 1,
@@ -176,6 +179,7 @@ onMounted(() => {
 })
 
 async function loadOrders() {
+  loading.value = true
   try {
     const res = await getOrderList({
       current: pagination.value.current,
@@ -185,6 +189,9 @@ async function loadOrders() {
     pagination.value.total = res.data.total
   } catch (error) {
     console.error('加载订单失败', error)
+    message.error('加载订单失败，请稍后重试')
+  } finally {
+    loading.value = false
   }
 }
 

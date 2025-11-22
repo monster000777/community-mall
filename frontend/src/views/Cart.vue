@@ -6,6 +6,8 @@
         :data-source="cartList"
         :pagination="false"
         row-key="id"
+        :loading="loading"
+        :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'product'">
@@ -42,7 +44,13 @@
         </div>
         <a-space>
           <a-button @click="handleClearCart">清空购物车</a-button>
-          <a-button type="primary" size="large" @click="handleCheckout" :disabled="cartList.length === 0">
+          <a-button
+            type="primary"
+            size="large"
+            @click="handleCheckout"
+            :disabled="cartList.length === 0"
+            :loading="checkoutLoading"
+          >
             去结算
           </a-button>
         </a-space>
@@ -50,7 +58,13 @@
     </a-card>
 
     <!-- 收货地址选择弹窗 -->
-    <a-modal v-model:visible="checkoutVisible" title="选择收货地址" width="600px" @ok="handleCreateOrder">
+    <a-modal
+      v-model:visible="checkoutVisible"
+      title="选择收货地址"
+      width="600px"
+      @ok="handleCreateOrder"
+      :confirm-loading="creatingOrder"
+    >
       <a-alert 
         v-if="addressList.length === 0"
         message="还没有收货地址" 
@@ -105,6 +119,9 @@ const cartList = ref([])
 const checkoutVisible = ref(false)
 const addressList = ref([])
 const selectedAddressId = ref(null)
+const loading = ref(false)
+const checkoutLoading = ref(false)
+const creatingOrder = ref(false)
 
 const columns = [
   { title: '商品', key: 'product', width: '40%' },
@@ -125,11 +142,15 @@ onMounted(() => {
 })
 
 async function loadCart() {
+  loading.value = true
   try {
     const res = await getCartList()
     cartList.value = res.data
   } catch (error) {
     console.error('加载购物车失败', error)
+    message.error('加载购物车失败，请稍后重试')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -139,6 +160,7 @@ async function handleQuantityChange(record) {
     message.success('更新成功')
   } catch (error) {
     console.error('更新数量失败', error)
+    message.error('更新数量失败，请稍后重试')
   }
 }
 
@@ -154,6 +176,7 @@ function handleDelete(cartId) {
         cartStore.loadCart()
       } catch (error) {
         console.error('删除失败', error)
+        message.error('删除失败，请稍后重试')
       }
     }
   })
@@ -171,6 +194,7 @@ function handleClearCart() {
         cartStore.loadCart()
       } catch (error) {
         console.error('清空失败', error)
+        message.error('清空购物车失败，请稍后重试')
       }
     }
   })
@@ -178,6 +202,7 @@ function handleClearCart() {
 
 async function handleCheckout() {
   // 加载地址列表
+  checkoutLoading.value = true
   try {
     const res = await getAddressList()
     addressList.value = res.data || []
@@ -194,6 +219,8 @@ async function handleCheckout() {
   } catch (error) {
     console.error('加载地址失败', error)
     message.error('加载地址失败')
+  } finally {
+    checkoutLoading.value = false
   }
 }
 
@@ -204,6 +231,7 @@ async function handleCreateOrder() {
   }
 
   try {
+    creatingOrder.value = true
     const orderData = {
       addressId: selectedAddressId.value,
       paymentType: 1,
@@ -215,6 +243,9 @@ async function handleCreateOrder() {
     router.push('/orders')
   } catch (error) {
     console.error('创建订单失败', error)
+    message.error('订单创建失败，请稍后重试')
+  } finally {
+    creatingOrder.value = false
   }
 }
 

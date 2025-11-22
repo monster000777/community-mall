@@ -7,6 +7,8 @@
         :pagination="pagination"
         row-key="id"
         @change="handleTableChange"
+        :loading="loading"
+        :locale="{ emptyText: '暂无订单' }"
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'orderNo'">
@@ -27,6 +29,7 @@
                 type="primary"
                 size="small"
                 @click="handlePay(record.id)"
+                :loading="payingOrderId === record.id"
               >
                 去支付
               </a-button>
@@ -34,6 +37,7 @@
                 v-if="record.orderStatus === 1"
                 size="small"
                 @click="handleCancel(record.id)"
+                :loading="cancelingOrderId === record.id"
               >
                 取消订单
               </a-button>
@@ -51,11 +55,14 @@ import { message, Modal } from 'ant-design-vue'
 import { getOrderList, cancelOrder, payOrder } from '@/api/order'
 
 const orders = ref([])
+const loading = ref(false)
 const pagination = ref({
   current: 1,
   pageSize: 10,
   total: 0
 })
+const payingOrderId = ref(null)
+const cancelingOrderId = ref(null)
 
 const columns = [
   { title: '订单号', key: 'orderNo', dataIndex: 'orderNo' },
@@ -72,6 +79,7 @@ onMounted(() => {
 })
 
 async function loadOrders() {
+  loading.value = true
   try {
     const res = await getOrderList({
       current: pagination.value.current,
@@ -81,6 +89,9 @@ async function loadOrders() {
     pagination.value.total = res.data.total
   } catch (error) {
     console.error('加载订单失败', error)
+    message.error('加载订单失败，请稍后重试')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -129,12 +140,16 @@ function handlePay(orderId) {
     title: '确认支付',
     content: '确定要支付该订单吗？（模拟支付）',
     onOk: async () => {
+      payingOrderId.value = orderId
       try {
         await payOrder(orderId)
         message.success('支付成功')
         loadOrders()
       } catch (error) {
         console.error('支付失败', error)
+        message.error('支付失败，请稍后重试')
+      } finally {
+        payingOrderId.value = null
       }
     }
   })
@@ -145,12 +160,16 @@ function handleCancel(orderId) {
     title: '确认取消',
     content: '确定要取消该订单吗？',
     onOk: async () => {
+      cancelingOrderId.value = orderId
       try {
         await cancelOrder(orderId)
         message.success('订单已取消')
         loadOrders()
       } catch (error) {
         console.error('取消订单失败', error)
+        message.error('取消订单失败，请稍后重试')
+      } finally {
+        cancelingOrderId.value = null
       }
     }
   })
