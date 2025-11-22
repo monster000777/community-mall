@@ -161,28 +161,10 @@ import {
   CreateOutline,
   TrashOutline
 } from '@vicons/ionicons5'
+import { getUserList, createUser, updateUser, updateUserStatus, deleteUser } from '@/api/user'
 
 // 模拟数据（实际项目中应该从API获取）
-const users = ref([
-  {
-    id: 1,
-    username: 'admin',
-    nickname: '管理员',
-    role: 'admin',
-    status: 1,
-    createdAt: '2024-01-01 10:00:00',
-    updatedAt: '2024-01-01 10:00:00'
-  },
-  {
-    id: 2,
-    username: 'user',
-    nickname: '测试用户',
-    role: 'user',
-    status: 1,
-    createdAt: '2024-01-02 10:00:00',
-    updatedAt: '2024-01-02 10:00:00'
-  }
-])
+const users = ref([])
 
 const modalVisible = ref(false)
 const editId = ref(null)
@@ -216,9 +198,13 @@ onMounted(() => {
   loadUsers()
 })
 
-function loadUsers() {
-  // 模拟加载数据
-  pagination.value.total = users.value.length
+async function loadUsers() {
+  const res = await getUserList({
+    current: pagination.value.current,
+    size: pagination.value.pageSize
+  })
+  users.value = res.data.records || []
+  pagination.value.total = res.data.total || 0
 }
 
 function handleTableChange(pag) {
@@ -243,7 +229,7 @@ function handleEdit(user) {
   modalVisible.value = true
 }
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!formState.username) {
     message.warning('请输入用户名')
     return
@@ -257,35 +243,34 @@ function handleSubmit() {
     return
   }
 
-  if (editId.value) {
-    // 更新用户
-    const index = users.value.findIndex(u => u.id === editId.value)
-    if (index !== -1) {
-      users.value[index] = {
-        ...users.value[index],
+  try {
+    if (editId.value) {
+      // 更新用户
+      await updateUser(editId.value, {
+        username: formState.username,
         nickname: formState.nickname,
+        password: formState.password,
         role: formState.role,
-        status: formState.status,
-        updatedAt: new Date().toLocaleString('zh-CN')
-      }
+        status: formState.status
+      })
+      message.success('更新成功')
+    } else {
+      // 添加用户
+      await createUser({
+        username: formState.username,
+        nickname: formState.nickname,
+        password: formState.password,
+        role: formState.role,
+        status: formState.status
+      })
+      message.success('添加成功')
     }
-    message.success('更新成功')
-  } else {
-    // 添加用户
-    users.value.push({
-      id: users.value.length + 1,
-      username: formState.username,
-      nickname: formState.nickname,
-      role: formState.role,
-      status: formState.status,
-      createdAt: new Date().toLocaleString('zh-CN'),
-      updatedAt: new Date().toLocaleString('zh-CN')
-    })
-    message.success('添加成功')
-  }
 
-  modalVisible.value = false
-  loadUsers()
+    modalVisible.value = false
+    loadUsers()
+  } catch (error) {
+    console.error('保存用户失败', error)
+  }
 }
 
 function handleToggleStatus(user) {
@@ -294,13 +279,15 @@ function handleToggleStatus(user) {
     title: `确认${action}`,
     content: `确定要${action}用户"${user.username}"吗？`,
     onOk: () => {
-      const index = users.value.findIndex(u => u.id === user.id)
-      if (index !== -1) {
-        users.value[index].status = user.status === 1 ? 0 : 1
-        users.value[index].updatedAt = new Date().toLocaleString('zh-CN')
-      }
-      message.success(`${action}成功`)
-      loadUsers()
+      const newStatus = user.status === 1 ? 0 : 1
+      updateUserStatus(user.id, newStatus)
+        .then(() => {
+          message.success(`${action}成功`)
+          loadUsers()
+        })
+        .catch(error => {
+          console.error('更新用户状态失败', error)
+        })
     }
   })
 }
@@ -312,12 +299,14 @@ function handleDelete(id) {
     okText: '确认',
     okType: 'danger',
     onOk: () => {
-      const index = users.value.findIndex(u => u.id === id)
-      if (index !== -1) {
-        users.value.splice(index, 1)
-      }
-      message.success('删除成功')
-      loadUsers()
+      deleteUser(id)
+        .then(() => {
+          message.success('删除成功')
+          loadUsers()
+        })
+        .catch(error => {
+          console.error('删除用户失败', error)
+        })
     }
   })
 }
