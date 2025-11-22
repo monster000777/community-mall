@@ -52,3 +52,13 @@ export function payOrder(orderId) {
   })
 }
 
+/**
+ * 管理员：获取订单列表
+ */
+export function getAdminOrderList(params) {
+  return request({
+    url: '/admin/orders',
+    method: 'get',
+    params
+  })
+}

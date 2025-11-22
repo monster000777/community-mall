@@ -146,7 +146,7 @@ import {
   RocketOutline,
   RefreshOutline
 } from '@vicons/ionicons5'
-import { getOrderList } from '@/api/order'
+import { getAdminOrderList } from '@/api/order'
 
 const orders = ref([])
 const detailVisible = ref(false)
@@ -181,7 +181,7 @@ onMounted(() => {
 async function loadOrders() {
   loading.value = true
   try {
-    const res = await getOrderList({
+    const res = await getAdminOrderList({
       current: pagination.value.current,
       size: pagination.value.pageSize
     })

@@ -133,6 +133,22 @@ public class OrderService {
     }
 
     /**
+     * 管理员获取订单列表
+     */
+    public IPage<OrderMaster> getAdminOrderPage(Integer current, Integer size, Integer orderStatus, Long userId) {
+        Page<OrderMaster> page = new Page<>(current, size);
+        LambdaQueryWrapper<OrderMaster> wrapper = new LambdaQueryWrapper<>();
+        if (orderStatus != null) {
+            wrapper.eq(OrderMaster::getOrderStatus, orderStatus);
+        }
+        if (userId != null) {
+            wrapper.eq(OrderMaster::getUserId, userId);
+        }
+        wrapper.orderByDesc(OrderMaster::getCreatedAt);
+        return orderMasterMapper.selectPage(page, wrapper);
+    }
+
+    /**
      * 获取订单详情
      */
     public OrderMaster getOrderDetail(Long orderId, Long userId) {
