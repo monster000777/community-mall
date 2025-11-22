@@ -203,7 +203,8 @@ INSERT INTO `category` (`category_name`, `parent_id`, `sort_order`) VALUES
 ('蔬菜豆制品', 0, 2),
 ('肉禽蛋品', 0, 3),
 ('休闲零食', 0, 4),
-('粮油调味', 0, 5);
+('粮油调味', 0, 5),
+('酒水饮料', 0, 6);
 
 -- 插入测试商品（使用真实网络图片）
 INSERT INTO `product` (`product_name`, `category_id`, `description`, `price`, `stock`, `main_image`, `is_on_sale`) VALUES

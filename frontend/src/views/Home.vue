@@ -169,7 +169,8 @@ const categoryIcons = [
   'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&h=200&fit=crop',
   'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=200&h=200&fit=crop',
   'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop',
-  'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop'
+  'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=200&h=200&fit=crop'
 ]
 
 onMounted(async () => {
