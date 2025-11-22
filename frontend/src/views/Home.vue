@@ -1,0 +1,579 @@
+<template>
+  <div class="home">
+    <!-- 轮播图 -->
+    <a-carousel autoplay class="banner" :autoplay-speed="5000">
+      <div class="banner-item banner-1">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-icon">
+            <n-icon :size="80" :component="BasketOutline" />
+          </div>
+          <h1 class="banner-title">欢迎来到社区团购</h1>
+          <p class="banner-subtitle">新鲜优质，价格实惠</p>
+          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
+            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            立即选购
+          </a-button>
+        </div>
+      </div>
+      <div class="banner-item banner-2">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-icon">
+            <n-icon :size="80" :component="LeafOutline" />
+          </div>
+          <h1 class="banner-title">每日新鲜直达</h1>
+          <p class="banner-subtitle">从产地到餐桌，只需一天</p>
+          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
+            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            查看商品
+          </a-button>
+        </div>
+      </div>
+      <div class="banner-item banner-3">
+        <div class="banner-overlay"></div>
+        <div class="banner-content">
+          <div class="banner-icon">
+            <n-icon :size="80" :component="PricetagsOutline" />
+          </div>
+          <h1 class="banner-title">团购更优惠</h1>
+          <p class="banner-subtitle">参与团购，享受超低价格</p>
+          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
+            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            开始团购
+          </a-button>
+        </div>
+      </div>
+    </a-carousel>
+
+    <!-- 商品分类 -->
+    <div class="category-section">
+      <div class="section-header">
+        <h2 class="section-title">商品分类</h2>
+        <div class="section-divider"></div>
+      </div>
+      <div class="container">
+        <a-row :gutter="[24, 24]">
+          <a-col v-for="(category, index) in categories" :key="category.id" :xs="12" :sm="8" :md="6" :lg="4">
+            <div class="category-card" @click="goToProducts(category.id)">
+              <div class="category-icon-wrapper">
+                <img :src="categoryIcons[index % categoryIcons.length]" :alt="category.categoryName" class="category-img">
+              </div>
+              <div class="category-name">{{ category.categoryName }}</div>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+    </div>
+
+    <!-- 热门商品 -->
+    <div class="product-section">
+      <div class="section-header">
+        <h2 class="section-title">热门商品</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">精选优质商品，品质保证</p>
+      </div>
+      <div class="container">
+        <a-row :gutter="[24, 24]">
+          <a-col v-for="product in products" :key="product.id" :xs="12" :sm="12" :md="8" :lg="6">
+            <div class="product-card" @click="goToProductDetail(product.id)">
+              <div class="product-image-wrapper">
+                <img :src="product.mainImage" :alt="product.productName" class="product-image" />
+                <div class="product-overlay">
+                  <a-button type="primary" ghost>查看详情</a-button>
+                </div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">{{ product.productName }}</h3>
+                <div class="product-meta">
+                  <span class="product-price">¥{{ product.price }}</span>
+                  <span class="product-sales">已售{{ product.sales }}</span>
+                </div>
+              </div>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+    </div>
+
+    <!-- 优势特点 -->
+    <div class="features-section">
+      <div class="container">
+        <a-row :gutter="[24, 24]">
+          <a-col :xs="24" :sm="12" :md="6">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <n-icon :size="52" :component="RocketOutline" />
+              </div>
+              <h3>快速配送</h3>
+              <p>当日下单，次日送达</p>
+            </div>
+          </a-col>
+          <a-col :xs="24" :sm="12" :md="6">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <n-icon :size="52" :component="ShieldCheckmarkOutline" />
+              </div>
+              <h3>品质保证</h3>
+              <p>严选优质商品</p>
+            </div>
+          </a-col>
+          <a-col :xs="24" :sm="12" :md="6">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <n-icon :size="52" :component="CashOutline" />
+              </div>
+              <h3>价格实惠</h3>
+              <p>团购更优惠</p>
+            </div>
+          </a-col>
+          <a-col :xs="24" :sm="12" :md="6">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <n-icon :size="52" :component="GiftOutline" />
+              </div>
+              <h3>新人福利</h3>
+              <p>新用户专享优惠</p>
+            </div>
+          </a-col>
+        </a-row>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { NIcon } from 'naive-ui'
+import { 
+  BasketOutline,
+  LeafOutline,
+  PricetagsOutline,
+  ArrowForwardOutline,
+  RocketOutline,
+  ShieldCheckmarkOutline,
+  CashOutline,
+  GiftOutline
+} from '@vicons/ionicons5'
+import { getAllCategories } from '@/api/category'
+import { getProductList } from '@/api/product'
+
+const router = useRouter()
+const categories = ref([])
+const products = ref([])
+
+// 分类图标（使用网络图片）
+const categoryIcons = [
+  'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=200&h=200&fit=crop'
+]
+
+onMounted(async () => {
+  try {
+    const [categoryRes, productRes] = await Promise.all([
+      getAllCategories(),
+      getProductList({ current: 1, size: 8 })
+    ])
+    categories.value = categoryRes.data
+    products.value = productRes.data.records
+  } catch (error) {
+    console.error('加载数据失败', error)
+  }
+})
+
+function goToProducts(categoryId) {
+  router.push({ path: '/products', query: { categoryId } })
+}
+
+function goToProductDetail(productId) {
+  router.push(`/product/${productId}`)
+}
+</script>
+
+<style scoped>
+.home {
+  background: #f5f7fa;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* 轮播图样式 */
+.banner {
+  margin-bottom: 0;
+  height: 500px;
+}
+
+.banner-item {
+  height: 500px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.banner-1 {
+  background: linear-gradient(135deg, rgba(255, 209, 0, 0.85) 0%, rgba(255, 165, 0, 0.85) 100%),
+              url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&h=500&fit=crop') center/cover;
+  background-blend-mode: overlay;
+}
+
+.banner-2 {
+  background: linear-gradient(135deg, rgba(255, 200, 0, 0.85) 0%, rgba(255, 180, 0, 0.85) 100%),
+              url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1920&h=500&fit=crop') center/cover;
+  background-blend-mode: overlay;
+}
+
+.banner-3 {
+  background: linear-gradient(135deg, rgba(255, 209, 0, 0.9) 0%, rgba(255, 150, 0, 0.9) 100%),
+              url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1920&h=500&fit=crop') center/cover;
+  background-blend-mode: overlay;
+}
+
+.banner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.15);
+}
+
+.banner-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #333;
+  padding: 0 20px;
+}
+
+.banner-icon {
+  color: rgba(51, 51, 51, 0.9);
+  margin-bottom: 20px;
+  animation: bounceIn 1s ease-out;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.banner-title {
+  font-size: 56px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3);
+  color: #2c3e50;
+  animation: fadeInDown 1s ease-out;
+}
+
+.banner-subtitle {
+  font-size: 24px;
+  margin-bottom: 36px;
+  color: #34495e;
+  font-weight: 600;
+  animation: fadeInUp 1s ease-out;
+}
+
+.banner-btn {
+  height: 52px;
+  padding: 0 48px;
+  font-size: 17px;
+  font-weight: 700;
+  border-radius: 26px;
+  animation: fadeIn 1.5s ease-out;
+  box-shadow: 0 4px 16px rgba(255, 209, 0, 0.4);
+  display: inline-flex;
+  align-items: center;
+}
+
+.banner-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 209, 0, 0.5);
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 分区标题 */
+.section-header {
+  text-align: center;
+  padding: 60px 0 40px;
+}
+
+.section-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.section-divider {
+  width: 80px;
+  height: 5px;
+  background: linear-gradient(90deg, #FFD100 0%, #FFA500 100%);
+  margin: 0 auto 16px;
+  border-radius: 3px;
+  box-shadow: 0 2px 8px rgba(255, 209, 0, 0.3);
+}
+
+.section-subtitle {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+/* 分类卡片 */
+.category-section {
+  background: white;
+  padding-bottom: 60px;
+}
+
+.category-card {
+  text-align: center;
+  padding: 24px;
+  border-radius: 16px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.category-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.category-icon-wrapper {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(255, 209, 0, 0.25);
+}
+
+.category-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.category-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 商品卡片 */
+.product-section {
+  padding: 60px 0;
+}
+
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 240px;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.1);
+}
+
+.product-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+  opacity: 1;
+}
+
+.product-info {
+  padding: 20px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-price {
+  font-size: 26px;
+  font-weight: 800;
+  color: #FFD100;
+  text-shadow: 1px 1px 2px rgba(255, 209, 0, 0.2);
+}
+
+.product-sales {
+  font-size: 14px;
+  color: #999;
+}
+
+/* 特点区域 */
+.features-section {
+  background: white;
+  padding: 60px 0;
+  margin-top: 60px;
+}
+
+.feature-item {
+  text-align: center;
+  padding: 30px 20px;
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+}
+
+.feature-icon {
+  color: #FFD100;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover .feature-icon {
+  color: #FFA500;
+  transform: scale(1.15);
+}
+
+.feature-item h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.feature-item p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .banner-title {
+    font-size: 32px;
+  }
+  
+  .banner-subtitle {
+    font-size: 16px;
+  }
+  
+  .section-title {
+    font-size: 28px;
+  }
+  
+  .category-icon-wrapper {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* Ant Design 深度样式 */
+:deep(.ant-carousel .slick-dots) {
+  bottom: 30px;
+}
+
+:deep(.ant-carousel .slick-dots li button) {
+  background: rgba(51, 51, 51, 0.3);
+  height: 5px;
+  border-radius: 3px;
+}
+
+:deep(.ant-carousel .slick-dots li.slick-active button) {
+  background: #FFD100;
+  width: 40px;
+  box-shadow: 0 2px 8px rgba(255, 209, 0, 0.5);
+}
+</style>
+

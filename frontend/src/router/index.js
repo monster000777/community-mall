@@ -1,0 +1,113 @@
+import {createRouter, createWebHistory} from 'vue-router'
+import {useUserStore} from '@/stores/user'
+
+const routes = [
+    {
+        path: '/',
+        component: () => import('@/layouts/MainLayout.vue'),
+        children: [
+            {
+                path: '',
+                name: 'Home',
+                component: () => import('@/views/Home.vue')
+            },
+            {
+                path: 'products',
+                name: 'Products',
+                component: () => import('@/views/Products.vue')
+            },
+            {
+                path: 'product/:id',
+                name: 'ProductDetail',
+                component: () => import('@/views/ProductDetail.vue')
+            },
+            {
+                path: 'cart',
+                name: 'Cart',
+                component: () => import('@/views/Cart.vue'),
+                meta: {requiresAuth: true}
+            },
+            {
+                path: 'orders',
+                name: 'Orders',
+                component: () => import('@/views/Orders.vue'),
+                meta: {requiresAuth: true}
+            },
+            {
+                path: 'profile',
+                name: 'Profile',
+                component: () => import('@/views/Profile.vue'),
+                meta: {requiresAuth: true}
+            },
+            {
+                path: 'address',
+                name: 'Address',
+                component: () => import('@/views/Address.vue'),
+                meta: {requiresAuth: true}
+            }
+        ]
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: () => import('@/views/Login.vue')
+    },
+    {
+        path: '/register',
+        name: 'Register',
+        component: () => import('@/views/Register.vue')
+    },
+    {
+        path: '/admin',
+        component: () => import('@/layouts/AdminLayout.vue'),
+        meta: {requiresAuth: true, requiresAdmin: false},
+        children: [
+            {
+                path: '',
+                redirect: '/admin/products'
+            },
+            {
+                path: 'products',
+                name: 'AdminProducts',
+                component: () => import('@/views/admin/ProductManage.vue')
+            },
+            {
+                path: 'orders',
+                name: 'AdminOrders',
+                component: () => import('@/views/admin/OrderManage.vue')
+            },
+            {
+                path: 'users',
+                name: 'AdminUsers',
+                component: () => import('@/views/admin/UserManage.vue')
+            }
+        ]
+    }
+]
+
+const router = createRouter({
+    history: createWebHistory(),
+    routes
+})
+
+// 路由守卫
+router.beforeEach((to, from, next) => {
+    const userStore = useUserStore()
+
+    // 需要登录的页面
+    if (to.meta.requiresAuth && !userStore.token) {
+        next('/login')
+        return
+    }
+
+    // 需要管理员权限的页面
+    if (to.meta.requiresAdmin && !userStore.isAdmin()) {
+        next('/')
+        return
+    }
+
+    next()
+})
+
+export default router
+
