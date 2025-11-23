@@ -91,8 +91,8 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue'
-import {useRouter} from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {NIcon} from 'naive-ui'
 import {
   StorefrontOutline,
@@ -114,6 +114,7 @@ import {useCartStore} from '@/stores/cart'
 import {message} from 'ant-design-vue'
 
 const router = useRouter()
+const route = useRoute()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const selectedKeys = ref(['home'])
@@ -123,6 +124,24 @@ onMounted(() => {
     cartStore.loadCart()
   }
 })
+
+watch(
+  () => route.name,
+  (name) => {
+    if (name === 'Home') {
+      selectedKeys.value = ['home']
+    } else if (name === 'Products' || name === 'ProductDetail') {
+      selectedKeys.value = ['products']
+    } else if (name === 'Cart') {
+      selectedKeys.value = ['cart']
+    } else if (name === 'Orders') {
+      selectedKeys.value = ['orders']
+    } else {
+      selectedKeys.value = []
+    }
+  },
+  { immediate: true }
+)
 
 async function handleLogout() {
   await userStore.logout()
