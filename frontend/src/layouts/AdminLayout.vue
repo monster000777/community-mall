@@ -20,20 +20,20 @@
       >
         <a-menu-item key="products" @click="$router.push('/admin/products')">
           <n-icon :size="18" :component="GridOutline" style="margin-right: 12px; vertical-align: -3px;" />
-          <span>商品管理</span>
+          <span v-if="!collapsed">商品管理</span>
         </a-menu-item>
         <a-menu-item key="orders" @click="$router.push('/admin/orders')">
           <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 12px; vertical-align: -3px;" />
-          <span>订单管理</span>
+          <span v-if="!collapsed">订单管理</span>
         </a-menu-item>
         <a-menu-item key="users" @click="$router.push('/admin/users')">
           <n-icon :size="18" :component="PeopleOutline" style="margin-right: 12px; vertical-align: -3px;" />
-          <span>用户管理</span>
+          <span v-if="!collapsed">用户管理</span>
         </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="home" @click="$router.push('/')">
           <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px; vertical-align: -3px;" />
-          <span>返回前台</span>
+          <span v-if="!collapsed">返回前台</span>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
