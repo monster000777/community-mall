@@ -48,7 +48,7 @@
             </a>
             <template #overlay>
               <a-menu>
-                <a-menu-item @click="$router.push('/admin')">
+                <a-menu-item v-if="userStore.isAdmin()" @click="$router.push('/admin')">
                   <n-icon :size="16" :component="ShieldCheckmarkOutline"
                           style="margin-right: 8px; vertical-align: -2px;"/>
                   管理后台
