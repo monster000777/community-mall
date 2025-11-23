@@ -13,6 +13,7 @@
 - MyBatis-Plus 3.5.3.1
 - MySQL 8.0
 - Sa-Token 1.37.0 (权限认证)
+- SpringDoc OpenAPI (Swagger UI)（接口文档）
 - Redis (Session存储)
 - BCrypt (密码加密)
 - Maven
@@ -30,7 +31,7 @@
 
 ```
 community-mall/
-├── backend/                          # 后端项目
+├── community-mall-backend/          # 后端项目
 │   ├── src/main/java/com/community/mall/
 │   │   ├── CommunityMallApplication.java   # 启动类
 │   │   ├── common/                   # 公共类
@@ -56,16 +57,21 @@ community-mall/
 │   │   ├── util/                     # 工具类
 │   │   └── vo/                       # 视图对象
 │   ├── src/main/resources/
-│   │   └── application.yml           # 配置文件
+│   │   ├── application.yml           # 配置文件
+│   │   ├── banner.txt                # 启动Banner
+│   │   └── success-banner.txt        # 成功启动Banner
 │   └── pom.xml                       # Maven配置
 ├── frontend/                         # 前端项目
 │   ├── src/
 │   │   ├── api/                      # API接口封装
+│   │   │   ├── address.js            # 地址接口
 │   │   │   ├── auth.js               # 认证接口
 │   │   │   ├── cart.js               # 购物车接口
 │   │   │   ├── category.js           # 分类接口
 │   │   │   ├── order.js              # 订单接口
 │   │   │   ├── product.js            # 商品接口
+│   │   │   ├── profile.js            # 个人中心接口
+│   │   │   ├── user.js               # 用户管理接口
 │   │   │   └── request.js            # Axios封装
 │   │   ├── layouts/                  # 布局组件
 │   │   │   ├── MainLayout.vue        # 主布局
@@ -84,6 +90,7 @@ community-mall/
 │   │   │   ├── Cart.vue              # 购物车
 │   │   │   ├── Orders.vue            # 订单列表
 │   │   │   ├── Profile.vue           # 个人中心
+│   │   │   ├── Address.vue           # 地址管理
 │   │   │   └── admin/                # 管理后台页面
 │   │   │       ├── ProductManage.vue # 商品管理
 │   │   │       ├── OrderManage.vue   # 订单管理
@@ -115,7 +122,7 @@ community-mall/
 mysql -u root -p < database/schema.sql
 ```
 
-2. 修改后端配置文件 `backend/src/main/resources/application.yml`：
+2. 修改后端配置文件 `community-mall-backend/src/main/resources/application.yml`：
 
 ```yaml
 spring:
@@ -128,7 +135,7 @@ spring:
 ### 启动后端
 
 ```bash
-cd backend
+cd community-mall-backend
 mvn clean install
 mvn spring-boot:run
 ```
@@ -183,7 +190,7 @@ npm run dev
 
 **管理员账号**
 - 用户名: admin
-- 密码: admin123
+- 密码: 123456
 
 **测试用户**
 - 可自行注册
@@ -219,6 +226,11 @@ npm run dev
 - `DELETE /api/admin/products/{id}` - 删除商品
 - `PUT /api/admin/products/{id}/status` - 更新商品状态
 
+### 接口文档（Swagger）
+
+- 后端已集成 SpringDoc OpenAPI（Swagger UI），启动后端服务后可通过以下地址查看在线接口文档：
+  - `http://localhost:8080/api/swagger-ui/index.html`
+
 ## 🔒 安全机制
 
 - Sa-Token + Redis 认证（已从JWT迁移）
@@ -244,11 +256,11 @@ npm run dev
 
 ## 📋 待优化功能
 
-- [ ] 地址管理功能完善
+- [X] 地址管理功能完善
 - [X] 用户管理功能实现
 - [ ] 团购活动模块
 - [ ] 数据报表和统计
-- [ ] 图片上传功能
+- [X] 图片上传功能
 - [ ] 支付宝/微信支付集成
 - [ ] 订单物流跟踪
 - [ ] 商品评价系统
@@ -256,17 +268,14 @@ npm run dev
 
 ## 📄 License
 
-MIT License
-
-## 👥 贡献
-
-欢迎提交 Issue 和 Pull Request
+> 本项目代码版权归作者 Monster(ZouXiaojie) 所有，仅供个人学习与学术交流使用。  
+> 未经作者明确书面授权，禁止转载、搬运、复制、修改或用于任何形式的商业用途或学术不端行为。
 
 ## 📧 联系方式
 
-如有问题，欢迎联系讨论。
+- 作者：Monster(ZouXiaojie)
+- 邮箱：1170844693@qq.com
 
----
+ ---
 
-**注意**: 本项目为学习演示项目，生产环境使用需要进一步完善安全性和功能。
-
+ **声明**: 未经作者允许禁止抄袭本项目内容。
