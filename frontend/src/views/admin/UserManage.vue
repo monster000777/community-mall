@@ -131,6 +131,12 @@
         <a-form-item label="用户名" required>
           <a-input v-model:value="formState.username" size="large" placeholder="请输入用户名" :disabled="!!editId" />
         </a-form-item>
+        <a-form-item label="手机号" required>
+          <a-input v-model:value="formState.phone" size="large" placeholder="请输入手机号" />
+        </a-form-item>
+        <a-form-item label="邮箱">
+          <a-input v-model:value="formState.email" size="large" placeholder="请输入邮箱" />
+        </a-form-item>
         <a-form-item label="昵称" required>
           <a-input v-model:value="formState.nickname" size="large" placeholder="请输入昵称" />
         </a-form-item>
@@ -192,6 +198,8 @@ const uploadingUserId = ref(null)
 
 const formState = reactive({
   username: '',
+  phone: '',
+  email: '',
   nickname: '',
   password: '',
   role: 'user',
@@ -292,6 +300,8 @@ function showAddModal() {
 function handleEdit(user) {
   editId.value = user.id
   formState.username = user.username
+  formState.phone = user.phone
+  formState.email = user.email
   formState.nickname = user.nickname
   formState.role = user.role
   formState.status = user.status
@@ -302,6 +312,10 @@ function handleEdit(user) {
 async function handleSubmit() {
   if (!formState.username) {
     message.warning('请输入用户名')
+    return
+  }
+  if (!formState.phone) {
+    message.warning('请输入手机号')
     return
   }
   if (!formState.nickname) {
@@ -318,6 +332,8 @@ async function handleSubmit() {
       // 更新用户
       await updateUser(editId.value, {
         username: formState.username,
+        phone: formState.phone,
+        email: formState.email,
         nickname: formState.nickname,
         password: formState.password,
         role: formState.role,
@@ -328,6 +344,8 @@ async function handleSubmit() {
       // 添加用户
       await createUser({
         username: formState.username,
+        phone: formState.phone,
+        email: formState.email,
         nickname: formState.nickname,
         password: formState.password,
         role: formState.role,
@@ -383,6 +401,8 @@ function handleDelete(id) {
 
 function resetForm() {
   formState.username = ''
+  formState.phone = ''
+  formState.email = ''
   formState.nickname = ''
   formState.password = ''
   formState.role = 'user'

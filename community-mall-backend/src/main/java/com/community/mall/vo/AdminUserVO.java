@@ -14,6 +14,10 @@ public class AdminUserVO {
 
     private String username;
 
+    private String phone;
+
+    private String email;
+
     private String nickname;
 
     /**

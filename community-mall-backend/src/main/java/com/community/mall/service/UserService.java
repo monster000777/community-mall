@@ -70,6 +70,8 @@ public class UserService {
         AdminUserVO vo = new AdminUserVO();
         vo.setId(user.getId());
         vo.setUsername(user.getUsername());
+        vo.setPhone(user.getPhone());
+        vo.setEmail(user.getEmail());
         vo.setNickname(user.getNickname());
         vo.setAvatar(user.getAvatar());
         vo.setRole(user.getRoleId() != null && user.getRoleId() == 1L ? "admin" : "user");
@@ -89,8 +91,20 @@ public class UserService {
             throw new RuntimeException("用户名已存在");
         }
 
+        if (!StringUtils.hasText(request.getPhone())) {
+            throw new RuntimeException("手机号不能为空");
+        }
+
+        LambdaQueryWrapper<User> phoneWrapper = new LambdaQueryWrapper<>();
+        phoneWrapper.eq(User::getPhone, request.getPhone());
+        if (userMapper.selectCount(phoneWrapper) > 0) {
+            throw new RuntimeException("手机号已存在");
+        }
+
         User user = new User();
         user.setUsername(request.getUsername());
+        user.setPhone(request.getPhone());
+        user.setEmail(request.getEmail());
         user.setNickname(request.getNickname());
         if (!StringUtils.hasText(request.getPassword())) {
             throw new RuntimeException("密码不能为空");
@@ -108,6 +122,20 @@ public class UserService {
         User user = userMapper.selectById(id);
         if (user == null) {
             throw new RuntimeException("用户不存在");
+        }
+
+        if (StringUtils.hasText(request.getPhone())) {
+            LambdaQueryWrapper<User> phoneWrapper = new LambdaQueryWrapper<>();
+            phoneWrapper.eq(User::getPhone, request.getPhone());
+            phoneWrapper.ne(User::getId, id);
+            if (userMapper.selectCount(phoneWrapper) > 0) {
+                throw new RuntimeException("手机号已存在");
+            }
+            user.setPhone(request.getPhone());
+        }
+
+        if (StringUtils.hasText(request.getEmail())) {
+            user.setEmail(request.getEmail());
         }
 
         if (StringUtils.hasText(request.getNickname())) {
