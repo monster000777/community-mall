@@ -62,6 +62,8 @@ community-mall/
 │   │   └── success-banner.txt        # 成功启动Banner
 │   └── pom.xml                       # Maven配置
 ├── frontend/                         # 前端项目
+│   ├── public/                       # 静态资源目录（如 favicon 等）
+│   │   └── favicon.svg               # 网站图标（浏览器标签 icon）
 │   ├── src/
 │   │   ├── api/                      # API接口封装
 │   │   │   ├── address.js            # 地址接口
@@ -96,10 +98,10 @@ community-mall/
 │   │   │       ├── OrderManage.vue   # 订单管理
 │   │   │       └── UserManage.vue    # 用户管理
 │   │   ├── App.vue                   # 根组件
-│   │   └── main.js                   # 入口文件
-│   ├── index.html
-│   ├── package.json
-│   └── vite.config.js
+│   │   └── main.js                   # 前端入口脚本
+│   ├── index.html                    # 前端入口 HTML 模板
+│   ├── package.json                  # 前端依赖与脚本配置
+│   └── vite.config.js                # Vite 构建与开发服务器配置
 └── database/
     └── schema.sql                    # 数据库脚本
 ```
