@@ -62,3 +62,23 @@ export function getAdminOrderList(params) {
     params
   })
 }
+
+/**
+ * 管理员：发货订单
+ */
+export function adminShipOrder(orderId) {
+  return request({
+    url: `/admin/orders/${orderId}/ship`,
+    method: 'put'
+  })
+}
+
+/**
+ * 管理员：完成订单
+ */
+export function adminCompleteOrder(orderId) {
+  return request({
+    url: `/admin/orders/${orderId}/complete`,
+    method: 'put'
+  })
+}

@@ -6,6 +6,8 @@ import com.community.mall.entity.OrderMaster;
 import com.community.mall.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,25 @@ public class AdminOrderController {
             @RequestParam(required = false) Long userId) {
         IPage<OrderMaster> page = orderService.getAdminOrderPage(current, size, orderStatus, userId);
         return Result.success(page);
+    }
+
+    @PutMapping("/{orderId}/ship")
+    public Result<Void> shipOrder(@PathVariable Long orderId) {
+        try {
+            orderService.adminShipOrder(orderId);
+            return Result.success("订单已发货");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{orderId}/complete")
+    public Result<Void> completeOrder(@PathVariable Long orderId) {
+        try {
+            orderService.adminCompleteOrder(orderId);
+            return Result.success("订单已完成");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
     }
 }

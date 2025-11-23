@@ -74,10 +74,32 @@
             <span class="amount-text">¥{{ record.actualAmount }}</span>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-button type="link" size="small" @click="viewDetail(record)" class="action-btn">
-              <n-icon :size="14" :component="EyeOutline" style="margin-right: 4px; vertical-align: -1px;" />
-              查看详情
-            </a-button>
+            <a-space>
+              <a-button
+                v-if="record.orderStatus === 2"
+                type="link"
+                size="small"
+                class="action-btn"
+                :loading="shippingOrderId === record.id"
+                @click="handleShip(record)"
+              >
+                发货
+              </a-button>
+              <a-button
+                v-if="record.orderStatus === 3"
+                type="link"
+                size="small"
+                class="action-btn"
+                :loading="completingOrderId === record.id"
+                @click="handleComplete(record)"
+              >
+                标记完成
+              </a-button>
+              <a-button type="link" size="small" @click="viewDetail(record)" class="action-btn">
+                <n-icon :size="14" :component="EyeOutline" style="margin-right: 4px; vertical-align: -1px;" />
+                查看详情
+              </a-button>
+            </a-space>
           </template>
         </template>
       </a-table>
@@ -146,12 +168,14 @@ import {
   RocketOutline,
   RefreshOutline
 } from '@vicons/ionicons5'
-import { getAdminOrderList } from '@/api/order'
+import { getAdminOrderList, adminShipOrder, adminCompleteOrder } from '@/api/order'
 
 const orders = ref([])
 const detailVisible = ref(false)
 const currentOrder = ref(null)
 const loading = ref(false)
+const shippingOrderId = ref(null)
+const completingOrderId = ref(null)
 
 const pagination = ref({
   current: 1,
@@ -199,6 +223,46 @@ function handleTableChange(pag) {
   pagination.value.current = pag.current
   pagination.value.pageSize = pag.pageSize
   loadOrders()
+}
+
+function handleShip(order) {
+  Modal.confirm({
+    title: '确认发货',
+    content: `确定要将订单 ${order.orderNo} 标记为已发货吗？`,
+    async onOk() {
+      shippingOrderId.value = order.id
+      try {
+        await adminShipOrder(order.id)
+        message.success('发货成功')
+        await loadOrders()
+      } catch (error) {
+        console.error('发货失败', error)
+        message.error('发货失败，请稍后重试')
+      } finally {
+        shippingOrderId.value = null
+      }
+    }
+  })
+}
+
+function handleComplete(order) {
+  Modal.confirm({
+    title: '确认完成订单',
+    content: `确定要将订单 ${order.orderNo} 标记为已完成吗？`,
+    async onOk() {
+      completingOrderId.value = order.id
+      try {
+        await adminCompleteOrder(order.id)
+        message.success('订单已完成')
+        await loadOrders()
+      } catch (error) {
+        console.error('完成订单失败', error)
+        message.error('完成订单失败，请稍后重试')
+      } finally {
+        completingOrderId.value = null
+      }
+    }
+  })
 }
 
 function getStatusText(status) {

@@ -204,5 +204,37 @@ public class OrderService {
         order.setPaymentTime(LocalDateTime.now());
         orderMasterMapper.updateById(order);
     }
+
+    /**
+     * 管理员：发货订单
+     */
+    public void adminShipOrder(Long orderId) {
+        OrderMaster order = orderMasterMapper.selectById(orderId);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (order.getOrderStatus() != 2) {
+            throw new RuntimeException("只能发货已支付订单");
+        }
+
+        order.setOrderStatus(3);  // 已发货
+        orderMasterMapper.updateById(order);
+    }
+
+    /**
+     * 管理员：完成订单
+     */
+    public void adminCompleteOrder(Long orderId) {
+        OrderMaster order = orderMasterMapper.selectById(orderId);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (order.getOrderStatus() != 3) {
+            throw new RuntimeException("只能完成已发货订单");
+        }
+
+        order.setOrderStatus(4);  // 已完成
+        orderMasterMapper.updateById(order);
+    }
 }
 
