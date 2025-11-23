@@ -41,6 +41,15 @@
               >
                 取消订单
               </a-button>
+              <a-button
+                v-if="canDeleteOrder(record.orderStatus)"
+                size="small"
+                danger
+                @click="handleDelete(record.id)"
+                :loading="deletingOrderId === record.id"
+              >
+                删除订单
+              </a-button>
             </a-space>
           </template>
         </template>
@@ -52,7 +61,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { getOrderList, cancelOrder, payOrder } from '@/api/order'
+import { getOrderList, cancelOrder, payOrder, deleteOrder } from '@/api/order'
 
 const orders = ref([])
 const loading = ref(false)
@@ -63,6 +72,7 @@ const pagination = ref({
 })
 const payingOrderId = ref(null)
 const cancelingOrderId = ref(null)
+const deletingOrderId = ref(null)
 
 const columns = [
   { title: '订单号', key: 'orderNo', dataIndex: 'orderNo' },
@@ -127,6 +137,10 @@ function getStatusColor(status) {
   return colorMap[status] || 'default'
 }
 
+function canDeleteOrder(status) {
+  return status === 4 || status === 5 || status === 7
+}
+
 function viewOrderDetail(order) {
   Modal.info({
     title: '订单详情',
@@ -170,6 +184,26 @@ function handleCancel(orderId) {
         message.error('取消订单失败，请稍后重试')
       } finally {
         cancelingOrderId.value = null
+      }
+    }
+  })
+}
+
+function handleDelete(orderId) {
+  Modal.confirm({
+    title: '确认删除',
+    content: '删除后将无法恢复该订单记录，确定继续吗？',
+    onOk: async () => {
+      deletingOrderId.value = orderId
+      try {
+        await deleteOrder(orderId)
+        message.success('订单已删除')
+        loadOrders()
+      } catch (error) {
+        console.error('删除订单失败', error)
+        message.error('删除订单失败，请稍后重试')
+      } finally {
+        deletingOrderId.value = null
       }
     }
   })

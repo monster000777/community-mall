@@ -206,6 +206,24 @@ public class OrderService {
     }
 
     /**
+     * 删除订单（逻辑删除）
+     */
+    public void deleteOrder(Long orderId, Long userId) {
+        OrderMaster order = orderMasterMapper.selectById(orderId);
+        if (order == null || !order.getUserId().equals(userId)) {
+            throw new RuntimeException("订单不存在");
+        }
+
+        Integer status = order.getOrderStatus();
+        if (status == null || (status != 4 && status != 5 && status != 7)) {
+            throw new RuntimeException("只能删除已完成、已取消或已退款的订单");
+        }
+
+        // 逻辑删除，依赖 OrderMaster 上的 @TableLogic
+        orderMasterMapper.deleteById(orderId);
+    }
+
+    /**
      * 管理员：发货订单
      */
     public void adminShipOrder(Long orderId) {

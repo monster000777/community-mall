@@ -91,5 +91,19 @@ public class OrderController {
             return Result.error(e.getMessage());
         }
     }
+
+    /**
+     * 删除订单
+     */
+    @DeleteMapping("/{orderId}")
+    public Result<Void> deleteOrder(@PathVariable Long orderId) {
+        try {
+            Long userId = StpUtil.getLoginIdAsLong();
+            orderService.deleteOrder(orderId, userId);
+            return Result.success("订单已删除");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
 }
 

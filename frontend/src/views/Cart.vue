@@ -240,6 +240,8 @@ async function handleCreateOrder() {
     const res = await createOrder(orderData)
     message.success('订单创建成功')
     checkoutVisible.value = false
+    // 结算成功后清空头部购物车数量
+    cartStore.clearCartData()
     router.push('/orders')
   } catch (error) {
     console.error('创建订单失败', error)

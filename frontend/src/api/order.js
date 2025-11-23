@@ -53,6 +53,16 @@ export function payOrder(orderId) {
 }
 
 /**
+ * 删除订单
+ */
+export function deleteOrder(orderId) {
+  return request({
+    url: `/order/${orderId}`,
+    method: 'delete'
+  })
+}
+
+/**
  * 管理员：获取订单列表
  */
 export function getAdminOrderList(params) {
