@@ -236,5 +236,63 @@ public class OrderService {
         order.setOrderStatus(4);  // 已完成
         orderMasterMapper.updateById(order);
     }
+
+    /**
+     * 管理员：取消订单（待支付）
+     */
+    public void adminCancelOrder(Long orderId) {
+        OrderMaster order = orderMasterMapper.selectById(orderId);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (order.getOrderStatus() != 1) {
+            throw new RuntimeException("只能取消待支付订单");
+        }
+
+        order.setOrderStatus(5);  // 已取消
+        orderMasterMapper.updateById(order);
+
+        // 恢复库存
+        LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderItem::getOrderId, orderId);
+        List<OrderItem> items = orderItemMapper.selectList(wrapper);
+        for (OrderItem item : items) {
+            Product product = productMapper.selectById(item.getProductId());
+            if (product != null) {
+                product.setStock(product.getStock() + item.getQuantity());
+                product.setSales(product.getSales() - item.getQuantity());
+                productMapper.updateById(product);
+            }
+        }
+    }
+
+    /**
+     * 管理员：退款订单（已支付）
+     */
+    public void adminRefundOrder(Long orderId) {
+        OrderMaster order = orderMasterMapper.selectById(orderId);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+        if (order.getOrderStatus() != 2) {
+            throw new RuntimeException("只能退款已支付订单");
+        }
+
+        order.setOrderStatus(7);  // 已退款
+        orderMasterMapper.updateById(order);
+
+        // 恢复库存
+        LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderItem::getOrderId, orderId);
+        List<OrderItem> items = orderItemMapper.selectList(wrapper);
+        for (OrderItem item : items) {
+            Product product = productMapper.selectById(item.getProductId());
+            if (product != null) {
+                product.setStock(product.getStock() + item.getQuantity());
+                product.setSales(product.getSales() - item.getQuantity());
+                productMapper.updateById(product);
+            }
+        }
+    }
 }
 

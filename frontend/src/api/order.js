@@ -82,3 +82,23 @@ export function adminCompleteOrder(orderId) {
     method: 'put'
   })
 }
+
+/**
+ * 管理员：取消订单
+ */
+export function adminCancelOrder(orderId) {
+  return request({
+    url: `/admin/orders/${orderId}/cancel`,
+    method: 'put'
+  })
+}
+
+/**
+ * 管理员：退款订单
+ */
+export function adminRefundOrder(orderId) {
+  return request({
+    url: `/admin/orders/${orderId}/refund`,
+    method: 'put'
+  })
+}

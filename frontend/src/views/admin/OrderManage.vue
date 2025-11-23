@@ -76,6 +76,16 @@
           <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button
+                v-if="record.orderStatus === 1"
+                type="link"
+                size="small"
+                class="action-btn"
+                :loading="cancelingOrderId === record.id"
+                @click="handleAdminCancel(record)"
+              >
+                取消订单
+              </a-button>
+              <a-button
                 v-if="record.orderStatus === 2"
                 type="link"
                 size="small"
@@ -84,6 +94,16 @@
                 @click="handleShip(record)"
               >
                 发货
+              </a-button>
+              <a-button
+                v-if="record.orderStatus === 2"
+                type="link"
+                size="small"
+                class="action-btn"
+                :loading="refundingOrderId === record.id"
+                @click="handleRefund(record)"
+              >
+                退款
               </a-button>
               <a-button
                 v-if="record.orderStatus === 3"
@@ -168,7 +188,7 @@ import {
   RocketOutline,
   RefreshOutline
 } from '@vicons/ionicons5'
-import { getAdminOrderList, adminShipOrder, adminCompleteOrder } from '@/api/order'
+import { getAdminOrderList, adminShipOrder, adminCompleteOrder, adminCancelOrder, adminRefundOrder } from '@/api/order'
 
 const orders = ref([])
 const detailVisible = ref(false)
@@ -176,6 +196,8 @@ const currentOrder = ref(null)
 const loading = ref(false)
 const shippingOrderId = ref(null)
 const completingOrderId = ref(null)
+const cancelingOrderId = ref(null)
+const refundingOrderId = ref(null)
 
 const pagination = ref({
   current: 1,
@@ -225,6 +247,26 @@ function handleTableChange(pag) {
   loadOrders()
 }
 
+function handleAdminCancel(order) {
+  Modal.confirm({
+    title: '确认取消订单',
+    content: `确定要取消订单 ${order.orderNo} 吗？`,
+    async onOk() {
+      cancelingOrderId.value = order.id
+      try {
+        await adminCancelOrder(order.id)
+        message.success('订单已取消')
+        await loadOrders()
+      } catch (error) {
+        console.error('取消订单失败', error)
+        message.error('取消订单失败，请稍后重试')
+      } finally {
+        cancelingOrderId.value = null
+      }
+    }
+  })
+}
+
 function handleShip(order) {
   Modal.confirm({
     title: '确认发货',
@@ -240,6 +282,26 @@ function handleShip(order) {
         message.error('发货失败，请稍后重试')
       } finally {
         shippingOrderId.value = null
+      }
+    }
+  })
+}
+
+function handleRefund(order) {
+  Modal.confirm({
+    title: '确认退款',
+    content: `确定要为订单 ${order.orderNo} 发起退款吗？`,
+    async onOk() {
+      refundingOrderId.value = order.id
+      try {
+        await adminRefundOrder(order.id)
+        message.success('退款成功')
+        await loadOrders()
+      } catch (error) {
+        console.error('退款失败', error)
+        message.error('退款失败，请稍后重试')
+      } finally {
+        refundingOrderId.value = null
       }
     }
   })

@@ -48,4 +48,24 @@ public class AdminOrderController {
             return Result.error(e.getMessage());
         }
     }
+
+    @PutMapping("/{orderId}/cancel")
+    public Result<Void> cancelOrder(@PathVariable Long orderId) {
+        try {
+            orderService.adminCancelOrder(orderId);
+            return Result.success("订单已取消");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{orderId}/refund")
+    public Result<Void> refundOrder(@PathVariable Long orderId) {
+        try {
+            orderService.adminRefundOrder(orderId);
+            return Result.success("订单已退款");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
 }
