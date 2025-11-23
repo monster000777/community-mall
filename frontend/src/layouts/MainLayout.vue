@@ -32,9 +32,18 @@
       <div class="user-info">
         <template v-if="userStore.token">
           <a-dropdown>
-            <a class="ant-dropdown-link" @click.prevent>
-              <n-icon :size="20" :component="PersonCircleOutline" style="margin-right: 6px; vertical-align: -4px;"/>
-              {{ userStore.userInfo?.nickname || userStore.userInfo?.username }}
+            <a class="ant-dropdown-link user-dropdown-trigger" @click.prevent>
+              <a-avatar
+                :size="32"
+                :src="userStore.userInfo?.avatar"
+                class="header-avatar"
+                :style="headerAvatarStyle"
+              >
+                <span v-if="!userStore.userInfo?.avatar">{{ avatarText }}</span>
+              </a-avatar>
+              <span class="header-username">
+                {{ userStore.userInfo?.nickname || userStore.userInfo?.username }}
+              </span>
               <n-icon :size="16" :component="ChevronDownOutline" style="margin-left: 4px; vertical-align: -2px;"/>
             </a>
             <template #overlay>
@@ -91,7 +100,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {NIcon} from 'naive-ui'
 import {
@@ -118,6 +127,28 @@ const route = useRoute()
 const userStore = useUserStore()
 const cartStore = useCartStore()
 const selectedKeys = ref(['home'])
+
+const avatarText = computed(() => {
+  const name = userStore.userInfo?.nickname || userStore.userInfo?.username || ''
+  return name ? name.charAt(0).toUpperCase() : 'U'
+})
+
+const headerAvatarStyle = computed(() => {
+  if (userStore.userInfo?.avatar) {
+    return {}
+  }
+  const colors = ['#FFD100', '#40a9ff', '#73d13d', '#ff7875', '#9254de']
+  const name = userStore.userInfo?.nickname || userStore.userInfo?.username || ''
+  let sum = 0
+  for (let i = 0; i < name.length; i++) {
+    sum += name.charCodeAt(i)
+  }
+  const color = colors[sum % colors.length]
+  return {
+    backgroundColor: color,
+    color: '#fff'
+  }
+})
 
 onMounted(() => {
   if (userStore.token) {
@@ -223,6 +254,19 @@ async function handleLogout() {
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.user-dropdown-trigger {
+  display: flex;
+  align-items: center;
+}
+
+.header-avatar {
+  margin-right: 6px;
+}
+
+.header-username {
+  font-weight: 600;
 }
 
 .user-info a {

@@ -28,6 +28,13 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     /**
+     * 根据 ID 获取用户
+     */
+    public User getById(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    /**
      * 分页查询用户列表
      */
     public IPage<AdminUserVO> getUserPage(Integer current, Integer size, String keyword, Integer status, String role) {
@@ -64,6 +71,7 @@ public class UserService {
         vo.setId(user.getId());
         vo.setUsername(user.getUsername());
         vo.setNickname(user.getNickname());
+        vo.setAvatar(user.getAvatar());
         vo.setRole(user.getRoleId() != null && user.getRoleId() == 1L ? "admin" : "user");
         vo.setStatus(user.getStatus());
         vo.setCreatedAt(user.getCreatedAt());
@@ -135,5 +143,25 @@ public class UserService {
      */
     public void deleteUser(Long id) {
         userMapper.deleteById(id);
+    }
+
+    /**
+     * 用户：更新个人信息（昵称、头像）
+     */
+    public User updateUserProfile(Long userId, String nickname, String avatar) {
+        User user = userMapper.selectById(userId);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+
+        if (StringUtils.hasText(nickname)) {
+            user.setNickname(nickname);
+        }
+        if (StringUtils.hasText(avatar)) {
+            user.setAvatar(avatar);
+        }
+
+        userMapper.updateById(user);
+        return user;
     }
 }

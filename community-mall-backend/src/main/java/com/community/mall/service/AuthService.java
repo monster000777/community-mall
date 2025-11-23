@@ -66,14 +66,15 @@ public class AuthService {
 
         // 设置角色名称
         String role = user.getRoleId() == 1 ? "admin" : "user";
-        
+
         return new LoginResponse(
                 token,
                 user.getId(),
                 user.getUsername(),
                 user.getNickname(),
                 user.getRoleId(),
-                role
+                role,
+                user.getAvatar()
         );
     }
 

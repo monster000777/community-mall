@@ -29,6 +29,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
                 .notMatch("/swagger-ui/**")
                 .notMatch("/v3/api-docs/**")
                 .notMatch("/swagger-ui.html")
+                .notMatch("/uploads/**")
                 .check(r -> StpUtil.checkLogin());
             
             // 权限校验 -- 管理员权限

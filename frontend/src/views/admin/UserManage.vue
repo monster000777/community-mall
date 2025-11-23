@@ -63,11 +63,21 @@
       >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'avatar'">
-            <a-avatar :size="40" style="background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);">
-              <template #icon>
-                <n-icon :size="20" :component="PersonOutline" />
-              </template>
-            </a-avatar>
+            <a-upload
+              :show-upload-list="false"
+              :before-upload="beforeAvatarUpload"
+              :custom-request="options => handleAvatarUpload(options, record)"
+            >
+              <a-avatar
+                :size="40"
+                :src="record.avatar"
+                :style="getAvatarStyle(record)"
+              >
+                <template v-if="!record.avatar" #icon>
+                  <n-icon :size="20" :component="PersonOutline" />
+                </template>
+              </a-avatar>
+            </a-upload>
           </template>
           <template v-else-if="column.key === 'username'">
             <div class="username">{{ record.username }}</div>
@@ -161,10 +171,13 @@ import {
   CreateOutline,
   TrashOutline
 } from '@vicons/ionicons5'
-import { getUserList, createUser, updateUser, updateUserStatus, deleteUser } from '@/api/user'
+import { getUserList, createUser, updateUser, updateUserStatus, deleteUser, uploadUserAvatar } from '@/api/user'
+import { useUserStore } from '@/stores/user'
 
 // 模拟数据（实际项目中应该从API获取）
 const users = ref([])
+
+const userStore = useUserStore()
 
 const modalVisible = ref(false)
 const editId = ref(null)
@@ -174,6 +187,8 @@ const pagination = ref({
   pageSize: 10,
   total: 0
 })
+
+const uploadingUserId = ref(null)
 
 const formState = reactive({
   username: '',
@@ -205,6 +220,61 @@ async function loadUsers() {
   })
   users.value = res.data.records || []
   pagination.value.total = res.data.total || 0
+}
+
+function getAvatarStyle(user) {
+  if (user.avatar) {
+    return { cursor: 'pointer' }
+  }
+  const colors = ['#FFD100', '#40a9ff', '#73d13d', '#ff7875', '#9254de']
+  const name = user.nickname || user.username || ''
+  let sum = 0
+  for (let i = 0; i < name.length; i++) {
+    sum += name.charCodeAt(i)
+  }
+  const color = colors[sum % colors.length]
+  return {
+    backgroundColor: color,
+    color: '#fff',
+    cursor: 'pointer'
+  }
+}
+
+function beforeAvatarUpload(file) {
+  const isImage = file.type === 'image/jpeg' || file.type === 'image/png'
+  if (!isImage) {
+    message.error('只支持 JPG/PNG 格式的图片')
+    return false
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2
+  if (!isLt2M) {
+    message.error('图片大小不能超过 2MB')
+    return false
+  }
+  return true
+}
+
+async function handleAvatarUpload(options, user) {
+  const { file, onSuccess, onError } = options
+  const formData = new FormData()
+  formData.append('file', file)
+  uploadingUserId.value = user.id
+  try {
+    const res = await uploadUserAvatar(user.id, formData)
+    user.avatar = res.data
+    // 如果是当前登录管理员自己，同步更新全局 userStore 的头像
+    if (userStore.userInfo?.userId === user.id) {
+      userStore.updateUserInfo({ avatar: res.data })
+    }
+    message.success('头像已更新')
+    onSuccess && onSuccess(res)
+  } catch (error) {
+    console.error('更新用户头像失败', error)
+    message.error('更新用户头像失败，请稍后重试')
+    onError && onError(error)
+  } finally {
+    uploadingUserId.value = null
+  }
 }
 
 function handleTableChange(pag) {

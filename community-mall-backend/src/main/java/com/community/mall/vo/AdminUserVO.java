@@ -17,6 +17,11 @@ public class AdminUserVO {
     private String nickname;
 
     /**
+     * 头像 URL
+     */
+    private String avatar;
+
+    /**
      * 角色标识：admin 或 user
      */
     private String role;

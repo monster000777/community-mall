@@ -38,3 +38,15 @@ export function deleteUser(id) {
     method: 'delete'
   })
 }
+
+// 管理员上传/更新指定用户头像
+export function uploadUserAvatar(id, data) {
+  return request({
+    url: `/admin/users/${id}/avatar`,
+    method: 'post',
+    data,
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  })
+}

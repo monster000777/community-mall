@@ -26,7 +26,8 @@ export const useUserStore = defineStore('user', () => {
       userId: res.data.userId,
       username: res.data.username,
       nickname: res.data.nickname,
-      role: res.data.role
+      role: res.data.role,
+      avatar: res.data.avatar
     }
     
     localStorage.setItem('satoken', res.data.token)
@@ -52,12 +53,23 @@ export const useUserStore = defineStore('user', () => {
     return userInfo.value?.role === 'admin'
   }
 
+  // 更新本地用户信息（例如个人中心修改昵称、头像后）
+  function updateUserInfo(partial) {
+    if (!userInfo.value) return
+    userInfo.value = {
+      ...userInfo.value,
+      ...partial
+    }
+    localStorage.setItem('userInfo', JSON.stringify(userInfo.value))
+  }
+
   return {
     token,
     userInfo,
     login,
     logout,
-    isAdmin
+    isAdmin,
+    updateUserInfo
   }
 })
 

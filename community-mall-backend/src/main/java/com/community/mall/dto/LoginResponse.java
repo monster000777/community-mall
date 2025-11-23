@@ -17,5 +17,10 @@ public class LoginResponse {
     private String nickname;
     private Long roleId;
     private String role;  // 角色名称：admin 或 user
+
+    /**
+     * 头像 URL
+     */
+    private String avatar;
 }
 

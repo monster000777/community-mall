@@ -7,6 +7,9 @@ import com.community.mall.service.UserService;
 import com.community.mall.vo.AdminUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 
 /**
  * 管理员-用户管理控制器
@@ -67,6 +70,41 @@ public class AdminUserController {
             return Result.success("用户状态更新成功");
         } catch (Exception e) {
             return Result.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 管理员上传/更新指定用户头像
+     */
+    @PostMapping("/{id}/avatar")
+    public Result<String> uploadUserAvatar(@PathVariable Long id, @RequestParam("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return Result.error("上传文件不能为空");
+        }
+        try {
+            String uploadRoot = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
+            String avatarDirPath = uploadRoot + "avatar" + File.separator;
+            File avatarDir = new File(avatarDirPath);
+            if (!avatarDir.exists()) {
+                avatarDir.mkdirs();
+            }
+
+            String originalFilename = file.getOriginalFilename();
+            String ext = "";
+            if (originalFilename != null && originalFilename.contains(".")) {
+                ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+            }
+            String filename = "avatar_" + id + "_" + System.currentTimeMillis() + ext;
+            File dest = new File(avatarDir, filename);
+            file.transferTo(dest);
+
+            String url = "/api/uploads/avatar/" + filename;
+            // 复用用户资料更新逻辑，只更新 avatar
+            userService.updateUserProfile(id, null, url);
+
+            return Result.success("头像更新成功", url);
+        } catch (Exception e) {
+            return Result.error("上传失败: " + e.getMessage());
         }
     }
 
