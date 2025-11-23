@@ -43,7 +43,12 @@
           总计：<span>¥{{ totalPrice }}</span>
         </div>
         <a-space>
-          <a-button @click="handleClearCart">清空购物车</a-button>
+          <a-button
+            @click="handleClearCart"
+            :disabled="cartList.length === 0"
+          >
+            清空购物车
+          </a-button>
           <a-button
             type="primary"
             size="large"
@@ -183,6 +188,10 @@ function handleDelete(cartId) {
 }
 
 function handleClearCart() {
+  if (cartList.value.length === 0) {
+    message.warning('购物车已为空')
+    return
+  }
   Modal.confirm({
     title: '确认清空',
     content: '确定要清空购物车吗？',
