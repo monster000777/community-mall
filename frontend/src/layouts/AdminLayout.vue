@@ -59,7 +59,7 @@
         <div class="header-right">
           <a-dropdown>
             <div class="user-info">
-              <a-avatar :size="36" style="background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);">
+              <a-avatar :size="36" class="user-avatar">
                 <template #icon>
                   <n-icon :size="20" :component="PersonOutline" />
                 </template>
@@ -160,7 +160,7 @@ function handleLogout() {
 }
 
 .admin-sider {
-  background: linear-gradient(180deg, #001529 0%, #001a33 100%);
+  background: #001529;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -171,23 +171,20 @@ function handleLogout() {
   justify-content: center;
   gap: 12px;
   padding: 16px;
-  background: rgba(255, 209, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 209, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s;
 }
 
 .logo-icon {
-  color: #FFD100;
+  color: var(--primary-color);
   transition: all 0.3s;
 }
 
 .logo-text {
   font-size: 20px;
   font-weight: 700;
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: white;
   white-space: nowrap;
 }
 
@@ -199,7 +196,7 @@ function handleLogout() {
 
 .admin-menu :deep(.ant-menu-item) {
   margin: 8px 0;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   height: 48px;
   line-height: 48px;
   font-size: 15px;
@@ -207,18 +204,13 @@ function handleLogout() {
 }
 
 .admin-menu :deep(.ant-menu-item:hover) {
-  background: rgba(255, 209, 0, 0.15);
-  color: #FFD100;
+  color: var(--primary-color) !important;
 }
 
 .admin-menu :deep(.ant-menu-item-selected) {
-  background: linear-gradient(135deg, rgba(255, 209, 0, 0.2) 0%, rgba(255, 165, 0, 0.2) 100%);
-  color: #FFD100;
+  background: var(--primary-color) !important;
+  color: white !important;
   font-weight: 600;
-}
-
-.admin-menu :deep(.ant-menu-item-selected)::after {
-  border-right: 3px solid #FFD100;
 }
 
 .admin-header {
@@ -227,7 +219,7 @@ function handleLogout() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-sm);
   z-index: 10;
 }
 
@@ -240,11 +232,11 @@ function handleLogout() {
 .trigger-icon {
   cursor: pointer;
   transition: all 0.3s;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .trigger-icon:hover {
-  color: #FFD100;
+  color: var(--primary-color);
   transform: scale(1.1);
 }
 
@@ -253,11 +245,11 @@ function handleLogout() {
 }
 
 .breadcrumb :deep(.ant-breadcrumb-link) {
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .breadcrumb :deep(.ant-breadcrumb-separator) {
-  color: #999;
+  color: var(--text-tertiary);
 }
 
 .header-right {
@@ -272,22 +264,26 @@ function handleLogout() {
   gap: 12px;
   padding: 8px 16px;
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   transition: all 0.3s;
 }
 
 .user-info:hover {
-  background: #f5f5f5;
+  background: var(--bg-body);
+}
+
+.user-avatar {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
 }
 
 .user-name {
   font-size: 15px;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .admin-content {
-  background: #f0f2f5;
+  background: var(--bg-body);
   padding: 24px;
   min-height: calc(100vh - 64px - 70px);
 }
@@ -295,16 +291,16 @@ function handleLogout() {
 .content-wrapper {
   background: white;
   padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   min-height: 100%;
 }
 
 .admin-footer {
   background: white;
   text-align: center;
-  color: #666;
-  border-top: 1px solid #f0f0f0;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
   padding: 20px 0;
 }
 

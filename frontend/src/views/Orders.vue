@@ -1,60 +1,70 @@
 <template>
   <div class="orders-page">
-    <a-card title="我的订单">
-      <a-table
-        :columns="columns"
-        :data-source="orders"
-        :pagination="pagination"
-        row-key="id"
-        @change="handleTableChange"
-        :loading="loading"
-        :locale="{ emptyText: '暂无订单' }"
-      >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'orderNo'">
-            <a @click="viewOrderDetail(record)">{{ record.orderNo }}</a>
+    <div class="container">
+      <div class="orders-card">
+        <div class="card-header">
+          <h2>我的订单</h2>
+        </div>
+
+        <a-table
+          :columns="columns"
+          :data-source="orders"
+          :pagination="pagination"
+          row-key="id"
+          @change="handleTableChange"
+          :loading="loading"
+          class="orders-table"
+          :locale="{ emptyText: '暂无订单' }"
+        >
+          <template #bodyCell="{ column, record }">
+            <template v-if="column.key === 'orderNo'">
+              <a class="order-link" @click="viewOrderDetail(record)">{{ record.orderNo }}</a>
+            </template>
+            <template v-else-if="column.key === 'orderStatus'">
+              <a-tag :color="getStatusColor(record.orderStatus)" class="status-tag">
+                {{ getStatusText(record.orderStatus) }}
+              </a-tag>
+            </template>
+            <template v-else-if="column.key === 'actualAmount'">
+              <span class="amount-text">¥{{ record.actualAmount }}</span>
+            </template>
+            <template v-else-if="column.key === 'action'">
+              <a-space>
+                <a-button
+                  v-if="record.orderStatus === 1"
+                  type="primary"
+                  size="small"
+                  @click="handlePay(record.id)"
+                  :loading="payingOrderId === record.id"
+                  class="action-btn pay-btn"
+                >
+                  去支付
+                </a-button>
+                <a-button
+                  v-if="record.orderStatus === 1"
+                  size="small"
+                  @click="handleCancel(record.id)"
+                  :loading="cancelingOrderId === record.id"
+                  class="action-btn"
+                >
+                  取消
+                </a-button>
+                <a-button
+                  v-if="canDeleteOrder(record.orderStatus)"
+                  size="small"
+                  danger
+                  @click="handleDelete(record.id)"
+                  :loading="deletingOrderId === record.id"
+                  class="action-btn"
+                >
+                  删除
+                </a-button>
+              </a-space>
+            </template>
           </template>
-          <template v-else-if="column.key === 'orderStatus'">
-            <a-tag :color="getStatusColor(record.orderStatus)">
-              {{ getStatusText(record.orderStatus) }}
-            </a-tag>
-          </template>
-          <template v-else-if="column.key === 'actualAmount'">
-            ¥{{ record.actualAmount }}
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button
-                v-if="record.orderStatus === 1"
-                type="primary"
-                size="small"
-                @click="handlePay(record.id)"
-                :loading="payingOrderId === record.id"
-              >
-                去支付
-              </a-button>
-              <a-button
-                v-if="record.orderStatus === 1"
-                size="small"
-                @click="handleCancel(record.id)"
-                :loading="cancelingOrderId === record.id"
-              >
-                取消订单
-              </a-button>
-              <a-button
-                v-if="canDeleteOrder(record.orderStatus)"
-                size="small"
-                danger
-                @click="handleDelete(record.id)"
-                :loading="deletingOrderId === record.id"
-              >
-                删除订单
-              </a-button>
-            </a-space>
-          </template>
-        </template>
-      </a-table>
-    </a-card>
+        </a-table>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -126,13 +136,13 @@ function getStatusText(status) {
 
 function getStatusColor(status) {
   const colorMap = {
-    1: 'orange',
-    2: 'blue',
+    1: 'warning',
+    2: 'processing',
     3: 'cyan',
-    4: 'green',
-    5: 'red',
+    4: 'success',
+    5: 'default',
     6: 'purple',
-    7: 'gray'
+    7: 'default'
   }
   return colorMap[status] || 'default'
 }
@@ -145,7 +155,8 @@ function viewOrderDetail(order) {
   Modal.info({
     title: '订单详情',
     content: `订单号：${order.orderNo}\n金额：¥${order.actualAmount}\n收货地址：${order.receiverAddress}`,
-    width: 600
+    width: 600,
+    okText: '确定'
   })
 }
 
@@ -173,6 +184,7 @@ function handleCancel(orderId) {
   Modal.confirm({
     title: '确认取消',
     content: '确定要取消该订单吗？',
+    okType: 'danger',
     onOk: async () => {
       cancelingOrderId.value = orderId
       try {
@@ -193,6 +205,7 @@ function handleDelete(orderId) {
   Modal.confirm({
     title: '确认删除',
     content: '删除后将无法恢复该订单记录，确定继续吗？',
+    okType: 'danger',
     onOk: async () => {
       deletingOrderId.value = orderId
       try {
@@ -212,8 +225,68 @@ function handleDelete(orderId) {
 
 <style scoped>
 .orders-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 40px 0;
+  min-height: calc(100vh - 64px);
+  background: var(--bg-body);
+}
+
+.orders-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+}
+
+.card-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.orders-table :deep(.ant-table-thead > tr > th) {
+  background: var(--bg-body);
+  font-weight: 600;
+}
+
+.order-link {
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.order-link:hover {
+  color: var(--primary-hover);
+  text-decoration: underline;
+}
+
+.status-tag {
+  border-radius: 12px;
+  padding: 0 10px;
+  font-weight: 500;
+}
+
+.amount-text {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.action-btn {
+  border-radius: 4px;
+}
+
+.pay-btn {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.pay-btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 </style>
-

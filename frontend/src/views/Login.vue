@@ -34,9 +34,10 @@
               v-model:value="loginForm.username"
               size="large"
               placeholder="请输入用户名"
+              class="custom-input"
             >
               <template #prefix>
-                <n-icon :size="18" :component="PersonOutline" style="color: #999;" />
+                <n-icon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -46,9 +47,10 @@
               v-model:value="loginForm.password"
               size="large"
               placeholder="请输入密码"
+              class="custom-input"
             >
               <template #prefix>
-                <n-icon :size="18" :component="LockClosedOutline" style="color: #999;" />
+                <n-icon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
@@ -76,14 +78,16 @@
           </a>
         </div>
 
-        <a-divider>或者</a-divider>
+        <div class="divider">
+          <span>或者</span>
+        </div>
 
         <div class="quick-login">
-          <a-button size="large" block @click="handleQuickLogin('user')">
+          <a-button size="large" block @click="handleQuickLogin('user')" class="quick-btn">
             <n-icon :size="18" :component="PersonCircleOutline" style="margin-right: 8px; vertical-align: -3px;" />
             普通用户登录
           </a-button>
-          <a-button size="large" block @click="handleQuickLogin('admin')" style="margin-top: 12px;">
+          <a-button size="large" block @click="handleQuickLogin('admin')" class="quick-btn mt-3">
             <n-icon :size="18" :component="ShieldCheckmarkOutline" style="margin-right: 8px; vertical-align: -3px;" />
             管理员登录
           </a-button>
@@ -176,13 +180,13 @@ function handleQuickLogin(type) {
 .login-container {
   display: flex;
   min-height: 100vh;
-  background: #f5f7fa;
+  background: var(--bg-body);
 }
 
 .login-left {
   flex: 1;
   position: relative;
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
+  background: url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80') center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,6 +202,8 @@ function handleQuickLogin(type) {
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
   animation: float 20s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
 }
 
 @keyframes float {
@@ -211,8 +217,9 @@ function handleQuickLogin(type) {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80') center/cover;
-  opacity: 0.15;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  opacity: 0.18;
+  z-index: 0;
 }
 
 .left-content {
@@ -225,16 +232,17 @@ function handleQuickLogin(type) {
 }
 
 .brand-title {
-  font-size: 48px;
+  font-size: 3.5rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: fadeInDown 0.8s ease;
+  color: white;
 }
 
 .brand-subtitle {
-  font-size: 24px;
-  margin-bottom: 60px;
+  font-size: 1.5rem;
+  margin-bottom: 4rem;
   opacity: 0.95;
   font-weight: 300;
   letter-spacing: 2px;
@@ -244,19 +252,20 @@ function handleQuickLogin(type) {
 .features {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-top: 60px;
+  gap: 2rem;
+  margin-top: 4rem;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
-  font-size: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-lg);
+  font-size: 1.1rem;
   font-weight: 500;
   transition: all 0.3s ease;
   animation: fadeIn 0.8s ease;
@@ -268,7 +277,7 @@ function handleQuickLogin(type) {
 .feature-item:nth-child(4) { animation-delay: 0.6s; }
 
 .feature-item:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-5px);
 }
 
@@ -277,77 +286,92 @@ function handleQuickLogin(type) {
 }
 
 .login-right {
-  flex: 0 0 500px;
+  flex: 0 0 550px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px;
   background: white;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.02);
 }
 
 .login-form-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   animation: fadeInRight 0.8s ease;
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 3rem;
 }
 
 .form-header h2 {
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 700;
-  color: #333;
-  margin-bottom: 12px;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
 }
 
 .form-header p {
-  font-size: 16px;
-  color: #666;
+  font-size: 1rem;
+  color: var(--text-secondary);
 }
 
 .login-form {
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
 
-.login-form :deep(.ant-input-affix-wrapper),
-.login-form :deep(.ant-input-password) {
-  border-radius: 8px;
+.custom-input :deep(.ant-input-affix-wrapper),
+.custom-input :deep(.ant-input-password) {
+  border-radius: var(--radius-md);
   padding: 12px 16px;
+  border-color: var(--border-color);
+  background: var(--bg-input);
+  transition: all 0.3s ease;
 }
 
-.login-form :deep(.ant-input) {
-  font-size: 15px;
+.custom-input :deep(.ant-input-affix-wrapper:hover),
+.custom-input :deep(.ant-input-password:hover) {
+  border-color: var(--primary-color);
+}
+
+.custom-input :deep(.ant-input-affix-wrapper-focused),
+.custom-input :deep(.ant-input-password-focused) {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+.input-icon {
+  color: var(--text-tertiary);
 }
 
 .login-button {
   height: 50px;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: var(--radius-md);
+  font-size: 1rem;
   font-weight: 600;
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
+  background: var(--primary-color);
   border: none;
-  box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
   transition: all 0.3s ease;
 }
 
 .login-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 209, 0, 0.4);
-  background: linear-gradient(135deg, #FFA500 0%, #FFD100 100%);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
+  background: var(--primary-hover);
 }
 
 .form-footer {
   text-align: center;
-  margin-top: 24px;
-  color: #666;
-  font-size: 14px;
+  margin-top: 1.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
 }
 
 .register-link {
-  color: #FFD100;
+  color: var(--primary-color);
   font-weight: 600;
   margin-left: 8px;
   cursor: pointer;
@@ -355,88 +379,79 @@ function handleQuickLogin(type) {
 }
 
 .register-link:hover {
-  color: #FFA500;
+  color: var(--primary-hover);
   text-decoration: underline;
 }
 
-.quick-login :deep(.ant-btn) {
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+  color: var(--text-tertiary);
+  font-size: 0.9rem;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-color);
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+.quick-btn {
   height: 48px;
-  border-radius: 8px;
-  font-size: 15px;
-  border: 2px solid #e8e8e8;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
   transition: all 0.3s ease;
 }
 
-.quick-login :deep(.ant-btn:hover) {
-  border-color: #FFD100;
-  color: #FFD100;
+.quick-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: var(--primary-light);
   transform: translateY(-2px);
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fadeInRight {
-  from {
-    opacity: 0;
-    transform: translateX(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
-/* 响应式设计 */
+/* Responsive Design */
 @media (max-width: 1024px) {
-  .login-left {
-    display: none;
-  }
-  
-  .login-right {
-    flex: 1;
-  }
+  .login-left { display: none; }
+  .login-right { flex: 1; }
 }
 
 @media (max-width: 576px) {
-  .login-right {
-    padding: 20px;
-  }
-  
-  .login-form-wrapper {
-    max-width: 100%;
-  }
-  
-  .form-header h2 {
-    font-size: 24px;
-  }
+  .login-right { padding: 20px; }
+  .login-form-wrapper { max-width: 100%; }
+  .form-header h2 { font-size: 1.5rem; }
 }
 </style>

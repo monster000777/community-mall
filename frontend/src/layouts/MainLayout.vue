@@ -9,6 +9,7 @@
           v-model:selectedKeys="selectedKeys"
           mode="horizontal"
           :style="{ lineHeight: '64px', flex: 1 }"
+          class="nav-menu"
       >
         <a-menu-item key="home" @click="$router.push('/')">
           <n-icon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;"/>
@@ -19,7 +20,7 @@
           商品列表
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
-          <a-badge :count="cartStore.cartCount">
+          <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
             <n-icon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;"/>
             购物车
           </a-badge>
@@ -47,7 +48,7 @@
               <n-icon :size="16" :component="ChevronDownOutline" style="margin-left: 4px; vertical-align: -2px;"/>
             </a>
             <template #overlay>
-              <a-menu>
+              <a-menu class="user-dropdown-menu">
                 <a-menu-item v-if="userStore.isAdmin()" @click="$router.push('/admin')">
                   <n-icon :size="16" :component="ShieldCheckmarkOutline"
                           style="margin-right: 8px; vertical-align: -2px;"/>
@@ -62,7 +63,7 @@
                   收货地址
                 </a-menu-item>
                 <a-menu-divider/>
-                <a-menu-item @click="handleLogout">
+                <a-menu-item @click="handleLogout" class="logout-item">
                   <n-icon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;"/>
                   退出登录
                 </a-menu-item>
@@ -71,11 +72,11 @@
           </a-dropdown>
         </template>
         <template v-else>
-          <a-button type="link" @click="$router.push('/login')">
+          <a-button type="link" @click="$router.push('/login')" class="login-btn">
             <n-icon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;"/>
             登录
           </a-button>
-          <a-button type="primary" @click="$router.push('/register')">
+          <a-button type="primary" @click="$router.push('/register')" class="register-btn">
             <n-icon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;"/>
             注册
           </a-button>
@@ -83,13 +84,23 @@
       </div>
     </a-layout-header>
     <a-layout-content class="content">
-      <router-view/>
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </a-layout-content>
     <a-layout-footer class="footer">
       <div class="footer-content">
         <div class="footer-logo">
           <n-icon :size="28" :component="StorefrontOutline" style="margin-right: 8px;"/>
           社区团购系统
+        </div>
+        <div class="footer-links">
+          <a href="#">关于我们</a>
+          <a href="#">联系客服</a>
+          <a href="#">配送服务</a>
+          <a href="#">隐私政策</a>
         </div>
         <div class="footer-info">
           © 2024 社区团购 | 新鲜优质 价格实惠
@@ -137,7 +148,7 @@ const headerAvatarStyle = computed(() => {
   if (userStore.userInfo?.avatar) {
     return {}
   }
-  const colors = ['#FFD100', '#40a9ff', '#73d13d', '#ff7875', '#9254de']
+  const colors = ['#10B981', '#14B8A6', '#F59E0B', '#3B82F6', '#8B5CF6']
   const name = userStore.userInfo?.nickname || userStore.userInfo?.username || ''
   let sum = 0
   for (let i = 0; i < name.length; i++) {
@@ -185,18 +196,21 @@ async function handleLogout() {
 <style scoped>
 .layout {
   min-height: 100vh;
+  background: var(--bg-body);
 }
 
 .header {
   display: flex;
   align-items: center;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
   padding: 0 60px;
-  box-shadow: 0 2px 12px rgba(255, 209, 0, 0.15);
+  box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 999;
-  border-bottom: 3px solid #FFD100;
+  border-bottom: 1px solid var(--border-color);
+  height: 64px;
 }
 
 .logo {
@@ -204,122 +218,150 @@ async function handleLogout() {
   align-items: center;
   margin-right: 60px;
   cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.02);
 }
 
 .logo-icon {
-  color: #FFD100;
+  color: var(--primary-color);
 }
 
 .logo-text {
-  font-size: 26px;
-  font-weight: 700;
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
+  font-size: 24px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-left: 8px;
-  letter-spacing: 1px;
+  letter-spacing: -0.5px;
 }
 
-:deep(.ant-menu-horizontal) {
+.nav-menu {
   border-bottom: none;
   background: transparent;
 }
 
+:deep(.ant-menu-horizontal) {
+  border-bottom: none;
+}
+
 :deep(.ant-menu-item) {
-  color: #333;
-  font-weight: 600;
+  color: var(--text-secondary);
+  font-weight: 500;
   font-size: 15px;
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+:deep(.ant-menu-item:hover) {
+  color: var(--primary-color) !important;
+}
+
+:deep(.ant-menu-item-selected) {
+  color: var(--primary-color) !important;
+  font-weight: 600;
+}
+
+:deep(.ant-menu-horizontal > .ant-menu-item::after) {
+  border-bottom: 2px solid var(--primary-color) !important;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+:deep(.ant-menu-horizontal > .ant-menu-item-selected::after) {
+  transform: scaleX(1);
+}
+
+:deep(.ant-badge-count) {
+  background: var(--accent-color);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 0 0 1px #fff;
+}
+
+:deep(.ant-menu-item .ant-badge) {
+  color: inherit;
   display: flex;
   align-items: center;
 }
 
-:deep(.ant-menu-item:hover) {
-  color: #FFD100;
-}
-
-:deep(.ant-menu-item-selected) {
-  color: #FFD100;
-  border-bottom-color: #FFD100;
-}
-
-:deep(.ant-badge-count) {
-  background: #FFD100;
-  color: #333;
-  font-weight: 600;
-}
-
 .user-info {
-  color: #333;
+  color: var(--text-primary);
   display: flex;
-  gap: 12px;
+  gap: 16px;
   align-items: center;
 }
 
 .user-dropdown-trigger {
   display: flex;
   align-items: center;
+  padding: 4px 8px;
+  border-radius: 20px;
+  transition: background 0.3s ease;
+}
+
+.user-dropdown-trigger:hover {
+  background: var(--bg-body);
 }
 
 .header-avatar {
-  margin-right: 6px;
+  margin-right: 8px;
+  border: 2px solid white;
+  box-shadow: 0 0 0 1px var(--border-color);
 }
 
 .header-username {
   font-weight: 600;
+  color: var(--text-primary);
 }
 
-.user-info a {
-  color: #333;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  transition: all 0.3s ease;
+.login-btn {
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
-.user-info a:hover {
-  color: #FFD100;
+.login-btn:hover {
+  color: var(--primary-color);
 }
 
-:deep(.ant-btn-primary) {
-  background: #FFD100;
-  border-color: #FFD100;
-  color: #333;
-  font-weight: 600;
+.register-btn {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 
-:deep(.ant-btn-primary:hover) {
-  background: #FFA500;
-  border-color: #FFA500;
-}
-
-:deep(.ant-btn-link) {
-  color: #333;
-  font-weight: 600;
-}
-
-:deep(.ant-btn-link:hover) {
-  color: #FFD100;
+.register-btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
 }
 
 .content {
   padding: 0;
-  background: #fafafa;
-  min-height: calc(100vh - 134px);
+  background: var(--bg-body);
+  min-height: calc(100vh - 64px - 200px); /* Adjust based on footer height */
 }
 
 .footer {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-  color: rgba(255, 255, 255, 0.85);
-  padding: 32px 60px;
+  background: #111827; /* Dark gray almost black */
+  color: rgba(255, 255, 255, 0.7);
+  padding: 48px 60px;
 }
 
 .footer-content {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   align-items: center;
+  gap: 24px;
 }
 
 .footer-logo {
@@ -327,12 +369,51 @@ async function handleLogout() {
   align-items: center;
   font-size: 20px;
   font-weight: 700;
-  color: #FFD100;
+  color: var(--primary-color);
+}
+
+.footer-links {
+  display: flex;
+  gap: 32px;
+}
+
+.footer-links a {
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: white;
 }
 
 .footer-info {
   font-size: 14px;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 20px;
+  }
+  
+  .logo {
+    margin-right: 20px;
+  }
+  
+  .logo-text {
+    display: none;
+  }
 }
 </style>
-

@@ -1,61 +1,66 @@
 <template>
   <div class="address-page">
-    <a-card title="收货地址管理">
-      <template #extra>
-        <a-button type="primary" @click="showAddModal">
-          <n-icon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
-          新增地址
-        </a-button>
-      </template>
+    <div class="container">
+      <div class="address-card">
+        <div class="card-header">
+          <h2>收货地址管理</h2>
+          <a-button type="primary" @click="showAddModal" class="add-btn">
+            <n-icon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+            新增地址
+          </a-button>
+        </div>
 
-      <a-empty v-if="!loading && addressList.length === 0" description="还没有收货地址，快去添加吧" />
+        <div v-if="!loading && addressList.length === 0" class="empty-state">
+          <n-icon :size="64" :component="LocationOutline" style="color: #ddd" />
+          <p>还没有收货地址，快去添加吧</p>
+        </div>
 
-      <a-list
-        v-else
-        :grid="{ gutter: 16, xs: 1, sm: 1, md: 2, lg: 2, xl: 3 }"
-        :data-source="addressList"
-        :loading="loading"
-      >
-        <template #renderItem="{ item }">
-          <a-list-item>
-            <a-card hoverable :class="{ 'default-address': item.isDefault === 1 }">
-              <template #title>
-                <div class="address-title">
-                  <span>{{ item.receiverName }}</span>
-                  <a-tag v-if="item.isDefault === 1" color="#FFD100" style="color: #333; font-weight: 600;">默认</a-tag>
-                </div>
-              </template>
-
-              <div class="address-info">
-                <p class="address-phone">
-                  <n-icon :size="16" :component="CallOutline" style="margin-right: 6px; vertical-align: -2px; color: #FFD100;" />
-                  {{ item.receiverPhone }}
-                </p>
-                <p class="address-detail">
-                  <n-icon :size="16" :component="LocationOutline" style="margin-right: 6px; vertical-align: -2px; color: #FFD100;" />
-                  {{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}
-                </p>
+        <div v-else class="address-grid">
+          <div 
+            v-for="item in addressList" 
+            :key="item.id" 
+            class="address-item"
+            :class="{ 'default': item.isDefault === 1 }"
+          >
+            <div class="item-header">
+              <span class="name">{{ item.receiverName }}</span>
+              <a-tag v-if="item.isDefault === 1" color="success">默认</a-tag>
+            </div>
+            
+            <div class="item-content">
+              <div class="info-row">
+                <n-icon :size="16" :component="CallOutline" class="icon" />
+                <span>{{ item.receiverPhone }}</span>
               </div>
-
-              <div class="address-actions">
-                <a-button type="link" @click="handleEdit(item)">
-                  <n-icon :size="16" :component="CreateOutline" style="margin-right: 4px; vertical-align: -2px;" />
-                  编辑
-                </a-button>
-                <a-button v-if="item.isDefault !== 1" type="link" @click="handleSetDefault(item.id)">
-                  <n-icon :size="16" :component="StarOutline" style="margin-right: 4px; vertical-align: -2px;" />
-                  设为默认
-                </a-button>
-                <a-button type="link" danger @click="handleDelete(item.id)">
-                  <n-icon :size="16" :component="TrashOutline" style="margin-right: 4px; vertical-align: -2px;" />
-                  删除
-                </a-button>
+              <div class="info-row">
+                <n-icon :size="16" :component="LocationOutline" class="icon" />
+                <span>{{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}</span>
               </div>
-            </a-card>
-          </a-list-item>
-        </template>
-      </a-list>
-    </a-card>
+            </div>
+
+            <div class="item-actions">
+              <a-button type="text" size="small" @click="handleEdit(item)">
+                <template #icon><n-icon :component="CreateOutline" /></template>
+                编辑
+              </a-button>
+              <a-button 
+                v-if="item.isDefault !== 1" 
+                type="text" 
+                size="small" 
+                @click="handleSetDefault(item.id)"
+              >
+                <template #icon><n-icon :component="StarOutline" /></template>
+                设为默认
+              </a-button>
+              <a-button type="text" danger size="small" @click="handleDelete(item.id)">
+                <template #icon><n-icon :component="TrashOutline" /></template>
+                删除
+              </a-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- 添加/编辑地址弹窗 -->
     <a-modal
@@ -64,22 +69,24 @@
       width="600px"
       @ok="handleSubmit"
       :confirm-loading="submitLoading"
+      class="address-modal"
     >
-      <a-form :model="formState" :label-col="{ span: 5 }">
-        <a-form-item label="收货人" required>
-          <a-input v-model:value="formState.receiverName" placeholder="请输入收货人姓名" />
-        </a-form-item>
-
-        <a-form-item label="联系电话" required>
-          <a-input v-model:value="formState.receiverPhone" placeholder="请输入手机号" />
-        </a-form-item>
+      <a-form :model="formState" layout="vertical">
+        <div class="form-row">
+          <a-form-item label="收货人" required class="form-col">
+            <a-input v-model:value="formState.receiverName" placeholder="请输入收货人姓名" />
+          </a-form-item>
+          <a-form-item label="联系电话" required class="form-col">
+            <a-input v-model:value="formState.receiverPhone" placeholder="请输入手机号" />
+          </a-form-item>
+        </div>
 
         <a-form-item label="所在地区" required>
-          <a-space>
-            <a-input v-model:value="formState.province" placeholder="省份" style="width: 120px;" />
-            <a-input v-model:value="formState.city" placeholder="城市" style="width: 120px;" />
-            <a-input v-model:value="formState.district" placeholder="区县" style="width: 120px;" />
-          </a-space>
+          <div class="area-inputs">
+            <a-input v-model:value="formState.province" placeholder="省份" />
+            <a-input v-model:value="formState.city" placeholder="城市" />
+            <a-input v-model:value="formState.district" placeholder="区县" />
+          </div>
         </a-form-item>
 
         <a-form-item label="详细地址" required>
@@ -90,8 +97,10 @@
           />
         </a-form-item>
 
-        <a-form-item label="设为默认">
-          <a-switch v-model:checked="formState.isDefault" :checked-value="1" :un-checked-value="0" />
+        <a-form-item>
+          <a-checkbox v-model:checked="formState.isDefault" :true-value="1" :false-value="0">
+            设为默认收货地址
+          </a-checkbox>
         </a-form-item>
       </a-form>
     </a-modal>
@@ -234,6 +243,7 @@ function handleDelete(id) {
   Modal.confirm({
     title: '确认删除',
     content: '确定要删除这个地址吗？',
+    okType: 'danger',
     onOk: async () => {
       try {
         await deleteAddress(id)
@@ -262,42 +272,140 @@ function resetForm() {
 
 <style scoped>
 .address-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 40px 0;
+  min-height: calc(100vh - 64px);
+  background: var(--bg-body);
+}
+
+.address-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   padding: 24px;
 }
 
-.default-address {
-  border: 2px solid #FFD100;
-  box-shadow: 0 4px 16px rgba(255, 209, 0, 0.2);
-}
-
-.address-title {
+.card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.address-info {
-  margin: 16px 0;
+.card-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.address-phone,
-.address-detail {
-  margin: 8px 0;
-  color: #666;
-  line-height: 1.6;
+.add-btn {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  font-weight: 600;
 }
 
-.address-actions {
+.add-btn:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.address-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.address-item {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  background: white;
+}
+
+.address-item:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.address-item.default {
+  border-color: var(--primary-color);
+  background: var(--primary-light);
+}
+
+.item-header {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.item-content {
+  margin-bottom: 20px;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.icon {
+  margin-right: 8px;
+  margin-top: 3px;
+  color: var(--text-tertiary);
+}
+
+.item-actions {
+  display: flex;
+  justify-content: flex-end;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border-color);
 }
 
-:deep(.ant-btn-link) {
-  padding: 4px 8px;
+.address-item.default .item-actions {
+  border-top-color: rgba(16, 185, 129, 0.2);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  margin-top: 16px;
+}
+
+/* Form Styles */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-col {
+  flex: 1;
+}
+
+.area-inputs {
+  display: flex;
+  gap: 10px;
+}
+
+.area-inputs .ant-input {
+  flex: 1;
 }
 </style>
-

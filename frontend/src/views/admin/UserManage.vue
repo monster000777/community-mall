@@ -3,7 +3,7 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="PeopleOutline" style="margin-right: 12px; vertical-align: -5px; color: #FFD100;" />
+          <n-icon :size="28" :component="PeopleOutline" class="title-icon" />
           用户管理
         </h2>
         <p class="page-desc">管理所有用户信息和权限</p>
@@ -16,7 +16,7 @@
 
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);">
+        <div class="stat-icon icon-primary">
           <n-icon :size="28" :component="PeopleOutline" />
         </div>
         <div class="stat-info">
@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);">
+        <div class="stat-icon icon-success">
           <n-icon :size="28" :component="CheckmarkCircleOutline" />
         </div>
         <div class="stat-info">
@@ -34,7 +34,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);">
+        <div class="stat-icon icon-info">
           <n-icon :size="28" :component="ShieldCheckmarkOutline" />
         </div>
         <div class="stat-info">
@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);">
+        <div class="stat-icon icon-error">
           <n-icon :size="28" :component="BanOutline" />
         </div>
         <div class="stat-info">
@@ -72,6 +72,7 @@
                 :size="40"
                 :src="record.avatar"
                 :style="getAvatarStyle(record)"
+                class="user-avatar"
               >
                 <template v-if="!record.avatar" #icon>
                   <n-icon :size="20" :component="PersonOutline" />
@@ -84,7 +85,9 @@
           </template>
           <template v-else-if="column.key === 'role'">
             <a-tag :color="record.role === 'admin' ? 'blue' : 'default'">
-              <n-icon :size="14" :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline" style="margin-right: 4px; vertical-align: -1px;" />
+              <template #icon>
+                <n-icon :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline" />
+              </template>
               {{ record.role === 'admin' ? '管理员' : '普通用户' }}
             </a-tag>
           </template>
@@ -95,22 +98,22 @@
           </template>
           <template v-else-if="column.key === 'action'">
             <a-space>
-              <a-button type="link" size="small" @click="handleEdit(record)" class="action-btn">
-                <n-icon :size="14" :component="CreateOutline" style="margin-right: 4px; vertical-align: -1px;" />
+              <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
+                <template #icon><n-icon :component="CreateOutline" /></template>
                 编辑
               </a-button>
               <a-button
-                type="link"
+                type="text"
                 size="small"
                 @click="handleToggleStatus(record)"
                 class="action-btn"
                 :danger="record.status === 1"
               >
-                <n-icon :size="14" :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" style="margin-right: 4px; vertical-align: -1px;" />
+                <template #icon><n-icon :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" /></template>
                 {{ record.status === 1 ? '禁用' : '启用' }}
               </a-button>
-              <a-button type="link" danger size="small" @click="handleDelete(record.id)" class="action-btn">
-                <n-icon :size="14" :component="TrashOutline" style="margin-right: 4px; vertical-align: -1px;" />
+              <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
+                <template #icon><n-icon :component="TrashOutline" /></template>
                 删除
               </a-button>
             </a-space>
@@ -180,11 +183,8 @@ import {
 import { getUserList, createUser, updateUser, updateUserStatus, deleteUser, uploadUserAvatar } from '@/api/user'
 import { useUserStore } from '@/stores/user'
 
-// 模拟数据（实际项目中应该从API获取）
 const users = ref([])
-
 const userStore = useUserStore()
-
 const modalVisible = ref(false)
 const editId = ref(null)
 
@@ -234,7 +234,7 @@ function getAvatarStyle(user) {
   if (user.avatar) {
     return { cursor: 'pointer' }
   }
-  const colors = ['#FFD100', '#40a9ff', '#73d13d', '#ff7875', '#9254de']
+  const colors = ['#10B981', '#3B82F6', '#F59E0B', '#EF4444', '#8B5CF6']
   const name = user.nickname || user.username || ''
   let sum = 0
   for (let i = 0; i < name.length; i++) {
@@ -270,7 +270,6 @@ async function handleAvatarUpload(options, user) {
   try {
     const res = await uploadUserAvatar(user.id, formData)
     user.avatar = res.data
-    // 如果是当前登录管理员自己，同步更新全局 userStore 的头像
     if (userStore.userInfo?.userId === user.id) {
       userStore.updateUserInfo({ avatar: res.data })
     }
@@ -329,7 +328,6 @@ async function handleSubmit() {
 
   try {
     if (editId.value) {
-      // 更新用户
       await updateUser(editId.value, {
         username: formState.username,
         phone: formState.phone,
@@ -341,7 +339,6 @@ async function handleSubmit() {
       })
       message.success('更新成功')
     } else {
-      // 添加用户
       await createUser({
         username: formState.username,
         phone: formState.phone,
@@ -421,7 +418,7 @@ function resetForm() {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-content {
@@ -431,14 +428,20 @@ function resetForm() {
 .page-title {
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
   display: flex;
   align-items: center;
 }
 
+.title-icon {
+  margin-right: 12px;
+  vertical-align: -5px;
+  color: var(--primary-color);
+}
+
 .page-desc {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 14px;
 }
@@ -448,15 +451,16 @@ function resetForm() {
   padding: 0 28px;
   font-size: 15px;
   font-weight: 600;
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
+  background: var(--primary-color);
   border: none;
-  box-shadow: 0 4px 12px rgba(255, 209, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
   transition: all 0.3s ease;
 }
 
 .add-button:hover {
+  background: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 209, 0, 0.4);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
 }
 
 .stats-cards {
@@ -472,20 +476,20 @@ function resetForm() {
   gap: 16px;
   padding: 20px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -493,26 +497,31 @@ function resetForm() {
   flex-shrink: 0;
 }
 
+.icon-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); }
+.icon-success { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
+.icon-info { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
+.icon-error { background: linear-gradient(135deg, #EF4444 0%, #F87171 100%); }
+
 .stat-info {
   flex: 1;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .table-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .table-card :deep(.ant-table) {
@@ -520,15 +529,15 @@ function resetForm() {
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {
-  background: #fafafa;
+  background: var(--bg-body);
   font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .username {
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .action-btn {
@@ -538,16 +547,17 @@ function resetForm() {
 
 .user-form :deep(.ant-input),
 .user-form :deep(.ant-select-selector) {
-  border-radius: 6px;
+  border-radius: var(--radius-md);
 }
 
 :deep(.modal-ok-btn) {
-  background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);
-  border: none;
+  background: var(--primary-color);
+  border-color: var(--primary-color);
 }
 
 :deep(.modal-ok-btn:hover) {
-  background: linear-gradient(135deg, #FFA500 0%, #FFD100 100%);
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
 }
 
 @media (max-width: 1200px) {

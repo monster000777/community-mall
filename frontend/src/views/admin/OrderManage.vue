@@ -3,7 +3,7 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="ReceiptOutline" style="margin-right: 12px; vertical-align: -5px; color: #FFD100;" />
+          <n-icon :size="28" :component="ReceiptOutline" class="title-icon" />
           订单管理
         </h2>
         <p class="page-desc">查看和管理所有订单信息</p>
@@ -12,7 +12,7 @@
 
     <div class="stats-cards">
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #FFD100 0%, #FFA500 100%);">
+        <div class="stat-icon icon-primary">
           <n-icon :size="28" :component="DocumentTextOutline" />
         </div>
         <div class="stat-info">
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #1890ff 0%, #40a9ff 100%);">
+        <div class="stat-icon icon-info">
           <n-icon :size="28" :component="TimeOutline" />
         </div>
         <div class="stat-info">
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);">
+        <div class="stat-icon icon-success">
           <n-icon :size="28" :component="CheckmarkDoneOutline" />
         </div>
         <div class="stat-info">
@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="stat-card">
-        <div class="stat-icon" style="background: linear-gradient(135deg, #722ed1 0%, #9254de 100%);">
+        <div class="stat-icon icon-purple">
           <n-icon :size="28" :component="CashOutline" />
         </div>
         <div class="stat-info">
@@ -66,7 +66,9 @@
           </template>
           <template v-if="column.key === 'orderStatus'">
             <a-tag :color="getStatusColor(record.orderStatus)" class="status-tag">
-              <n-icon :size="14" :component="getStatusIcon(record.orderStatus)" style="margin-right: 4px; vertical-align: -1px;" />
+              <template #icon>
+                <n-icon :component="getStatusIcon(record.orderStatus)" />
+              </template>
               {{ getStatusText(record.orderStatus) }}
             </a-tag>
           </template>
@@ -77,17 +79,17 @@
             <a-space>
               <a-button
                 v-if="record.orderStatus === 1"
-                type="link"
+                type="text"
                 size="small"
                 class="action-btn"
                 :loading="cancelingOrderId === record.id"
                 @click="handleAdminCancel(record)"
               >
-                取消订单
+                取消
               </a-button>
               <a-button
                 v-if="record.orderStatus === 2"
-                type="link"
+                type="text"
                 size="small"
                 class="action-btn"
                 :loading="shippingOrderId === record.id"
@@ -97,7 +99,7 @@
               </a-button>
               <a-button
                 v-if="record.orderStatus === 2"
-                type="link"
+                type="text"
                 size="small"
                 class="action-btn"
                 :loading="refundingOrderId === record.id"
@@ -107,17 +109,17 @@
               </a-button>
               <a-button
                 v-if="record.orderStatus === 3"
-                type="link"
+                type="text"
                 size="small"
                 class="action-btn"
                 :loading="completingOrderId === record.id"
                 @click="handleComplete(record)"
               >
-                标记完成
+                完成
               </a-button>
-              <a-button type="link" size="small" @click="viewDetail(record)" class="action-btn">
-                <n-icon :size="14" :component="EyeOutline" style="margin-right: 4px; vertical-align: -1px;" />
-                查看详情
+              <a-button type="text" size="small" @click="viewDetail(record)" class="action-btn">
+                <template #icon><n-icon :component="EyeOutline" /></template>
+                详情
               </a-button>
             </a-space>
           </template>
@@ -146,7 +148,7 @@
             {{ currentOrder.userId }}
           </a-descriptions-item>
           <a-descriptions-item label="订单金额">
-            <span style="color: #FFD100; font-weight: 600; font-size: 16px;">
+            <span class="amount-text">
               ¥{{ currentOrder.actualAmount }}
             </span>
           </a-descriptions-item>
@@ -342,8 +344,8 @@ function getStatusText(status) {
 
 function getStatusColor(status) {
   const colorMap = {
-    1: 'orange',
-    2: 'blue',
+    1: 'warning',
+    2: 'processing',
     3: 'cyan',
     4: 'success',
     5: 'error',
@@ -383,7 +385,7 @@ function viewDetail(order) {
   align-items: center;
   margin-bottom: 24px;
   padding-bottom: 24px;
-  border-bottom: 2px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .header-content {
@@ -393,14 +395,20 @@ function viewDetail(order) {
 .page-title {
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
   display: flex;
   align-items: center;
 }
 
+.title-icon {
+  margin-right: 12px;
+  vertical-align: -5px;
+  color: var(--primary-color);
+}
+
 .page-desc {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 14px;
 }
@@ -418,20 +426,20 @@ function viewDetail(order) {
   gap: 16px;
   padding: 20px;
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .stat-icon {
   width: 56px;
   height: 56px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -439,26 +447,31 @@ function viewDetail(order) {
   flex-shrink: 0;
 }
 
+.icon-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); }
+.icon-info { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
+.icon-success { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
+.icon-purple { background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); }
+
 .stat-info {
   flex: 1;
 }
 
 .stat-label {
   font-size: 14px;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
   font-size: 24px;
   font-weight: 700;
-  color: #333;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .table-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .table-card :deep(.ant-table) {
@@ -466,16 +479,16 @@ function viewDetail(order) {
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {
-  background: #fafafa;
+  background: var(--bg-body);
   font-weight: 600;
-  color: #333;
-  border-bottom: 2px solid #f0f0f0;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .order-no {
   font-family: 'Courier New', monospace;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .status-tag {
@@ -485,7 +498,7 @@ function viewDetail(order) {
 }
 
 .amount-text {
-  color: #FFD100;
+  color: var(--warning-color);
   font-weight: 600;
   font-size: 15px;
 }
@@ -501,7 +514,7 @@ function viewDetail(order) {
 
 .order-detail :deep(.ant-descriptions-item-label) {
   font-weight: 600;
-  background: #fafafa;
+  background: var(--bg-body);
 }
 
 @media (max-width: 1200px) {

@@ -1,70 +1,122 @@
 <template>
   <div class="products-page">
-    <a-row :gutter="24">
-      <!-- 分类筛选 -->
-      <a-col :span="4">
-        <a-card title="商品分类">
-          <a-menu v-model:selectedKeys="selectedCategory" mode="inline">
-            <a-menu-item key="0" @click="handleCategoryChange(null)">
-              全部商品
-            </a-menu-item>
-            <a-menu-item
-              v-for="category in categories"
-              :key="category.id"
-              @click="handleCategoryChange(category.id)"
-            >
-              {{ category.categoryName }}
-            </a-menu-item>
-          </a-menu>
-        </a-card>
-      </a-col>
+    <div class="container">
+      <div class="products-layout">
+        <!-- 分类筛选 -->
+        <div class="sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <n-icon :size="20" :component="FilterOutline" />
+              <h3>商品分类</h3>
+            </div>
+            <div class="category-list">
+              <div 
+                class="category-item" 
+                :class="{ active: selectedCategory[0] === '0' || !selectedCategory[0] }"
+                @click="handleCategoryChange(null)"
+              >
+                <div class="category-icon">
+                  <n-icon :size="18" :component="GridOutline" />
+                </div>
+                <span>全部商品</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+              </div>
+              <div 
+                v-for="category in categories"
+                :key="category.id"
+                class="category-item"
+                :class="{ active: selectedCategory[0] === category.id }"
+                @click="handleCategoryChange(category.id)"
+              >
+                <div class="category-icon">
+                  <n-icon :size="18" :component="LeafOutline" />
+                </div>
+                <span>{{ category.categoryName }}</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <!-- 商品列表 -->
-      <a-col :span="20">
-        <a-card>
-          <a-input-search
-            v-model:value="keyword"
-            placeholder="搜索商品"
-            style="margin-bottom: 20px"
-            @search="loadProducts"
-          />
-
-          <a-row :gutter="[16, 16]">
-            <a-col v-for="product in products" :key="product.id" :span="6">
-              <a-card hoverable @click="goToProductDetail(product.id)">
-                <template #cover>
-                  <img :src="product.mainImage" :alt="product.productName" />
+        <!-- 商品列表 -->
+        <div class="main-content">
+          <div class="toolbar">
+            <div class="search-wrapper">
+              <a-input-search
+                v-model:value="keyword"
+                placeholder="搜索新鲜食材..."
+                size="large"
+                class="custom-search"
+                @search="loadProducts"
+              >
+                <template #prefix>
+                  <n-icon :size="18" :component="SearchOutline" style="color: #999" />
                 </template>
-                <a-card-meta :title="product.productName">
-                  <template #description>
-                    <div class="product-price">¥{{ product.price }}</div>
-                    <div class="product-info">
-                      <span>库存: {{ product.stock }}</span>
-                      <span>销量: {{ product.sales }}</span>
-                    </div>
-                  </template>
-                </a-card-meta>
-              </a-card>
-            </a-col>
-          </a-row>
+              </a-input-search>
+            </div>
+            <div class="sort-wrapper">
+              <!-- 可以添加排序功能 -->
+            </div>
+          </div>
 
-          <a-pagination
-            v-model:current="pagination.current"
-            v-model:page-size="pagination.pageSize"
-            :total="pagination.total"
-            show-size-changer
-            style="margin-top: 20px; text-align: center"
-            @change="loadProducts"
-          />
-        </a-card>
-      </a-col>
-    </a-row>
+          <div v-if="loading" class="loading-state">
+            <a-spin size="large" />
+          </div>
+
+          <div v-else-if="products.length === 0" class="empty-state">
+            <n-icon :size="64" :component="BasketOutline" style="color: #ddd" />
+            <p>暂无相关商品</p>
+          </div>
+
+          <div v-else class="product-grid">
+            <div v-for="product in products" :key="product.id" class="product-card" @click="goToProductDetail(product.id)">
+              <div class="product-image-wrapper">
+                <img :src="product.mainImage" :alt="product.productName" class="product-image" />
+                <div class="product-overlay">
+                  <a-button type="primary" shape="round">查看详情</a-button>
+                </div>
+                <div class="stock-tag" v-if="product.stock < 10">仅剩 {{ product.stock }} 件</div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">{{ product.productName }}</h3>
+                <div class="product-meta">
+                  <div class="price-wrapper">
+                    <span class="currency">¥</span>
+                    <span class="price">{{ product.price }}</span>
+                  </div>
+                  <div class="sales">已售 {{ product.sales }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="pagination-wrapper" v-if="products.length > 0">
+            <a-pagination
+              v-model:current="pagination.current"
+              v-model:page-size="pagination.pageSize"
+              :total="pagination.total"
+              show-size-changer
+              @change="loadProducts"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { NIcon } from 'naive-ui'
+import { 
+  FilterOutline, 
+  GridOutline, 
+  LeafOutline, 
+  ChevronForwardOutline,
+  SearchOutline,
+  BasketOutline
+} from '@vicons/ionicons5'
 import { getAllCategories } from '@/api/category'
 import { getProductList } from '@/api/product'
 
@@ -75,6 +127,7 @@ const categories = ref([])
 const products = ref([])
 const keyword = ref('')
 const selectedCategory = ref(['0'])
+const loading = ref(false)
 
 const pagination = ref({
   current: 1,
@@ -100,6 +153,7 @@ async function loadCategories() {
 }
 
 async function loadProducts() {
+  loading.value = true
   try {
     const params = {
       current: pagination.value.current,
@@ -112,6 +166,8 @@ async function loadProducts() {
     pagination.value.total = res.data.total
   } catch (error) {
     console.error('加载商品失败', error)
+  } finally {
+    loading.value = false
   }
 }
 
@@ -128,28 +184,279 @@ function goToProductDetail(productId) {
 
 <style scoped>
 .products-page {
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 40px 0;
+  min-height: calc(100vh - 64px);
+  background: var(--bg-body);
 }
 
-.product-price {
-  color: #ff4d4f;
+.products-layout {
+  display: flex;
+  gap: 30px;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.filter-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: sticky;
+  top: 84px;
+}
+
+.filter-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-primary);
+}
+
+.filter-header h3 {
+  margin: 0;
   font-size: 18px;
-  font-weight: bold;
-  margin-top: 10px;
+  font-weight: 600;
+}
+
+.category-list {
+  padding: 10px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.category-item:hover {
+  background: var(--bg-body);
+  color: var(--primary-color);
+}
+
+.category-item.active {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.arrow-icon {
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.category-item:hover .arrow-icon,
+.category-item.active .arrow-icon {
+  opacity: 1;
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+}
+
+.toolbar {
+  margin-bottom: 24px;
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.search-wrapper {
+  max-width: 500px;
+}
+
+.custom-search :deep(.ant-input-wrapper) {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.custom-search :deep(.ant-input) {
+  border-radius: var(--radius-md) 0 0 var(--radius-md);
+}
+
+.custom-search :deep(.ant-btn-primary) {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.product-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.1);
+}
+
+.product-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.product-card:hover .product-overlay {
+  opacity: 1;
+}
+
+.stock-tag {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(239, 68, 68, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .product-info {
+  padding: 16px;
+}
+
+.product-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-meta {
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
-  font-size: 12px;
-  color: #999;
+  align-items: flex-end;
 }
 
-:deep(.ant-card-cover img) {
-  height: 200px;
-  object-fit: cover;
+.price-wrapper {
+  color: var(--warning-color);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.currency {
+  font-size: 14px;
+  margin-right: 2px;
+}
+
+.price {
+  font-size: 20px;
+}
+
+.sales {
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.pagination-wrapper {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
+.loading-state,
+.empty-state {
+  padding: 60px;
+  text-align: center;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-state p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .products-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+  }
+  
+  .filter-card {
+    position: static;
+  }
+  
+  .category-list {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 10px;
+  }
+  
+  .category-item {
+    flex-shrink: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+  }
+  
+  .arrow-icon {
+    display: none;
+  }
 }
 </style>
-
