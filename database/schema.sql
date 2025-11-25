@@ -193,7 +193,7 @@ INSERT INTO `permission` (`permission_name`, `permission_key`) VALUES
 INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES
 (1, 1), (1, 2), (1, 3), (1, 4);
 
--- 插入默认管理员账号（密码：admin123，需要加密）
+-- 插入默认管理员账号（密码：123456，需要加密）
 INSERT INTO `user` (`username`, `password`, `phone`, `nickname`, `role_id`) VALUES
 ('admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iKTVKIUi', '13800138000', '系统管理员', 1);
 
@@ -206,14 +206,54 @@ INSERT INTO `category` (`category_name`, `parent_id`, `sort_order`) VALUES
 ('粮油调味', 0, 5),
 ('酒水饮料', 0, 6);
 
--- 插入测试商品（使用真实网络图片）
+-- 插入测试商品(使用真实网络图片)
 INSERT INTO `product` (`product_name`, `category_id`, `description`, `price`, `stock`, `main_image`, `is_on_sale`) VALUES
-('新鲜苹果', 1, '新鲜红富士苹果，香甜可口', 12.80, 100, 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop', 1),
-('有机西红柿', 2, '本地有机西红柿，新鲜采摘', 8.50, 80, 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=400&h=400&fit=crop', 1),
-('土鸡蛋', 3, '农家散养土鸡蛋，营养丰富', 25.00, 50, 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&h=400&fit=crop', 1),
-('坚果礼盒', 4, '精选混合坚果，健康零食', 58.00, 30, 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400&h=400&fit=crop', 1),
-('东北大米', 5, '优质东北大米5kg装', 38.00, 120, 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop', 1),
-('新鲜草莓', 1, '当季新鲜草莓，甜度高', 28.00, 60, 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&h=400&fit=crop', 1),
-('有机黄瓜', 2, '新鲜有机黄瓜，脆嫩可口', 6.50, 90, 'https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=400&h=400&fit=crop', 1),
-('五花肉', 3, '新鲜五花肉，肥瘦适中', 32.00, 40, 'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400&h=400&fit=crop', 1);
+-- 生鲜水果 (category_id = 1)
+('新鲜苹果', 1, '新鲜红富士苹果,香甜可口', 12.80, 100, 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&h=400&fit=crop', 1),
+('新鲜草莓', 1, '当季新鲜草莓,甜度高', 28.00, 60, 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=400&h=400&fit=crop', 1),
+('进口香蕉', 1, '菲律宾进口香蕉,软糯香甜', 9.90, 150, 'https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=400&h=400&fit=crop', 1),
+('新鲜橙子', 1, '赣南脐橙,果肉饱满多汁', 15.80, 80, 'https://images.unsplash.com/photo-1547514701-42782101795e?w=400&h=400&fit=crop', 1),
+('猕猴桃', 1, '新西兰奇异果,酸甜可口', 32.00, 45, 'https://images.unsplash.com/photo-1585059895524-72359e06133a?w=400&h=400&fit=crop', 1),
+('新鲜葡萄', 1, '阳光玫瑰葡萄,粒大饱满', 45.00, 35, 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=400&h=400&fit=crop', 1),
+('新鲜芒果', 1, '海南贵妃芒,香甜多汁', 22.00, 55, 'https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?w=400&h=400&fit=crop', 1),
 
+-- 蔬菜豆制品 (category_id = 2)
+('有机西红柿', 2, '本地有机西红柿,新鲜采摘', 8.50, 80, 'https://images.unsplash.com/photo-1546094096-0df4bcaaa337?w=400&h=400&fit=crop', 1),
+('有机黄瓜', 2, '新鲜有机黄瓜,脆嫩可口', 6.50, 90, 'https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=400&h=400&fit=crop', 1),
+('新鲜生菜', 2, '水培生菜,清脆爽口', 5.80, 100, 'https://images.unsplash.com/photo-1622206151226-18ca2c9ab4a1?w=400&h=400&fit=crop', 1),
+('有机菠菜', 2, '有机种植菠菜,营养丰富', 7.50, 70, 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=400&h=400&fit=crop', 1),
+('新鲜土豆', 2, '优质土豆,面甜可口', 4.50, 200, 'https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400&h=400&fit=crop', 1),
+('嫩豆腐', 2, '新鲜嫩豆腐,口感细腻', 3.50, 60, 'https://images.unsplash.com/photo-1541529086526-db283c563270?w=400&h=400&fit=crop', 1),
+('新鲜胡萝卜', 2, '有机胡萝卜,脆甜多汁', 5.00, 120, 'https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=400&h=400&fit=crop', 1),
+
+-- 肉禽蛋品 (category_id = 3)
+('土鸡蛋', 3, '农家散养土鸡蛋,营养丰富', 25.00, 50, 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&h=400&fit=crop', 1),
+('五花肉', 3, '新鲜五花肉,肥瘦适中', 32.00, 40, 'https://images.unsplash.com/photo-1602470520998-f4a52199a3d6?w=400&h=400&fit=crop', 1),
+('鸡胸肉', 3, '新鲜鸡胸肉,低脂高蛋白', 18.00, 65, 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=400&fit=crop', 1),
+('新鲜排骨', 3, '精选猪排骨,肉质鲜嫩', 38.00, 45, 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop', 1),
+('鸭蛋', 3, '新鲜鸭蛋,个大饱满', 20.00, 55, 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=400&h=400&fit=crop', 1),
+('牛腱子肉', 3, '优质牛腱子,适合炖煮', 68.00, 30, 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&h=400&fit=crop', 1),
+
+-- 休闲零食 (category_id = 4)
+('坚果礼盒', 4, '精选混合坚果,健康零食', 58.00, 30, 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?w=400&h=400&fit=crop', 1),
+('每日坚果', 4, '每日坚果小包装,方便携带', 39.90, 80, 'https://images.unsplash.com/photo-1608797178974-15b35a64ede9?w=400&h=400&fit=crop', 1),
+('薯片', 4, '原味薯片,香脆可口', 12.50, 100, 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop', 1),
+('牛肉干', 4, '手撕牛肉干,劲道美味', 45.00, 50, 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop', 1),
+('巧克力', 4, '进口黑巧克力,浓郁醇香', 28.00, 70, 'https://images.unsplash.com/photo-1511381939415-e44015466834?w=400&h=400&fit=crop', 1),
+('饼干礼盒', 4, '多口味饼干组合,送礼佳品', 52.00, 40, 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&h=400&fit=crop', 1),
+
+-- 粮油调味 (category_id = 5)
+('东北大米', 5, '优质东北大米5kg装', 38.00, 120, 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400&h=400&fit=crop', 1),
+('泰国香米', 5, '进口泰国香米,米粒饱满', 45.00, 80, 'https://images.unsplash.com/photo-1516684732162-798a0062be99?w=400&h=400&fit=crop', 1),
+('花生油', 5, '压榨花生油5L装,香味浓郁', 88.00, 60, 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&h=400&fit=crop', 1),
+('生抽酱油', 5, '特级生抽,提鲜调味', 15.80, 100, 'https://images.unsplash.com/photo-1626200419199-391ae4be7a41?w=400&h=400&fit=crop', 1),
+('食用盐', 5, '精制食用盐,纯净健康', 3.50, 200, 'https://images.unsplash.com/photo-1532336414038-cf19250c5757?w=400&h=400&fit=crop', 1),
+('白砂糖', 5, '优质白砂糖,烘焙必备', 8.00, 150, 'https://images.unsplash.com/photo-1587735243615-c03f25aaff15?w=400&h=400&fit=crop', 1),
+
+-- 酒水饮料 (category_id = 6)
+('矿泉水', 6, '天然矿泉水整箱24瓶', 28.00, 100, 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=400&fit=crop', 1),
+('橙汁饮料', 6, '100%纯果汁,无添加', 18.00, 80, 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=400&fit=crop', 1),
+('牛奶', 6, '纯牛奶1L装,营养丰富', 12.50, 120, 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&h=400&fit=crop', 1),
+('绿茶饮料', 6, '无糖绿茶,清爽解渴', 8.50, 150, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop', 1),
+('酸奶', 6, '风味酸奶,益生菌发酵', 15.00, 90, 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop', 1),
+('可乐', 6, '经典可乐整箱12罐', 32.00, 70, 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop', 1);
