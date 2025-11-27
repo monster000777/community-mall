@@ -6,7 +6,10 @@ import com.community.mall.dto.UpdateProfileRequest;
 import com.community.mall.entity.User;
 import com.community.mall.service.UserService;
 import com.community.mall.vo.UserProfileVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,16 +18,18 @@ import java.io.File;
 /**
  * 用户个人中心相关接口
  */
+@Tag(name = "用户个人中心", description = "用户个人信息管理相关接口")
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserProfileController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     /**
      * 获取当前登录用户的个人信息
      */
+    @Operation(summary = "获取个人信息", description = "获取当前登录用户的个人详细信息")
     @GetMapping("/profile")
     public Result<UserProfileVO> getProfile() {
         Long userId = StpUtil.getLoginIdAsLong();
@@ -38,6 +43,7 @@ public class UserProfileController {
     /**
      * 更新当前登录用户的个人信息（昵称、头像）
      */
+    @Operation(summary = "更新个人信息", description = "更新当前用户的昵称和头像")
     @PutMapping("/profile")
     public Result<UserProfileVO> updateProfile(@RequestBody UpdateProfileRequest request) {
         try {
@@ -52,8 +58,9 @@ public class UserProfileController {
     /**
      * 上传头像文件，返回可访问的 URL
      */
+    @Operation(summary = "上传用户头像", description = "上传用户头像文件，返回图片URL")
     @PostMapping("/avatar")
-    public Result<String> uploadAvatar(@RequestParam("file") MultipartFile file) {
+    public Result<String> uploadAvatar(@Parameter(description = "头像文件") @RequestParam("file") MultipartFile file) {
         if (file == null || file.isEmpty()) {
             return Result.error("上传文件不能为空");
         }

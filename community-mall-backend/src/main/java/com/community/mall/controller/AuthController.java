@@ -5,23 +5,27 @@ import com.community.mall.dto.LoginRequest;
 import com.community.mall.dto.LoginResponse;
 import com.community.mall.dto.RegisterRequest;
 import com.community.mall.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
  * 认证控制器
  */
+@Tag(name = "用户认证", description = "用户认证相关接口")
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
 
     /**
      * 用户登录
      */
+    @Operation(summary = "用户登录", description = "用户使用用户名和密码登录系统")
     @PostMapping("/login")
     public Result<LoginResponse> login(@Validated @RequestBody LoginRequest request) {
         LoginResponse response = authService.login(request);
@@ -31,6 +35,7 @@ public class AuthController {
     /**
      * 用户注册
      */
+    @Operation(summary = "用户注册", description = "用户注册新账号")
     @PostMapping("/register")
     public Result<Void> register(@Validated @RequestBody RegisterRequest request) {
         try {
@@ -44,6 +49,7 @@ public class AuthController {
     /**
      * 退出登录
      */
+    @Operation(summary = "退出登录", description = "用户退出登录状态")
     @PostMapping("/logout")
     public Result<Void> logout() {
         try {
@@ -54,4 +60,3 @@ public class AuthController {
         }
     }
 }
-
