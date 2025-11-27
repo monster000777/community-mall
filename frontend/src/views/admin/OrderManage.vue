@@ -56,7 +56,6 @@
         :pagination="pagination"
         row-key="id"
         @change="handleTableChange"
-        :scroll="{ x: 1400 }"
         :loading="loading"
         :locale="{ emptyText: '暂无订单' }"
       >
@@ -208,14 +207,14 @@ const pagination = ref({
 })
 
 const columns = [
-  { title: '订单号', dataIndex: 'orderNo', key: 'orderNo', width: 200, fixed: 'left' },
-  { title: '用户ID', dataIndex: 'userId', key: 'userId', width: 100 },
-  { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount', width: 120 },
-  { title: '收货人', dataIndex: 'receiverName', key: 'receiverName', width: 120 },
-  { title: '收货电话', dataIndex: 'receiverPhone', key: 'receiverPhone', width: 140 },
-  { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus', width: 140 },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
-  { title: '操作', key: 'action', width: 120, fixed: 'right' }
+  { title: '订单号', dataIndex: 'orderNo', key: 'orderNo', width: 180, align: 'center' },
+  { title: '用户ID', dataIndex: 'userId', key: 'userId', width: 80, align: 'center' },
+  { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount', width: 100, align: 'center' },
+  { title: '收货人', dataIndex: 'receiverName', key: 'receiverName', width: 120, align: 'center' },
+  { title: '收货电话', dataIndex: 'receiverPhone', key: 'receiverPhone', width: 140, align: 'center' },
+  { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus', width: 120, align: 'center' },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, align: 'center' },
+  { title: '操作', key: 'action', width: 140, align: 'center' }
 ]
 
 const totalAmount = computed(() => {

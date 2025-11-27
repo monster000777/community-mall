@@ -1,5 +1,5 @@
-import {createRouter, createWebHistory} from 'vue-router'
-import {useUserStore} from '@/stores/user'
+import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const routes = [
     {
@@ -25,25 +25,35 @@ const routes = [
                 path: 'cart',
                 name: 'Cart',
                 component: () => import('@/views/Cart.vue'),
-                meta: {requiresAuth: true}
+                meta: { requiresAuth: true }
             },
             {
                 path: 'orders',
                 name: 'Orders',
                 component: () => import('@/views/Orders.vue'),
-                meta: {requiresAuth: true}
+                meta: { requiresAuth: true }
             },
             {
                 path: 'profile',
                 name: 'Profile',
                 component: () => import('@/views/Profile.vue'),
-                meta: {requiresAuth: true}
+                meta: { requiresAuth: true }
             },
             {
                 path: 'address',
                 name: 'Address',
                 component: () => import('@/views/Address.vue'),
-                meta: {requiresAuth: true}
+                meta: { requiresAuth: true }
+            },
+            {
+                path: 'group-activities',
+                name: 'GroupActivities',
+                component: () => import('@/views/GroupActivities.vue')
+            },
+            {
+                path: 'group-activities/:id',
+                name: 'GroupActivityDetail',
+                component: () => import('@/views/GroupActivityDetail.vue')
             }
         ]
     },
@@ -60,7 +70,7 @@ const routes = [
     {
         path: '/admin',
         component: () => import('@/layouts/AdminLayout.vue'),
-        meta: {requiresAuth: true, requiresAdmin: true},
+        meta: { requiresAuth: true, requiresAdmin: true },
         children: [
             {
                 path: '',
@@ -80,6 +90,11 @@ const routes = [
                 path: 'users',
                 name: 'AdminUsers',
                 component: () => import('@/views/admin/UserManage.vue')
+            },
+            {
+                path: 'group-activities',
+                name: 'AdminGroupActivities',
+                component: () => import('@/views/admin/GroupActivityManage.vue')
             }
         ]
     }

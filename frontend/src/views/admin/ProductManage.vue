@@ -207,14 +207,14 @@ const formState = reactive({
 })
 
 const columns = [
-  { title: '商品图片', key: 'mainImage', width: 100, fixed: 'left' },
-  { title: '商品名称', dataIndex: 'productName', key: 'productName', width: 200, fixed: 'left' },
-  { title: '分类ID', dataIndex: 'categoryId', key: 'categoryId', width: 100 },
-  { title: '价格', key: 'price', dataIndex: 'price', width: 120 },
-  { title: '库存', key: 'stock', dataIndex: 'stock', width: 100 },
-  { title: '状态', key: 'isOnSale', dataIndex: 'isOnSale', width: 100 },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
-  { title: '操作', key: 'action', width: 220, fixed: 'right' }
+  { title: '商品图片', key: 'mainImage', width: 100, align: 'center' },
+  { title: '商品名称', dataIndex: 'productName', key: 'productName', width: 200, align: 'center' },
+  { title: '分类ID', dataIndex: 'categoryId', key: 'categoryId', width: 100, align: 'center' },
+  { title: '价格', key: 'price', dataIndex: 'price', width: 110, align: 'center' },
+  { title: '库存', key: 'stock', dataIndex: 'stock', width: 90, align: 'center' },
+  { title: '状态', key: 'isOnSale', dataIndex: 'isOnSale', width: 100, align: 'center' },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, align: 'center' },
+  { title: '操作', key: 'action', width: 200, align: 'center' }
 ]
 
 onMounted(() => {

@@ -30,6 +30,10 @@
           <n-icon :size="18" :component="PeopleOutline" style="margin-right: 12px; vertical-align: -3px;" />
           <span v-if="!collapsed">用户管理</span>
         </a-menu-item>
+        <a-menu-item key="group-activities" @click="$router.push('/admin/group-activities')">
+          <n-icon :size="18" :component="FlameOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <span v-if="!collapsed">团购活动</span>
+        </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="home" @click="$router.push('/')">
           <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px; vertical-align: -3px;" />
@@ -106,6 +110,7 @@ import {
   GridOutline,
   ReceiptOutline,
   PeopleOutline,
+  FlameOutline,
   HomeOutline,
   MenuOutline,
   PersonOutline,
@@ -125,7 +130,8 @@ const selectedKeys = ref(['products'])
 const pageNames = {
   '/admin/products': '商品管理',
   '/admin/orders': '订单管理',
-  '/admin/users': '用户管理'
+  '/admin/users': '用户管理',
+  '/admin/group-activities': '团购活动'
 }
 
 const currentPageName = computed(() => {
@@ -208,9 +214,22 @@ function handleLogout() {
 }
 
 .admin-menu :deep(.ant-menu-item-selected) {
-  background: var(--primary-color) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
   color: white !important;
   font-weight: 600;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.admin-menu :deep(.ant-menu-item-selected::before) {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--primary-color);
+  border-radius: 0 4px 4px 0;
 }
 
 .admin-header {

@@ -38,7 +38,7 @@
           </div>
           <h1 class="banner-title">团购更优惠</h1>
           <p class="banner-subtitle">参与团购，享受超低价格</p>
-          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
+          <a-button type="primary" size="large" @click="$router.push('/group-activities')" class="banner-btn">
             <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
             开始团购
           </a-button>

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class SaTokenConfig implements WebMvcConfigurer {
-    
+
     /**
      * 注册 Sa-Token 拦截器
      */
@@ -22,19 +22,19 @@ public class SaTokenConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SaInterceptor(handler -> {
             // 登录校验 -- 拦截所有路由，并排除登录注册等开放接口
             SaRouter.match("/**")
-                .notMatch("/auth/login")
-                .notMatch("/auth/register")
-                .notMatch("/products/**")
-                .notMatch("/categories/**")
-                .notMatch("/swagger-ui/**")
-                .notMatch("/v3/api-docs/**")
-                .notMatch("/swagger-ui.html")
-                .notMatch("/uploads/**")
-                .check(r -> StpUtil.checkLogin());
-            
+                    .notMatch("/auth/login")
+                    .notMatch("/auth/register")
+                    .notMatch("/products/**")
+                    .notMatch("/categories/**")
+                    .notMatch("/group-activities/**")
+                    .notMatch("/swagger-ui/**")
+                    .notMatch("/v3/api-docs/**")
+                    .notMatch("/swagger-ui.html")
+                    .notMatch("/uploads/**")
+                    .check(r -> StpUtil.checkLogin());
+
             // 权限校验 -- 管理员权限
             SaRouter.match("/admin/**", r -> StpUtil.checkRole("admin"));
         })).addPathPatterns("/**");
     }
 }
-

@@ -19,6 +19,10 @@
           <n-icon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;"/>
           商品列表
         </a-menu-item>
+        <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
+          <n-icon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+          团购活动
+        </a-menu-item>
         <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
           <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
             <n-icon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;"/>
@@ -118,6 +122,7 @@ import {
   StorefrontOutline,
   HomeOutline,
   GridOutline,
+  FlameOutline,
   CartOutline,
   ReceiptOutline,
   PersonCircleOutline,
@@ -174,6 +179,8 @@ watch(
       selectedKeys.value = ['home']
     } else if (name === 'Products' || name === 'ProductDetail') {
       selectedKeys.value = ['products']
+    } else if (name === 'GroupActivities' || name === 'GroupActivityDetail') {
+      selectedKeys.value = ['group-activities']
     } else if (name === 'Cart') {
       selectedKeys.value = ['cart']
     } else if (name === 'Orders') {

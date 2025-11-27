@@ -207,14 +207,14 @@ const formState = reactive({
 })
 
 const columns = [
-  { title: '头像', key: 'avatar', width: 80 },
-  { title: '用户名', dataIndex: 'username', key: 'username', width: 150 },
-  { title: '昵称', dataIndex: 'nickname', key: 'nickname', width: 150 },
-  { title: '角色', key: 'role', dataIndex: 'role', width: 150 },
-  { title: '状态', key: 'status', dataIndex: 'status', width: 100 },
-  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 180 },
-  { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt', width: 180 },
-  { title: '操作', key: 'action', width: 240 }
+  { title: '头像', key: 'avatar', width: 80, align: 'center' },
+  { title: '用户名', dataIndex: 'username', key: 'username', width: 140, align: 'center' },
+  { title: '昵称', dataIndex: 'nickname', key: 'nickname', width: 140, align: 'center' },
+  { title: '角色', key: 'role', dataIndex: 'role', width: 130, align: 'center' },
+  { title: '状态', key: 'status', dataIndex: 'status', width: 100, align: 'center' },
+  { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, align: 'center' },
+  { title: '更新时间', dataIndex: 'updatedAt', key: 'updatedAt', width: 160, align: 'center' },
+  { title: '操作', key: 'action', width: 220, align: 'center' }
 ]
 
 onMounted(() => {
