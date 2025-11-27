@@ -179,6 +179,39 @@ CREATE TABLE `group_activity` (
     INDEX idx_time (`start_time`, `end_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='团购活动表';
 
+-- 团购订单表（关联团购活动和普通订单）
+CREATE TABLE `group_order` (
+    `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '团购订单ID',
+    `order_id` BIGINT NOT NULL COMMENT '订单ID',
+    `activity_id` BIGINT NOT NULL COMMENT '团购活动ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `quantity` INT NOT NULL COMMENT '购买数量',
+    `group_price` DECIMAL(10,2) NOT NULL COMMENT '团购价格（订单时的价格）',
+    `total_price` DECIMAL(10,2) NOT NULL COMMENT '总价',
+    `status` TINYINT DEFAULT 1 COMMENT '状态（1-待支付，2-已支付，3-已完成，4-已取消）',
+    `deleted_flag` TINYINT DEFAULT 0 COMMENT '删除标记',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    INDEX idx_order_id (`order_id`),
+    INDEX idx_activity_id (`activity_id`),
+    INDEX idx_user_id (`user_id`),
+    INDEX idx_status (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='团购订单表';
+
+-- 团购参与者表（统计用户参与情况）
+CREATE TABLE `group_participant` (
+    `id` BIGINT PRIMARY KEY AUTO_INCREMENT COMMENT '参与者ID',
+    `activity_id` BIGINT NOT NULL COMMENT '团购活动ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `total_quantity` INT DEFAULT 0 COMMENT '累计购买数量',
+    `last_order_time` DATETIME COMMENT '最后下单时间',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT '首次参与时间',
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    UNIQUE KEY `uk_activity_user` (`activity_id`, `user_id`),
+    INDEX idx_activity_id (`activity_id`),
+    INDEX idx_user_id (`user_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='团购参与者表';
+
 -- 初始化数据
 INSERT INTO `role` (`id`, `role_name`, `role_key`) VALUES
 (1, '管理员', 'admin'),
@@ -257,3 +290,25 @@ INSERT INTO `product` (`product_name`, `category_id`, `description`, `price`, `s
 ('绿茶饮料', 6, '无糖绿茶,清爽解渴', 8.50, 150, 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=400&h=400&fit=crop', 1),
 ('酸奶', 6, '风味酸奶,益生菌发酵', 15.00, 90, 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop', 1),
 ('可乐', 6, '经典可乐整箱12罐', 32.00, 70, 'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=400&fit=crop', 1);
+
+-- ====================================
+-- 团购活动测试数据
+-- ====================================
+
+-- 插入团购活动测试数据
+INSERT INTO `group_activity` (`activity_name`, `product_id`, `group_price`, `min_people`, `limit_per_user`, `stock`, `start_time`, `end_time`, `status`) VALUES
+-- 进行中的活动
+('新鲜草莓限时拼团', 2, 19.90, 3, 2, 100, DATE_SUB(NOW(), INTERVAL 1 DAY), DATE_ADD(NOW(), INTERVAL 2 DAY), 1),
+('进口香蕉团购特惠', 3, 6.90, 2, 3, 200, DATE_SUB(NOW(), INTERVAL 2 HOUR), DATE_ADD(NOW(), INTERVAL 1 DAY), 1),
+('阳光玫瑰葡萄拼团', 6, 32.00, 5, 1, 50, DATE_SUB(NOW(), INTERVAL 3 HOUR), DATE_ADD(NOW(), INTERVAL 3 DAY), 1),
+('土鸡蛋拼团优惠', 15, 18.00, 3, 2, 80, DATE_SUB(NOW(), INTERVAL 1 HOUR), DATE_ADD(NOW(), INTERVAL 2 DAY), 1),
+('坚果礼盒团购', 23, 42.00, 4, 1, 60, NOW(), DATE_ADD(NOW(), INTERVAL 5 DAY), 1),
+
+-- 未开始的活动
+('东北大米限时团', 31, 28.00, 3, 2, 150, DATE_ADD(NOW(), INTERVAL 1 DAY), DATE_ADD(NOW(), INTERVAL 7 DAY), 0),
+('花生油团购活动', 33, 68.00, 5, 1, 80, DATE_ADD(NOW(), INTERVAL 2 DAY), DATE_ADD(NOW(), INTERVAL 9 DAY), 0),
+('矿泉水整箱拼团', 37, 22.00, 2, 3, 200, DATE_ADD(NOW(), INTERVAL 3 DAY), DATE_ADD(NOW(), INTERVAL 10 DAY), 0),
+
+-- 已结束的活动
+('新鲜苹果团购', 1, 9.80, 2, 2, 0, DATE_SUB(NOW(), INTERVAL 5 DAY), DATE_SUB(NOW(), INTERVAL 1 DAY), 2),
+('有机西红柿拼团', 8, 6.50, 3, 2, 0, DATE_SUB(NOW(), INTERVAL 7 DAY), DATE_SUB(NOW(), INTERVAL 2 DAY), 2);
