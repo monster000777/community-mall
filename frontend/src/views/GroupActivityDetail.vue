@@ -107,14 +107,8 @@
 
                 <!-- 操作按钮 -->
                 <div class="action-buttons">
-                  <a-button
-                    v-if="activity.status === 1 && activity.stock > 0"
-                    type="primary"
-                    size="large"
-                    block
-                    class="main-btn"
-                    @click="joinGroup"
-                  >
+                  <a-button v-if="activity.status === 1 && activity.stock > 0" type="primary" size="large" block
+                    class="main-btn" @click="joinGroup">
                     <FireOutlined /> 立即参团
                   </a-button>
                   <a-button v-else-if="activity.status === 0" size="large" block disabled class="main-btn">
@@ -147,13 +141,71 @@
         </div>
       </a-spin>
     </div>
+
+    <!-- 参团弹窗 -->
+    <a-modal v-model:visible="modalVisible" title="确认参团" width="600px" @ok="handleJoinSubmit"
+      :confirm-loading="joinLoading" ok-text="确认参团" cancel-text="取消">
+      <a-form layout="vertical">
+        <a-form-item label="选择收货地址" required>
+          <a-radio-group v-model:value="joinForm.addressId" style="width: 100%">
+            <div v-for="addr in addressList" :key="addr.id" style="margin-bottom: 12px">
+              <a-radio :value="addr.id" style="width: 100%">
+                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+                  <div>
+                    <span style="font-weight: 600">{{ addr.receiverName }}</span>
+                    <span style="margin-left: 12px; color: #666">{{ addr.receiverPhone }}</span>
+                    <a-tag v-if="addr.isDefault === 1" color="success" style="margin-left: 8px">默认</a-tag>
+                  </div>
+                </div>
+                <div style="color: #999; font-size: 13px; margin-top: 4px">
+                  {{ addr.province }} {{ addr.city }} {{ addr.district }} {{ addr.detail }}
+                </div>
+              </a-radio>
+            </div>
+          </a-radio-group>
+        </a-form-item>
+
+        <a-form-item label="购买数量" required>
+          <a-input-number v-model:value="joinForm.quantity" :min="1" :max="activity?.limitPerUser || 1"
+            style="width: 100%" />
+          <div style="color: #999; font-size: 12px; margin-top: 4px">
+            每人限购{{ activity?.limitPerUser }}件
+          </div>
+        </a-form-item>
+
+        <a-form-item label="订单备注">
+          <a-textarea v-model:value="joinForm.remark" placeholder="选填，可以告诉商家您的特殊需求" :rows="3" />
+        </a-form-item>
+
+        <a-form-item>
+          <div style="background: #f5f5f5; padding: 16px; border-radius: 8px">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
+              <span>商品单价：</span>
+              <span style="color: #ff6b00; font-weight: 600">¥{{ activity?.groupPrice }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
+              <span>购买数量：</span>
+              <span style="font-weight: 600">{{ joinForm.quantity }}件</span>
+            </div>
+            <div style="border-top: 1px dashed #ddd; padding-top: 8px; margin-top: 8px">
+              <div style="display: flex; justify-content: space-between">
+                <span style="font-size: 16px; font-weight: 600">应付总额：</span>
+                <span style="color: #ff6b00; font-size: 20px; font-weight: 700">
+                  ¥{{ activity ? (activity.groupPrice * joinForm.quantity).toFixed(2) : '0.00' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { message } from 'ant-design-vue'
+import { message, Modal } from 'ant-design-vue'
 import {
   LeftOutlined,
   ClockCircleOutlined,
@@ -163,14 +215,26 @@ import {
   FireOutlined,
   StopOutlined
 } from '@ant-design/icons-vue'
-import { getGroupActivityDetail } from '@/api/groupActivity'
+import { getGroupActivityDetail, joinGroupActivity } from '@/api/groupActivity'
+import { getAddressList } from '@/api/address'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const loading = ref(false)
 const activity = ref(null)
+const modalVisible = ref(false)
+const joinLoading = ref(false)
+const addressList = ref([])
 let countdownTimer = null
+
+const joinForm = ref({
+  quantity: 1,
+  addressId: null,
+  remark: ''
+})
 
 // 计算剩余时间
 const timeLeft = computed(() => {
@@ -205,20 +269,108 @@ const goBack = () => {
   router.push('/group-activities')
 }
 
-// 参团
-const joinGroup = () => {
-  message.info('参团功能开发中，敬请期待！')
-  // TODO: 跳转到订单创建页面，传递活动ID
+// 打开参团弹窗
+const joinGroup = async () => {
+  // 检查登录状态
+    if (!userStore.token) {
+    message.warning('请先登录')
+    router.push('/login')
+    return
+  }
+
+  // 加载地址列表
+  try {
+    const res = await getAddressList()
+    addressList.value = res.data || []
+
+    if (addressList.value.length === 0) {
+      Modal.confirm({
+        title: '提示',
+        content: '您还没有收货地址，是否前往添加？',
+        okText: '去添加',
+        cancelText: '取消',
+        onOk: () => {
+          router.push('/address')
+        }
+      })
+      return
+    }
+
+    // 自动选择默认地址
+    const defaultAddress = addressList.value.find(addr => addr.isDefault === 1)
+    if (defaultAddress) {
+      joinForm.value.addressId = defaultAddress.id
+    } else if (addressList.value.length > 0) {
+      joinForm.value.addressId = addressList.value[0].id
+    }
+
+    joinForm.value.quantity = 1
+    joinForm.value.remark = ''
+    modalVisible.value = true
+  } catch (error) {
+    message.error('加载地址失败，请稍后重试')
+  }
+}
+
+// 确认参团
+const handleJoinSubmit = async () => {
+  if (!joinForm.value.addressId) {
+    message.warning('请选择收货地址')
+    return
+  }
+
+  if (joinForm.value.quantity < 1 || joinForm.value.quantity > activity.value.limitPerUser) {
+    message.warning(`购买数量应在1-${activity.value.limitPerUser}之间`)
+    return
+  }
+
+  Modal.confirm({
+    title: '确认参团',
+    content: `您将购买 ${joinForm.value.quantity} 件商品，总价 ¥${(activity.value.groupPrice * joinForm.value.quantity).toFixed(2)}，确认参团吗？`,
+    okText: '确认参团',
+    cancelText: '取消',
+    onOk: async () => {
+      joinLoading.value = true
+      try {
+        const res = await joinGroupActivity(activity.value.id, {
+          quantity: joinForm.value.quantity,
+          addressId: joinForm.value.addressId,
+          remark: joinForm.value.remark
+        })
+
+        message.success('参团成功！')
+        modalVisible.value = false
+
+        // 跳转到订单页面
+        Modal.info({
+          title: '参团成功',
+          content: '订单已创建，是否前往查看订单？',
+          okText: '查看订单',
+          cancelText: '继续浏览',
+          onOk: () => {
+            router.push('/orders')
+          }
+        })
+
+        // 重新加载活动详情，更新库存等信息
+        loadActivityDetail()
+      } catch (error) {
+        message.error(error.message || '参团失败，请稍后重试')
+      } finally {
+        joinLoading.value = false
+      }
+    }
+  })
 }
 
 // 格式化时间
 const formatTime = (seconds) => {
   if (seconds <= 0) return '已结束'
-  
+
   const days = Math.floor(seconds / 86400)
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
-  
+
   if (days > 0) {
     return `${days}天${hours}小时`
   } else if (hours > 0) {
@@ -418,7 +570,7 @@ onUnmounted(() => {
   padding: 4px 8px;
   border-radius: 4px;
   min-width: 40px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .time-item .value {

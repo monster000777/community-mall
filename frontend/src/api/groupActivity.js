@@ -29,6 +29,23 @@ export const getGroupActivityDetail = (id) => {
     })
 }
 
+// 参与团购活动
+export const joinGroupActivity = (id, data) => {
+    return request({
+        url: `/group-activities/${id}/join`,
+        method: 'post',
+        data
+    })
+}
+
+// 获取团购活动参与人数
+export const getGroupParticipantCount = (id) => {
+    return request({
+        url: `/group-activities/${id}/participants`,
+        method: 'get'
+    })
+}
+
 // ========== 管理员接口 ==========
 
 // 获取团购活动列表（管理员）

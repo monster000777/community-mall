@@ -1,100 +1,131 @@
 <template>
   <div class="group-activities-page">
     <div class="container">
-      <div class="page-header">
-        <h1 class="page-title">团购活动</h1>
-        <p class="page-subtitle">超值拼团，优惠多多</p>
-      </div>
-
-      <!-- 状态筛选 -->
-      <div class="filter-bar">
-        <a-radio-group v-model:value="statusFilter" button-style="solid" @change="handleFilterChange">
-          <a-radio-button :value="null">全部活动</a-radio-button>
-          <a-radio-button :value="1">进行中</a-radio-button>
-          <a-radio-button :value="0">即将开始</a-radio-button>
-          <a-radio-button :value="2">已结束</a-radio-button>
-        </a-radio-group>
-      </div>
-
-      <!-- 活动列表 -->
-      <a-spin :spinning="loading">
-        <div v-if="activities.length > 0" class="activities-grid">
-          <div
-            v-for="activity in activities"
-            :key="activity.id"
-            class="activity-card"
-            @click="goToDetail(activity.id)"
-          >
-            <!-- 商品图片 -->
-            <div class="activity-image-wrapper">
-              <img :src="activity.productImage" :alt="activity.productName" class="activity-image" />
-              <div v-if="activity.status === 0" class="status-badge not-started">即将开始</div>
-              <div v-else-if="activity.status === 1" class="status-badge active">进行中</div>
-              <div v-else class="status-badge ended">已结束</div>
+      <div class="activities-layout">
+        <!-- 侧边栏筛选 -->
+        <div class="sidebar">
+          <div class="filter-card">
+            <div class="filter-header">
+              <n-icon :size="20" :component="FilterOutline" />
+              <h3>活动状态</h3>
             </div>
-
-            <!-- 活动信息 -->
-            <div class="activity-info">
-              <h3 class="activity-name">{{ activity.activityName }}</h3>
-              <p class="product-name">{{ activity.productName }}</p>
-
-              <!-- 价格信息 -->
-              <div class="price-section">
-                <div class="group-price">
-                  <span class="currency">¥</span>
-                  <span class="price">{{ activity.groupPrice }}</span>
+            <div class="category-list">
+              <div class="category-item" :class="{ active: statusFilter === null }" @click="handleFilterChange(null)">
+                <div class="category-icon">
+                  <n-icon :size="18" :component="GridOutline" />
                 </div>
-                <div class="original-price">
-                  ¥{{ activity.originalPrice }}
+                <span>全部活动</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+              </div>
+              <div class="category-item" :class="{ active: statusFilter === 1 }" @click="handleFilterChange(1)">
+                <div class="category-icon">
+                  <n-icon :size="18" :component="FlameOutline" />
                 </div>
-                <div class="discount-tag">{{ activity.discount }}折</div>
+                <span>进行中</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-
-              <!-- 拼团信息 -->
-              <div class="group-info">
-                <span class="info-item">
-                  <UserOutlined />
-                  {{ activity.minPeople }}人成团
-                </span>
-                <span class="info-item">
-                  <ShoppingOutlined />
-                  限{{ activity.limitPerUser }}件
-                </span>
+              <div class="category-item" :class="{ active: statusFilter === 0 }" @click="handleFilterChange(0)">
+                <div class="category-icon">
+                  <n-icon :size="18" :component="TimeOutline" />
+                </div>
+                <span>即将开始</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-
-              <!-- 倒计时 -->
-              <div v-if="activity.status === 1 && activity.remainingTime > 0" class="countdown active">
-                <ClockCircleOutlined />
-                <span>距结束 {{ formatTime(activity.remainingTime) }}</span>
-              </div>
-              <div v-else-if="activity.status === 0" class="countdown pending">
-                <ClockCircleOutlined />
-                <span>距开始 {{ formatTime(activity.remainingTime) }}</span>
-              </div>
-              
-              <div class="action-area">
-                <a-button type="primary" block :disabled="activity.status !== 1">
-                  {{ activity.status === 1 ? '立即参团' : (activity.status === 0 ? '即将开始' : '已结束') }}
-                </a-button>
+              <div class="category-item" :class="{ active: statusFilter === 2 }" @click="handleFilterChange(2)">
+                <div class="category-icon">
+                  <n-icon :size="18" :component="StopCircleOutline" />
+                </div>
+                <span>已结束</span>
+                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 空状态 -->
-        <a-empty v-else description="暂无团购活动" />
-      </a-spin>
+        <!-- 主内容区 -->
+        <div class="main-content">
+          <!-- 顶部工具栏 (保持与商品列表一致的间距) -->
+          <div class="toolbar">
+            <h2 class="section-title">
+              {{ getStatusTitle() }}
+              <span class="section-subtitle">超值拼团，优惠多多</span>
+            </h2>
+          </div>
 
-      <!-- 分页 -->
-      <div v-if="total > 0" class="pagination">
-        <a-pagination
-          v-model:current="currentPage"
-          v-model:page-size="pageSize"
-          :total="total"
-          show-size-changer
-          :page-size-options="['10', '20', '30', '50']"
-          @change="handlePageChange"
-        />
+          <!-- 活动列表 -->
+          <a-spin :spinning="loading">
+            <div v-if="activities.length > 0" class="activities-grid">
+              <div v-for="activity in activities" :key="activity.id" class="activity-card"
+                @click="goToDetail(activity.id)">
+                <!-- 商品图片 -->
+                <div class="activity-image-wrapper">
+                  <img :src="activity.productImage" :alt="activity.productName" class="activity-image" />
+                  <div v-if="activity.status === 0" class="status-badge not-started">即将开始</div>
+                  <div v-else-if="activity.status === 1" class="status-badge active">进行中</div>
+                  <div v-else class="status-badge ended">已结束</div>
+                </div>
+
+                <!-- 活动信息 -->
+                <div class="activity-info">
+                  <h3 class="activity-name">{{ activity.activityName }}</h3>
+                  <p class="product-name">{{ activity.productName }}</p>
+
+                  <!-- 价格信息 -->
+                  <div class="price-section">
+                    <div class="group-price">
+                      <span class="currency">¥</span>
+                      <span class="price">{{ activity.groupPrice }}</span>
+                    </div>
+                    <div class="original-price">
+                      ¥{{ activity.originalPrice }}
+                    </div>
+                    <div class="discount-tag">{{ activity.discount }}折</div>
+                  </div>
+
+                  <!-- 拼团信息 -->
+                  <div class="group-info">
+                    <span class="info-item">
+                      <UserOutlined />
+                      {{ activity.minPeople }}人成团
+                    </span>
+                    <span class="info-item">
+                      <ShoppingOutlined />
+                      限{{ activity.limitPerUser }}件
+                    </span>
+                  </div>
+
+                  <!-- 倒计时 -->
+                  <div v-if="activity.status === 1 && activity.remainingTime > 0" class="countdown active">
+                    <ClockCircleOutlined />
+                    <span>距结束 {{ formatTime(activity.remainingTime) }}</span>
+                  </div>
+                  <div v-else-if="activity.status === 0" class="countdown pending">
+                    <ClockCircleOutlined />
+                    <span>距开始 {{ formatTime(activity.remainingTime) }}</span>
+                  </div>
+
+                  <div class="action-area">
+                    <a-button type="primary" block :disabled="activity.status !== 1">
+                      {{ activity.status === 1 ? '立即参团' : (activity.status === 0 ? '即将开始' : '已结束') }}
+                    </a-button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 空状态 -->
+            <div v-else class="empty-state">
+              <n-icon :size="64" :component="BasketOutline" style="color: #ddd" />
+              <p>暂无相关团购活动</p>
+            </div>
+          </a-spin>
+
+          <!-- 分页 -->
+          <div v-if="total > 0" class="pagination">
+            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total" show-size-changer
+              :page-size-options="['12', '24', '36']" @change="handlePageChange" />
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -105,6 +136,16 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { UserOutlined, ShoppingOutlined, ClockCircleOutlined } from '@ant-design/icons-vue'
+import { NIcon } from 'naive-ui'
+import {
+  FilterOutline,
+  GridOutline,
+  ChevronForwardOutline,
+  FlameOutline,
+  TimeOutline,
+  StopCircleOutline,
+  BasketOutline
+} from '@vicons/ionicons5'
 import { getGroupActivities } from '@/api/groupActivity'
 
 const router = useRouter()
@@ -113,7 +154,7 @@ const router = useRouter()
 const loading = ref(false)
 const activities = ref([])
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(12) // Match product page size
 const total = ref(0)
 const statusFilter = ref(null)
 
@@ -143,7 +184,8 @@ const loadActivities = async () => {
 }
 
 // 筛选变化
-const handleFilterChange = () => {
+const handleFilterChange = (status) => {
+  statusFilter.value = status
   currentPage.value = 1
   loadActivities()
 }
@@ -158,15 +200,25 @@ const goToDetail = (id) => {
   router.push(`/group-activities/${id}`)
 }
 
+// 获取状态标题
+const getStatusTitle = () => {
+  switch (statusFilter.value) {
+    case 1: return '进行中的活动'
+    case 0: return '即将开始的活动'
+    case 2: return '已结束的活动'
+    default: return '全部团购活动'
+  }
+}
+
 // 格式化时间
 const formatTime = (seconds) => {
   if (seconds <= 0) return '已结束'
-  
+
   const days = Math.floor(seconds / 86400)
   const hours = Math.floor((seconds % 86400) / 3600)
   const minutes = Math.floor((seconds % 3600) / 60)
   const secs = seconds % 60
-  
+
   if (days > 0) {
     return `${days}天${hours}小时`
   } else if (hours > 0) {
@@ -216,9 +268,9 @@ onUnmounted(() => {
 
 <style scoped>
 .group-activities-page {
+  padding: 40px 0;
   min-height: calc(100vh - 64px);
   background: var(--bg-body);
-  padding: 40px 0;
 }
 
 .container {
@@ -227,33 +279,119 @@ onUnmounted(() => {
   padding: 0 24px;
 }
 
-.page-header {
-  text-align: center;
-  margin-bottom: 40px;
+.activities-layout {
+  display: flex;
+  gap: 30px;
 }
 
-.page-title {
-  font-size: 32px;
-  font-weight: 800;
+/* Sidebar Styles - Copied from Products.vue */
+.sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.filter-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: sticky;
+  top: 84px;
+}
+
+.filter-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   color: var(--text-primary);
-  margin-bottom: 12px;
 }
 
-.page-subtitle {
-  font-size: 16px;
+.filter-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.category-list {
+  padding: 10px;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 4px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
   color: var(--text-secondary);
 }
 
-.filter-bar {
-  margin-bottom: 32px;
-  text-align: center;
+.category-item:hover {
+  background: var(--bg-body);
+  color: var(--primary-color);
+}
+
+.category-item.active {
+  background: var(--primary-light);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.category-icon {
+  display: flex;
+  align-items: center;
+  margin-right: 12px;
+}
+
+.arrow-icon {
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.category-item:hover .arrow-icon,
+.category-item.active .arrow-icon {
+  opacity: 1;
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+}
+
+.toolbar {
+  margin-bottom: 24px;
+  background: white;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.section-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .activities-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 24px;
-  margin-bottom: 40px;
 }
 
 .activity-card {
@@ -269,7 +407,7 @@ onUnmounted(() => {
 }
 
 .activity-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-lg);
   border-color: var(--primary-light);
 }
@@ -277,7 +415,8 @@ onUnmounted(() => {
 .activity-image-wrapper {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 180px;
+  /* Adjusted for smaller cards */
   overflow: hidden;
 }
 
@@ -317,17 +456,17 @@ onUnmounted(() => {
 }
 
 .activity-info {
-  padding: 20px;
+  padding: 16px;
   flex: 1;
   display: flex;
   flex-direction: column;
 }
 
 .activity-name {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 600;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -340,6 +479,7 @@ onUnmounted(() => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: none;
 }
 
 .price-section {
@@ -352,18 +492,20 @@ onUnmounted(() => {
 .group-price {
   color: var(--warning-color);
   font-weight: 800;
+  line-height: 1;
 }
 
 .group-price .currency {
   font-size: 14px;
+  margin-right: 2px;
 }
 
 .group-price .price {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .original-price {
-  font-size: 14px;
+  font-size: 12px;
   color: var(--text-tertiary);
   text-decoration: line-through;
 }
@@ -382,7 +524,7 @@ onUnmounted(() => {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -398,7 +540,7 @@ onUnmounted(() => {
   gap: 6px;
   padding: 8px 12px;
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   margin-bottom: 16px;
 }
@@ -417,28 +559,124 @@ onUnmounted(() => {
   margin-top: auto;
 }
 
+.empty-state {
+  padding: 60px;
+  text-align: center;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.empty-state p {
+  margin-top: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
 .pagination {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 
+/* Responsive */
 @media (max-width: 768px) {
+  .activities-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .filter-card {
+    position: static;
+  }
+
+  .filter-header {
+    display: none;
+    /* Hide header on mobile for a cleaner look */
+  }
+
+  .category-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+  }
+
+  .category-item {
+    flex-shrink: 0;
+    margin-right: 10px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .category-item span {
+    white-space: nowrap;
+  }
+
+  .category-icon {
+    margin-right: 8px;
+  }
+
+  .arrow-icon {
+    display: none;
+  }
+
+  .toolbar {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    gap: 8px;
+  }
+
+  .section-subtitle {
+    font-size: 12px;
+  }
+
   .activities-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: 16px;
   }
 
   .activity-image-wrapper {
-    height: 150px;
+    height: 120px;
   }
-  
+
   .activity-info {
     padding: 12px;
   }
-  
+
   .group-price .price {
-    font-size: 20px;
+    font-size: 18px;
+  }
+
+  .activity-name {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .price-section {
+    margin-bottom: 12px;
+  }
+
+  .group-info {
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .countdown {
+    padding: 6px 10px;
+    margin-bottom: 12px;
   }
 }
 </style>

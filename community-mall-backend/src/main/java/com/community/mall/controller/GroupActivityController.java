@@ -1,13 +1,17 @@
 package com.community.mall.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.community.mall.common.Result;
+import com.community.mall.dto.JoinGroupRequest;
 import com.community.mall.service.GroupActivityService;
+import com.community.mall.service.GroupOrderService;
 import com.community.mall.vo.GroupActivityVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +26,7 @@ import java.util.List;
 public class GroupActivityController {
 
     private final GroupActivityService groupActivityService;
+    private final GroupOrderService groupOrderService;
 
     /**
      * 获取团购活动列表（分页）
@@ -55,5 +60,34 @@ public class GroupActivityController {
             @Parameter(description = "活动ID") @PathVariable Long id) {
         GroupActivityVO activity = groupActivityService.getActivityById(id);
         return Result.success(activity);
+    }
+
+    /**
+     * 参与团购活动
+     */
+    @Operation(summary = "参与团购活动", description = "用户参与团购活动，创建团购订单")
+    @PostMapping("/{id}/join")
+    public Result<Long> joinGroupActivity(
+            @Parameter(description = "活动ID") @PathVariable Long id,
+            @Validated @RequestBody JoinGroupRequest request) {
+        try {
+            Long userId = StpUtil.getLoginIdAsLong();
+            request.setActivityId(id);
+            Long orderId = groupOrderService.joinGroupActivity(userId, request);
+            return Result.success("参团成功", orderId);
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取团购活动参与人数
+     */
+    @Operation(summary = "获取团购活动参与人数", description = "获取指定团购活动的参与人数")
+    @GetMapping("/{id}/participants")
+    public Result<Long> getParticipantCount(
+            @Parameter(description = "活动ID") @PathVariable Long id) {
+        Long count = groupOrderService.getParticipantCount(id);
+        return Result.success(count);
     }
 }
