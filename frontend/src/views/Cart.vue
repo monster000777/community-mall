@@ -7,15 +7,8 @@
           <span class="item-count">共 {{ cartList.length }} 件商品</span>
         </div>
 
-        <a-table
-          :columns="columns"
-          :data-source="cartList"
-          :pagination="false"
-          row-key="id"
-          :loading="loading"
-          class="cart-table"
-          :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }"
-        >
+        <a-table :columns="columns" :data-source="cartList" :pagination="false" row-key="id" :loading="loading"
+          class="cart-table" :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'product'">
               <div class="product-info" @click="$router.push(`/product/${record.productId}`)" style="cursor: pointer">
@@ -28,23 +21,13 @@
             </template>
             <template v-else-if="column.key === 'quantity'">
               <div class="quantity-stepper">
-                <a-button 
-                  size="small" 
-                  shape="circle"
-                  @click="decreaseQuantity(record)" 
-                  :disabled="record.quantity <= 1"
-                  class="stepper-btn"
-                >
+                <a-button size="small" shape="circle" @click="decreaseQuantity(record)" :disabled="record.quantity <= 1"
+                  class="stepper-btn">
                   <template #icon><n-icon :component="RemoveOutline" /></template>
                 </a-button>
                 <span class="qty-display">{{ record.quantity }}</span>
-                <a-button 
-                  size="small" 
-                  shape="circle"
-                  @click="increaseQuantity(record)" 
-                  :disabled="record.quantity >= record.stock"
-                  class="stepper-btn"
-                >
+                <a-button size="small" shape="circle" @click="increaseQuantity(record)"
+                  :disabled="record.quantity >= record.stock" class="stepper-btn">
                   <template #icon><n-icon :component="AddOutline" /></template>
                 </a-button>
               </div>
@@ -63,12 +46,7 @@
 
         <div class="cart-footer">
           <div class="left-actions">
-            <a-button
-              @click="handleClearCart"
-              :disabled="cartList.length === 0"
-              type="text"
-              danger
-            >
+            <a-button @click="handleClearCart" :disabled="cartList.length === 0" type="text" danger>
               清空购物车
             </a-button>
           </div>
@@ -76,14 +54,8 @@
             <div class="total-price">
               总计：<span>¥{{ totalPrice }}</span>
             </div>
-            <a-button
-              type="primary"
-              size="large"
-              @click="handleCheckout"
-              :disabled="cartList.length === 0"
-              :loading="checkoutLoading"
-              class="checkout-btn"
-            >
+            <a-button type="primary" size="large" @click="handleCheckout" :disabled="cartList.length === 0"
+              :loading="checkoutLoading" class="checkout-btn">
               去结算
             </a-button>
           </div>
@@ -92,22 +64,10 @@
     </div>
 
     <!-- 收货地址选择弹窗 -->
-    <a-modal
-      v-model:visible="checkoutVisible"
-      title="选择收货地址"
-      width="600px"
-      @ok="handleCreateOrder"
-      :confirm-loading="creatingOrder"
-      class="address-modal"
-    >
-      <a-alert 
-        v-if="addressList.length === 0"
-        message="还没有收货地址" 
-        description="请先添加收货地址" 
-        type="warning" 
-        show-icon 
-        style="margin-bottom: 16px"
-      >
+    <a-modal v-model:visible="checkoutVisible" title="选择收货地址" width="600px" @ok="handleCreateOrder"
+      :confirm-loading="creatingOrder" class="address-modal">
+      <a-alert v-if="addressList.length === 0" message="还没有收货地址" description="请先添加收货地址" type="warning" show-icon
+        style="margin-bottom: 16px">
         <template #action>
           <a-button type="primary" size="small" @click="goToAddressManage">
             去添加
@@ -117,13 +77,8 @@
 
       <a-radio-group v-model:value="selectedAddressId" style="width: 100%;">
         <div class="address-list">
-          <div 
-            v-for="item in addressList" 
-            :key="item.id" 
-            class="address-option"
-            :class="{ active: selectedAddressId === item.id }"
-            @click="selectedAddressId = item.id"
-          >
+          <div v-for="item in addressList" :key="item.id" class="address-option"
+            :class="{ active: selectedAddressId === item.id }" @click="selectedAddressId = item.id">
             <div class="option-header">
               <span class="name">{{ item.receiverName }}</span>
               <span class="phone">{{ item.receiverPhone }}</span>
@@ -138,6 +93,11 @@
           </div>
         </div>
       </a-radio-group>
+
+      <div class="order-note" style="margin-top: 24px">
+        <div style="margin-bottom: 8px; font-weight: 500">订单备注</div>
+        <a-textarea v-model:value="orderNote" placeholder="选填：请输入备注信息（50字以内）" :rows="3" :maxlength="50" show-count />
+      </div>
     </a-modal>
   </div>
 </template>
@@ -162,6 +122,8 @@ const selectedAddressId = ref(null)
 const loading = ref(false)
 const checkoutLoading = ref(false)
 const creatingOrder = ref(false)
+const orderNote = ref('')
+
 
 const columns = [
   { title: '商品', key: 'product', width: '40%' },
@@ -211,6 +173,8 @@ async function decreaseQuantity(record) {
 async function handleQuantityChange(record) {
   try {
     await updateCartQuantity(record.id, record.quantity)
+    // Update cart store to sync navigation bar count
+    cartStore.loadCart()
     // message.success('更新成功') // Optional: remove success message to avoid spamming
   } catch (error) {
     console.error('更新数量失败', error)
@@ -266,14 +230,14 @@ async function handleCheckout() {
   try {
     const res = await getAddressList()
     addressList.value = res.data || []
-    
+
     const defaultAddr = addressList.value.find(addr => addr.isDefault === 1)
     if (defaultAddr) {
       selectedAddressId.value = defaultAddr.id
     } else if (addressList.value.length > 0) {
       selectedAddressId.value = addressList.value[0].id
     }
-    
+
     checkoutVisible.value = true
   } catch (error) {
     console.error('加载地址失败', error)
@@ -294,11 +258,13 @@ async function handleCreateOrder() {
     const orderData = {
       addressId: selectedAddressId.value,
       paymentType: 1,
-      cartIds: cartList.value.map(item => item.id)
+      cartIds: cartList.value.map(item => item.id),
+      remark: orderNote.value
     }
     const res = await createOrder(orderData)
     message.success('订单创建成功')
     checkoutVisible.value = false
+    orderNote.value = '' // Reset note
     cartStore.clearCartData()
     router.push('/orders')
   } catch (error) {

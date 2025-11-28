@@ -6,16 +6,8 @@
           <h2>我的订单</h2>
         </div>
 
-        <a-table
-          :columns="columns"
-          :data-source="orders"
-          :pagination="pagination"
-          row-key="id"
-          @change="handleTableChange"
-          :loading="loading"
-          class="orders-table"
-          :locale="{ emptyText: '暂无订单' }"
-        >
+        <a-table :columns="columns" :data-source="orders" :pagination="pagination" row-key="id"
+          @change="handleTableChange" :loading="loading" class="orders-table" :locale="{ emptyText: '暂无订单' }">
           <template #bodyCell="{ column, record }">
             <template v-if="column.key === 'orderNo'">
               <a class="order-link" @click="viewOrderDetail(record)">{{ record.orderNo }}</a>
@@ -30,33 +22,16 @@
             </template>
             <template v-else-if="column.key === 'action'">
               <a-space>
-                <a-button
-                  v-if="record.orderStatus === 1"
-                  type="primary"
-                  size="small"
-                  @click="handlePay(record.id)"
-                  :loading="payingOrderId === record.id"
-                  class="action-btn pay-btn"
-                >
+                <a-button v-if="record.orderStatus === 1" type="primary" size="small" @click="handlePay(record.id)"
+                  :loading="payingOrderId === record.id" class="action-btn pay-btn">
                   去支付
                 </a-button>
-                <a-button
-                  v-if="record.orderStatus === 1"
-                  size="small"
-                  @click="handleCancel(record.id)"
-                  :loading="cancelingOrderId === record.id"
-                  class="action-btn"
-                >
+                <a-button v-if="record.orderStatus === 1" size="small" @click="handleCancel(record.id)"
+                  :loading="cancelingOrderId === record.id" class="action-btn">
                   取消
                 </a-button>
-                <a-button
-                  v-if="canDeleteOrder(record.orderStatus)"
-                  size="small"
-                  danger
-                  @click="handleDelete(record.id)"
-                  :loading="deletingOrderId === record.id"
-                  class="action-btn"
-                >
+                <a-button v-if="canDeleteOrder(record.orderStatus)" size="small" danger @click="handleDelete(record.id)"
+                  :loading="deletingOrderId === record.id" class="action-btn">
                   删除
                 </a-button>
               </a-space>
@@ -69,8 +44,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { message, Modal } from 'ant-design-vue'
+import { ref, onMounted, h } from 'vue'
+import { message, Modal, Space, Button } from 'ant-design-vue'
+import { DollarOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { getOrderList, cancelOrder, payOrder, deleteOrder } from '@/api/order'
 
 const orders = ref([])
@@ -89,6 +65,7 @@ const columns = [
   { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount' },
   { title: '收货人', key: 'receiverName', dataIndex: 'receiverName' },
   { title: '收货电话', key: 'receiverPhone', dataIndex: 'receiverPhone' },
+  { title: '订单备注', key: 'remark', dataIndex: 'remark', ellipsis: true },
   { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus' },
   { title: '创建时间', key: 'createdAt', dataIndex: 'createdAt' },
   { title: '操作', key: 'action' }
@@ -152,11 +129,89 @@ function canDeleteOrder(status) {
 }
 
 function viewOrderDetail(order) {
-  Modal.info({
+  const modal = Modal.info({
     title: '订单详情',
-    content: `订单号：${order.orderNo}\n金额：¥${order.actualAmount}\n收货地址：${order.receiverAddress}`,
-    width: 600,
-    okText: '确定'
+    width: 700,
+    okText: '关闭',
+    content: h('div', { style: 'line-height: 1.8' }, [
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '订单号：'),
+        h('span', order.orderNo)
+      ]),
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '订单金额：'),
+        h('span', { style: 'color: #ff6b00; font-weight: 600' }, `¥${order.actualAmount}`)
+      ]),
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '收货人：'),
+        h('span', `${order.receiverName} ${order.receiverPhone}`)
+      ]),
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '收货地址：'),
+        h('span', order.receiverAddress || '未填写')
+      ]),
+      order.remark ? h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '订单备注：'),
+        h('span', { style: 'color: #666' }, order.remark)
+      ]) : null,
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '订单状态：'),
+        h('span', getStatusText(order.orderStatus))
+      ]),
+      h('div', { style: 'margin-bottom: 12px' }, [
+        h('strong', '创建时间：'),
+        h('span', order.createdAt)
+      ]),
+      h('div', { style: 'margin-top: 24px; padding-top: 16px; border-top: 1px solid #f0f0f0' }, [
+        h('strong', { style: 'display: block; margin-bottom: 12px; color: #333' }, '可用操作：'),
+        h('div', { style: 'margin-top: 12px' }, [
+          h(Space, { size: 'middle' }, [
+            order.orderStatus === 1 ? h(Button, {
+              type: 'primary',
+              size: 'large',
+              icon: h(DollarOutlined),
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: '500'
+              },
+              onClick: () => {
+                modal.destroy()
+                handlePay(order.id)
+              }
+            }, { default: () => '去支付' }) : null,
+            order.orderStatus === 1 ? h(Button, {
+              danger: true,
+              size: 'large',
+              icon: h(CloseCircleOutlined),
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: '500'
+              },
+              onClick: () => {
+                modal.destroy()
+                handleCancel(order.id)
+              }
+            }, { default: () => '取消订单' }) : null,
+            canDeleteOrder(order.orderStatus) ? h(Button, {
+              danger: true,
+              size: 'large',
+              icon: h(DeleteOutlined),
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                fontWeight: '500'
+              },
+              onClick: () => {
+                modal.destroy()
+                handleDelete(order.id)
+              }
+            }, { default: () => '删除订单' }) : null
+          ])
+        ])
+      ])
+    ])
   })
 }
 

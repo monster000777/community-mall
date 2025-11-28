@@ -360,7 +360,13 @@ const loadActivities = async () => {
     }
 
     const res = await adminGetGroupActivities(params)
-    activities.value = res.data.records
+    activities.value = res.data.records.map(item => {
+      // 如果当前时间晚于结束时间，且状态为进行中，强制显示为已结束
+      if (dayjs().isAfter(dayjs(item.endTime)) && item.status === 1) {
+        return { ...item, status: 2 }
+      }
+      return item
+    })
     pagination.total = res.data.total
   } catch (error) {
     message.error(error.message || '加载失败')

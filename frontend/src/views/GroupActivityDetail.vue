@@ -199,6 +199,24 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- 参团成功弹窗 -->
+    <a-modal v-model:visible="successModalVisible" title="参团成功" :footer="null" width="500px">
+      <div style="text-align: center; padding: 20px 0;">
+        <div style="margin-bottom: 16px;">
+          <a-icon type="check-circle" theme="filled" style="color: #52c41a; font-size: 48px;" />
+          <!-- Note: In Vue 3 + Ant Design Vue 2/3, icons are components. Assuming CheckCircleFilled or similar is available or using the existing icon imports -->
+          <CheckCircleFilled style="color: #52c41a; font-size: 48px;" />
+        </div>
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">订单创建成功！</h3>
+        <p style="color: #666;">您可以查看订单详情，或者如果有变动也可以立即取消。</p>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
+        <a-button @click="successModalVisible = false">关闭</a-button>
+        <a-button danger @click="handleCancelOrder">取消订单</a-button>
+        <a-button type="primary" @click="goToOrders">查看订单</a-button>
+      </div>
+    </a-modal>
   </div>
 </template>
 
@@ -213,9 +231,11 @@ import {
   ShoppingOutlined,
   InboxOutlined,
   FireOutlined,
-  StopOutlined
+  StopOutlined,
+  CheckCircleFilled
 } from '@ant-design/icons-vue'
 import { getGroupActivityDetail, joinGroupActivity } from '@/api/groupActivity'
+import { cancelOrder } from '@/api/order'
 import { getAddressList } from '@/api/address'
 import { useUserStore } from '@/stores/user'
 
@@ -226,6 +246,8 @@ const userStore = useUserStore()
 const loading = ref(false)
 const activity = ref(null)
 const modalVisible = ref(false)
+const successModalVisible = ref(false)
+const createdOrderId = ref(null)
 const joinLoading = ref(false)
 const addressList = ref([])
 let countdownTimer = null
@@ -257,6 +279,10 @@ const loadActivityDetail = async () => {
   try {
     const res = await getGroupActivityDetail(route.params.id)
     activity.value = res.data
+    // 如果剩余时间<=0，强制设置状态为已结束
+    if (activity.value && activity.value.remainingTime <= 0 && activity.value.status === 1) {
+      activity.value.status = 2
+    }
   } catch (error) {
     message.error(error.message || '加载失败')
   } finally {
@@ -272,7 +298,7 @@ const goBack = () => {
 // 打开参团弹窗
 const joinGroup = async () => {
   // 检查登录状态
-    if (!userStore.token) {
+  if (!userStore.token) {
     message.warning('请先登录')
     router.push('/login')
     return
@@ -341,16 +367,9 @@ const handleJoinSubmit = async () => {
         message.success('参团成功！')
         modalVisible.value = false
 
-        // 跳转到订单页面
-        Modal.info({
-          title: '参团成功',
-          content: '订单已创建，是否前往查看订单？',
-          okText: '查看订单',
-          cancelText: '继续浏览',
-          onOk: () => {
-            router.push('/orders')
-          }
-        })
+        // 保存订单ID并显示成功弹窗
+        createdOrderId.value = res.data
+        successModalVisible.value = true
 
         // 重新加载活动详情，更新库存等信息
         loadActivityDetail()
@@ -358,6 +377,36 @@ const handleJoinSubmit = async () => {
         message.error(error.message || '参团失败，请稍后重试')
       } finally {
         joinLoading.value = false
+      }
+    }
+  })
+}
+
+// 跳转到订单页
+const goToOrders = () => {
+  successModalVisible.value = false
+  router.push('/orders')
+}
+
+// 取消订单
+const handleCancelOrder = () => {
+  if (!createdOrderId.value) return
+
+  Modal.confirm({
+    title: '确认取消',
+    content: '确定要取消刚才创建的订单吗？取消后无法恢复。',
+    okText: '确认取消',
+    okType: 'danger',
+    cancelText: '暂不取消',
+    onOk: async () => {
+      try {
+        await cancelOrder(createdOrderId.value)
+        message.success('订单已取消')
+        successModalVisible.value = false
+        // 重新加载活动详情，恢复库存显示
+        loadActivityDetail()
+      } catch (error) {
+        message.error(error.message || '取消失败')
       }
     }
   })
@@ -397,6 +446,11 @@ const formatDateTime = (dateTime) => {
 const updateCountdown = () => {
   if (activity.value && activity.value.remainingTime > 0) {
     activity.value.remainingTime--
+
+    // 如果倒计时刚好结束，且当前状态是进行中(1)或即将开始(0)，更新为已结束(2)
+    if (activity.value.remainingTime <= 0 && (activity.value.status === 1 || activity.value.status === 0)) {
+      activity.value.status = 2 // 已结束
+    }
   }
 }
 

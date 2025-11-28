@@ -156,7 +156,7 @@ const activities = ref([])
 const currentPage = ref(1)
 const pageSize = ref(12) // Match product page size
 const total = ref(0)
-const statusFilter = ref(null)
+const statusFilter = ref(1) // Default to showing only ongoing activities (status 1)
 
 // 倒计时定时器
 let countdownTimer = null
@@ -174,7 +174,20 @@ const loadActivities = async () => {
     }
 
     const res = await getGroupActivities(params)
-    activities.value = res.data.records
+    let records = res.data.records.map(item => {
+      // 如果剩余时间<=0，强制设置状态为已结束
+      if (item.remainingTime <= 0 && item.status === 1) {
+        return { ...item, status: 2 }
+      }
+      return item
+    })
+
+    // 如果当前筛选的是"进行中"(1)，则过滤掉那些刚刚被强制改为"已结束"(2)的活动
+    if (statusFilter.value === 1) {
+      records = records.filter(item => item.status === 1)
+    }
+
+    activities.value = records
     total.value = res.data.total
   } catch (error) {
     message.error(error.message || '加载失败')
@@ -234,9 +247,20 @@ const formatTime = (seconds) => {
 const updateCountdown = () => {
   activities.value = activities.value.map(activity => {
     if (activity.remainingTime > 0) {
+      const newRemainingTime = activity.remainingTime - 1
+
+      // 如果倒计时刚好结束，且当前状态是进行中(1)或即将开始(0)，更新为已结束(2)
+      if (newRemainingTime <= 0 && (activity.status === 1 || activity.status === 0)) {
+        return {
+          ...activity,
+          remainingTime: 0,
+          status: 2 // 已结束
+        }
+      }
+
       return {
         ...activity,
-        remainingTime: activity.remainingTime - 1
+        remainingTime: newRemainingTime
       }
     }
     return activity
