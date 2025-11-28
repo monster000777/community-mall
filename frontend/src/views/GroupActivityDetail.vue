@@ -3,12 +3,7 @@
     <div class="container">
       <a-spin :spinning="loading">
         <div v-if="activity" class="detail-wrapper">
-          <!-- 面包屑/返回 -->
-          <div class="breadcrumb-area">
-            <a-button type="link" class="back-btn" @click="goBack">
-              <LeftOutlined /> 返回列表
-            </a-button>
-          </div>
+
 
           <div class="detail-card">
             <div class="detail-content">
@@ -107,19 +102,24 @@
 
                 <!-- 操作按钮 -->
                 <div class="action-buttons">
-                  <a-button v-if="activity.status === 1 && activity.stock > 0" type="primary" size="large" block
-                    class="main-btn" @click="joinGroup">
-                    <FireOutlined /> 立即参团
-                  </a-button>
-                  <a-button v-else-if="activity.status === 0" size="large" block disabled class="main-btn">
-                    <ClockCircleOutlined /> 活动未开始
-                  </a-button>
-                  <a-button v-else-if="activity.stock === 0" size="large" block disabled class="main-btn">
-                    <StopOutlined /> 库存已售罄
-                  </a-button>
-                  <a-button v-else size="large" block disabled class="main-btn">
-                    <StopOutlined /> 活动已结束
-                  </a-button>
+                  <div class="button-group">
+                    <a-button v-if="activity.status === 1 && activity.stock > 0" type="primary" size="large"
+                      class="join-btn" @click="joinGroup">
+                      <FireOutlined /> 立即参团
+                    </a-button>
+                    <a-button v-else-if="activity.status === 0" size="large" disabled class="join-btn">
+                      <ClockCircleOutlined /> 活动未开始
+                    </a-button>
+                    <a-button v-else-if="activity.stock === 0" size="large" disabled class="join-btn">
+                      <StopOutlined /> 库存已售罄
+                    </a-button>
+                    <a-button v-else size="large" disabled class="join-btn">
+                      <StopOutlined /> 活动已结束
+                    </a-button>
+                    <a-button size="large" class="back-btn" @click="goBack">
+                      返回列表
+                    </a-button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -225,7 +225,6 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import {
-  LeftOutlined,
   ClockCircleOutlined,
   UserOutlined,
   ShoppingOutlined,
@@ -490,18 +489,7 @@ onUnmounted(() => {
   padding: 0 24px;
 }
 
-.breadcrumb-area {
-  margin-bottom: 24px;
-}
 
-.back-btn {
-  padding-left: 0;
-  color: var(--text-secondary);
-}
-
-.back-btn:hover {
-  color: var(--primary-color);
-}
 
 .detail-card {
   background: white;
@@ -542,7 +530,8 @@ onUnmounted(() => {
 }
 
 .status-badge.active {
-  background: rgba(16, 185, 129, 0.9);
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
 }
 
 .status-badge.not-started {
@@ -582,8 +571,8 @@ onUnmounted(() => {
 }
 
 .countdown-box.active {
-  background: #fff7e6;
-  border: 1px solid #ffe7ba;
+  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+  border: 1px solid #ffd591;
 }
 
 .countdown-box.pending {
@@ -597,7 +586,8 @@ onUnmounted(() => {
 
 .countdown-box.active .icon,
 .countdown-box.active .label {
-  color: #d46b08;
+  color: #fa541c;
+  font-weight: 600;
 }
 
 .countdown-box.pending .icon,
@@ -647,9 +637,10 @@ onUnmounted(() => {
 
 .price-box {
   padding: 24px;
-  background: var(--bg-body);
+  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
   border-radius: var(--radius-md);
   margin-bottom: 24px;
+  border: 2px solid #ffd591;
 }
 
 .price-row {
@@ -660,7 +651,7 @@ onUnmounted(() => {
 }
 
 .group-price-wrapper {
-  color: var(--warning-color);
+  color: #ff4d4f;
   font-weight: 800;
   display: flex;
   align-items: baseline;
@@ -683,12 +674,13 @@ onUnmounted(() => {
 
 .discount-tag {
   padding: 2px 8px;
-  background: #fff1f0;
-  color: #f5222d;
-  border: 1px solid #ffa39e;
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: white;
+  border: none;
   border-radius: 4px;
   font-size: 13px;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 77, 79, 0.3);
 }
 
 .original-price-row {
@@ -725,7 +717,7 @@ onUnmounted(() => {
 
 .rule-item .icon {
   font-size: 18px;
-  color: var(--primary-color);
+  color: #fa8c16;
 }
 
 .rule-item .label {
@@ -748,10 +740,32 @@ onUnmounted(() => {
   margin-bottom: 8px;
 }
 
-.main-btn {
-  height: 48px;
+.button-group {
+  display: flex;
+  gap: 16px;
+}
+
+.join-btn {
+  flex: 1;
+  height: 50px;
   font-size: 16px;
   font-weight: 600;
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  border-color: #ff6b35;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.join-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff5722 0%, #f57c00 100%);
+  border-color: #ff5722;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+}
+
+.back-btn {
+  height: 50px;
+  padding: 0 30px;
+  font-size: 16px;
 }
 
 .section-title {
@@ -778,6 +792,14 @@ onUnmounted(() => {
 
   .detail-card {
     padding: 20px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .back-btn {
+    width: 100%;
   }
 }
 </style>

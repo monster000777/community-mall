@@ -57,12 +57,47 @@
           <a-col v-for="(category, index) in categories" :key="category.id" :xs="12" :sm="8" :md="6" :lg="4">
             <div class="category-card" @click="goToProducts(category.id)">
               <div class="category-icon-wrapper">
-                <img :src="categoryIcons[index % categoryIcons.length]" :alt="category.categoryName" class="category-img">
+                <img :src="categoryIcons[index % categoryIcons.length]" :alt="category.categoryName"
+                  class="category-img">
               </div>
               <div class="category-name">{{ category.categoryName }}</div>
             </div>
           </a-col>
         </a-row>
+      </div>
+    </div>
+
+    <!-- 团购活动 -->
+    <div class="group-section" v-if="groupActivities.length > 0">
+      <div class="section-header">
+        <h2 class="section-title">热门团购</h2>
+        <div class="section-divider"></div>
+        <p class="section-subtitle">限时拼团，超值优惠</p>
+      </div>
+      <div class="container">
+        <a-row :gutter="[24, 24]">
+          <a-col v-for="activity in groupActivities" :key="activity.id" :xs="12" :sm="12" :md="8" :lg="6">
+            <div class="product-card" @click="goToGroupActivityDetail(activity.id)">
+              <div class="product-image-wrapper">
+                <img :src="activity.productImage" :alt="activity.activityName" class="product-image" />
+                <div class="product-overlay">
+                  <a-button type="primary" ghost class="view-btn">立即参团</a-button>
+                </div>
+                <div class="discount-badge">{{ activity.discount }}折</div>
+              </div>
+              <div class="product-info">
+                <h3 class="product-title">{{ activity.activityName }}</h3>
+                <div class="product-meta">
+                  <span class="product-price">¥{{ activity.groupPrice }}</span>
+                  <span class="original-price">¥{{ activity.originalPrice }}</span>
+                </div>
+              </div>
+            </div>
+          </a-col>
+        </a-row>
+        <div class="view-more-wrapper">
+          <a-button size="large" @click="$router.push('/group-activities')">查看更多团购</a-button>
+        </div>
       </div>
     </div>
 
@@ -146,7 +181,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { NIcon } from 'naive-ui'
-import { 
+import {
   BasketOutline,
   LeafOutline,
   PricetagsOutline,
@@ -158,10 +193,12 @@ import {
 } from '@vicons/ionicons5'
 import { getAllCategories } from '@/api/category'
 import { getProductList } from '@/api/product'
+import { getGroupActivities } from '@/api/groupActivity'
 
 const router = useRouter()
 const categories = ref([])
 const products = ref([])
+const groupActivities = ref([])
 
 // 分类图标（使用网络图片）
 const categoryIcons = [
@@ -175,12 +212,14 @@ const categoryIcons = [
 
 onMounted(async () => {
   try {
-    const [categoryRes, productRes] = await Promise.all([
+    const [categoryRes, productRes, groupActivityRes] = await Promise.all([
       getAllCategories(),
-      getProductList({ current: 1, size: 8 })
+      getProductList({ current: 1, size: 8 }),
+      getGroupActivities({ page: 1, size: 4, status: 1 })
     ])
     categories.value = categoryRes.data
     products.value = productRes.data.records
+    groupActivities.value = groupActivityRes.data.records
   } catch (error) {
     console.error('加载数据失败', error)
   }
@@ -192,6 +231,10 @@ function goToProducts(categoryId) {
 
 function goToProductDetail(productId) {
   router.push(`/product/${productId}`)
+}
+
+function goToGroupActivityDetail(activityId) {
+  router.push(`/group-activities/${activityId}`)
 }
 </script>
 
@@ -223,19 +266,19 @@ function goToProductDetail(productId) {
 
 .banner-1 {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.3) 100%),
-              url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&h=500&fit=crop') center/cover;
+    url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&h=500&fit=crop') center/cover;
   background-blend-mode: overlay;
 }
 
 .banner-2 {
   background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(13, 148, 136, 0.3) 100%),
-              url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1920&h=500&fit=crop') center/cover;
+    url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1920&h=500&fit=crop') center/cover;
   background-blend-mode: overlay;
 }
 
 .banner-3 {
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.3) 100%),
-              url('https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1920&h=500&fit=crop') center/cover;
+    url('https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1920&h=500&fit=crop') center/cover;
   background-blend-mode: overlay;
 }
 
@@ -264,9 +307,19 @@ function goToProductDetail(productId) {
 }
 
 @keyframes bounceIn {
-  0% { transform: scale(0); opacity: 0; }
-  60% { transform: scale(1.1); opacity: 1; }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 .banner-title {
@@ -309,28 +362,47 @@ function goToProductDetail(productId) {
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* 分区标题 */
 .section-header {
   text-align: center;
-  padding: 60px 0 40px;
+  padding: 40px 0 24px;
 }
 
 .section-title {
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 12px;
@@ -353,8 +425,7 @@ function goToProductDetail(productId) {
 
 /* 分类卡片 */
 .category-section {
-  background: white;
-  padding-bottom: 60px;
+  padding-bottom: 20px;
 }
 
 .category-card {
@@ -402,7 +473,7 @@ function goToProductDetail(productId) {
 
 /* 商品卡片 */
 .product-section {
-  padding: 60px 0;
+  padding: 20px 0;
 }
 
 .product-card {
@@ -503,9 +574,7 @@ function goToProductDetail(productId) {
 
 /* 特点区域 */
 .features-section {
-  background: white;
-  padding: 80px 0;
-  margin-top: 60px;
+  padding: 50px 0;
 }
 
 .feature-item {
@@ -520,7 +589,7 @@ function goToProductDetail(productId) {
 
 .feature-icon {
   color: var(--primary-color);
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   transition: all 0.3s ease;
   background: var(--primary-light);
   width: 80px;
@@ -529,7 +598,6 @@ function goToProductDetail(productId) {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
 }
 
 .feature-item:hover .feature-icon {
@@ -554,10 +622,22 @@ function goToProductDetail(productId) {
 
 /* 响应式 */
 @media (max-width: 768px) {
-  .banner-title { font-size: 32px; }
-  .banner-subtitle { font-size: 16px; }
-  .section-title { font-size: 28px; }
-  .category-icon-wrapper { width: 80px; height: 80px; }
+  .banner-title {
+    font-size: 32px;
+  }
+
+  .banner-subtitle {
+    font-size: 16px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .category-icon-wrapper {
+    width: 80px;
+    height: 80px;
+  }
 }
 
 /* Ant Design 深度样式 */
@@ -574,5 +654,37 @@ function goToProductDetail(productId) {
 :deep(.ant-carousel .slick-dots li.slick-active button) {
   background: white;
   width: 30px;
+}
+
+/* 团购卡片 */
+.group-section {
+  padding: 20px 0;
+}
+
+.discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 77, 79, 0.3);
+  z-index: 1;
+}
+
+.original-price {
+  font-size: 13px;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+  margin-left: 8px;
+  font-weight: normal;
+}
+
+.view-more-wrapper {
+  text-align: center;
+  margin-top: 30px;
 }
 </style>

@@ -355,12 +355,12 @@ onUnmounted(() => {
 
 .category-item:hover {
   background: var(--bg-body);
-  color: var(--primary-color);
+  color: #fa8c16;
 }
 
 .category-item.active {
-  background: var(--primary-light);
-  color: var(--primary-color);
+  background: #fff7e6;
+  color: #fa8c16;
   font-weight: 600;
 }
 
@@ -432,8 +432,8 @@ onUnmounted(() => {
 
 .activity-card:hover {
   transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--primary-light);
+  box-shadow: 0 12px 24px rgba(250, 140, 22, 0.2);
+  border-color: #ffd591;
 }
 
 .activity-image-wrapper {
@@ -468,7 +468,8 @@ onUnmounted(() => {
 }
 
 .status-badge.active {
-  background: rgba(16, 185, 129, 0.9);
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
 }
 
 .status-badge.not-started {
@@ -514,7 +515,7 @@ onUnmounted(() => {
 }
 
 .group-price {
-  color: var(--warning-color);
+  color: #ff4d4f;
   font-weight: 800;
   line-height: 1;
 }
@@ -536,12 +537,13 @@ onUnmounted(() => {
 
 .discount-tag {
   padding: 2px 6px;
-  background: #fff0f0;
-  color: var(--warning-color);
-  border: 1px solid #ffccc7;
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  color: white;
+  border: none;
   border-radius: 4px;
   font-size: 12px;
   font-weight: 600;
+  box-shadow: 0 2px 4px rgba(255, 77, 79, 0.3);
 }
 
 .group-info {
@@ -570,8 +572,10 @@ onUnmounted(() => {
 }
 
 .countdown.active {
-  background: #fff7e6;
-  color: #d46b08;
+  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+  color: #fa541c;
+  border: 1px solid #ffd591;
+  font-weight: 600;
 }
 
 .countdown.pending {
@@ -581,6 +585,20 @@ onUnmounted(() => {
 
 .action-area {
   margin-top: auto;
+}
+
+.action-area :deep(.ant-btn-primary) {
+  background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+  border-color: #ff6b35;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  font-weight: 600;
+}
+
+.action-area :deep(.ant-btn-primary):hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff5722 0%, #f57c00 100%);
+  border-color: #ff5722;
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.4);
+  transform: translateY(-2px);
 }
 
 .empty-state {
