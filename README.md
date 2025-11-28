@@ -113,28 +113,188 @@ community-mall/
 - JDK 1.8+
 - Maven 3.6+
 - MySQL 8.0+
+- Redis 5.0+（用于Session存储和缓存）
 - Node.js 16+
 - npm 或 yarn
 
+### Redis 安装与配置
+
+#### Windows 环境
+
+1. **下载 Redis for Windows**
+   - 访问 [Microsoft Archive Redis](https://github.com/microsoftarchive/redis/releases)
+   - 下载最新版本的 `.msi` 或 `.zip` 文件（推荐 Redis-x64-5.0.14.1.msi）
+
+2. **安装 Redis**
+   ```bash
+   # 使用 .msi 安装包会自动配置环境变量和服务
+   # 或解压 .zip 后手动运行
+   cd redis安装目录
+   redis-server.exe redis.windows.conf
+   ```
+
+3. **验证 Redis 服务**
+   ```bash
+   # 打开新的命令行窗口
+   redis-cli.exe
+   ping
+   # 应返回：PONG
+   ```
+
+4. **配置 Redis 为 Windows 服务（可选）**
+   ```bash
+   # 以管理员身份运行命令行
+   redis-server.exe --service-install redis.windows.conf
+   redis-server.exe --service-start
+   
+   # 查看服务状态
+   redis-server.exe --service-status
+   ```
+
+#### Linux/Mac 环境
+
+1. **Ubuntu/Debian 安装**
+   ```bash
+   sudo apt update
+   sudo apt install redis-server
+   sudo systemctl start redis-server
+   sudo systemctl enable redis-server
+   ```
+
+2. **CentOS/RHEL 安装**
+   ```bash
+   sudo yum install redis
+   sudo systemctl start redis
+   sudo systemctl enable redis
+   ```
+
+3. **macOS 安装（使用 Homebrew）**
+   ```bash
+   brew install redis
+   brew services start redis
+   ```
+
+4. **验证 Redis 服务**
+   ```bash
+   redis-cli ping
+   # 应返回：PONG
+   ```
+
+#### Redis 配置说明
+
+Redis 默认配置即可满足开发需求，如需修改配置：
+
+```bash
+# 编辑 Redis 配置文件
+# Windows: redis.windows.conf
+# Linux/Mac: /etc/redis/redis.conf 或 /usr/local/etc/redis.conf
+
+# 常用配置项：
+bind 127.0.0.1              # 绑定地址（生产环境注意安全）
+port 6379                   # 端口号
+requirepass your_password   # 设置密码（可选）
+maxmemory 256mb            # 最大内存限制
+maxmemory-policy allkeys-lru  # 内存淘汰策略
+```
+
+> **注意**：如果设置了 Redis 密码，需要在后端配置文件中同步修改。
+
 ### 数据库配置
 
-1. 创建数据库并导入SQL脚本：
+#### 1. MySQL 数据库初始化
+
+创建数据库并导入SQL脚本：
 
 ```bash
 mysql -u root -p < database/schema.sql
 ```
 
-2. 修改后端配置文件 `community-mall-backend/src/main/resources/application.yml`：
+#### 2. 配置后端连接
+
+修改后端配置文件 `community-mall-backend/src/main/resources/application.yml`：
 
 ```yaml
+server:
+  port: 8080                 # 后端服务端口
+  servlet:
+    context-path: /api       # 应用上下文路径，所有接口前缀为 /api
+
 spring:
+  application:
+    name: community-mall-backend  # 应用名称
+  
+  # MySQL 数据源配置
   datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/community_mall?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 你的密码
+    password: 你的MySQL密码    # 请修改为实际密码
+  
+  # Jackson JSON 序列化配置
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss  # 日期格式化
+    time-zone: GMT+8                   # 时区设置
+  
+  # Redis 配置
+  redis:
+    host: localhost          # Redis 服务器地址
+    port: 6379              # Redis 端口
+    password:               # Redis 密码（如果设置了密码请填写）
+    database: 0             # 使用的数据库编号（0-15）
+    timeout: 10s            # 连接超时时间
+    lettuce:
+      pool:
+        max-active: 8       # 连接池最大连接数
+        max-wait: -1ms      # 连接池最大阻塞等待时间（-1 表示没有限制）
+        max-idle: 8         # 连接池最大空闲连接数
+        min-idle: 0         # 连接池最小空闲连接数
+
+# MyBatis-Plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名转换（数据库字段 user_name -> Java 属性 userName）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # SQL 日志输出（开发环境）
+  global-config:
+    db-config:
+      id-type: auto                      # 主键类型：数据库自增
+      logic-delete-field: deletedFlag    # 逻辑删除字段名
+      logic-delete-value: 1              # 逻辑删除值（已删除）
+      logic-not-delete-value: 0          # 逻辑未删除值（未删除）
+  mapper-locations: classpath*:/mapper/**/*.xml  # Mapper XML 文件位置
+
+# Sa-Token 配置
+sa-token:
+  token-name: satoken        # Token 名称（同时也是 cookie 名称）
+  timeout: 86400             # Token 有效期（单位：秒，86400秒 = 1天，-1 代表永久有效）
+  active-timeout: -1         # Token 最低活跃频率（单位：秒），超过此时间没有访问会被冻结，-1 表示不限制
+  is-concurrent: true        # 是否允许同一账号多地同时登录（true 允许，false 新登录挤掉旧登录）
+  is-share: false           # 是否共用一个 token（true 共用，false 每次登录新建）
+  token-style: uuid         # Token 风格（可选：uuid、simple-uuid、random-32、random-64、random-128、tik）
+  is-log: true              # 是否输出操作日志
+
+# 日志配置
+logging:
+  level:
+    com.community.mall: debug           # 应用日志级别
+    com.baomidou.mybatisplus: debug     # MyBatis-Plus 日志级别
 ```
 
-### 启动后端
+### 启动项目
+
+#### 1. 确保服务运行
+
+在启动项目前，请确保以下服务正常运行：
+
+```bash
+# 检查 MySQL 服务
+mysql -u root -p -e "SELECT VERSION();"
+
+# 检查 Redis 服务
+redis-cli ping
+# 应返回：PONG
+```
+
+#### 2. 启动后端
 
 ```bash
 cd community-mall-backend
@@ -144,7 +304,12 @@ mvn spring-boot:run
 
 后端服务将在 `http://localhost:8080/api` 启动
 
-### 启动前端
+> **启动检查**：
+> - 查看控制台是否有错误信息
+> - 确认 Redis 连接成功的日志
+> - 访问 Swagger 文档：`http://localhost:8080/api/swagger-ui/index.html`
+
+#### 3. 启动前端
 
 ```bash
 cd frontend
@@ -153,6 +318,56 @@ npm run dev
 ```
 
 前端应用将在 `http://localhost:3000` 启动
+
+### 常见问题排查
+
+#### Redis 连接失败
+
+如果后端启动时出现 Redis 连接错误：
+
+1. **检查 Redis 服务是否启动**
+   ```bash
+   # Windows
+   netstat -ano | findstr :6379
+   
+   # Linux/Mac
+   ps aux | grep redis
+   netstat -nltp | grep 6379
+   ```
+
+2. **检查 Redis 连接配置**
+   - 确认 `application.yml` 中的 Redis host、port 配置正确
+   - 如果设置了密码，确认密码配置正确
+
+3. **测试 Redis 连接**
+   ```bash
+   redis-cli -h localhost -p 6379
+   # 如果设置了密码
+   redis-cli -h localhost -p 6379 -a your_password
+   ```
+
+#### MySQL 连接失败
+
+如果出现 MySQL 连接错误：
+
+1. 确认 MySQL 服务正在运行
+2. 确认数据库 `community_mall` 已创建
+3. 检查用户名和密码是否正确
+4. 确认 MySQL 时区设置正确
+
+#### 端口被占用
+
+如果提示端口被占用：
+
+```bash
+# Windows - 查找占用端口的进程
+netstat -ano | findstr :8080
+taskkill /PID 进程号 /F
+
+# Linux/Mac - 查找并终止进程
+lsof -i :8080
+kill -9 进程号
+```
 
 ## 📝 功能模块
 
