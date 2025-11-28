@@ -222,6 +222,20 @@ public class GroupActivityService {
     }
 
     /**
+     * 增加活动库存（取消订单时调用）
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void increaseStock(Long activityId, Integer quantity) {
+        GroupActivity activity = groupActivityMapper.selectById(activityId);
+        if (activity == null) {
+            throw new RuntimeException("团购活动不存在");
+        }
+
+        activity.setStock(activity.getStock() + quantity);
+        groupActivityMapper.updateById(activity);
+    }
+
+    /**
      * 定时任务：更新活动状态
      */
     public void updateActivityStatusByTime() {

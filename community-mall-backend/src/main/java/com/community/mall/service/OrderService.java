@@ -36,6 +36,12 @@ public class OrderService {
     @Autowired
     private AddressMapper addressMapper;
 
+    @Autowired
+    private GroupOrderMapper groupOrderMapper;
+
+    @Autowired
+    private GroupActivityService groupActivityService;
+
     /**
      * 创建订单
      */
@@ -73,11 +79,11 @@ public class OrderService {
         orderMaster.setTotalAmount(totalAmount);
         orderMaster.setActualAmount(totalAmount);
         orderMaster.setPaymentType(request.getPaymentType() != null ? request.getPaymentType() : 1);
-        orderMaster.setOrderStatus(1);  // 待支付
+        orderMaster.setOrderStatus(1); // 待支付
         orderMaster.setReceiverName(address.getReceiverName());
         orderMaster.setReceiverPhone(address.getReceiverPhone());
         orderMaster.setReceiverAddress(address.getProvince() + address.getCity() +
-                                       address.getDistrict() + address.getDetail());
+                address.getDistrict() + address.getDetail());
         orderMaster.setRemark(request.getRemark());
         orderMaster.setStatus(1);
 
@@ -118,7 +124,8 @@ public class OrderService {
         // 使用线程ID和随机数增加唯一性，降低重复概率
         String threadId = String.valueOf(Thread.currentThread().getId() % 10000);
         String random = String.valueOf((int) (Math.random() * 10000));
-        return timestamp + String.format("%04d", Integer.parseInt(threadId)) + String.format("%04d", Integer.parseInt(random));
+        return timestamp + String.format("%04d", Integer.parseInt(threadId))
+                + String.format("%04d", Integer.parseInt(random));
     }
 
     /**
@@ -128,7 +135,7 @@ public class OrderService {
         Page<OrderMaster> page = new Page<>(current, size);
         LambdaQueryWrapper<OrderMaster> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrderMaster::getUserId, userId)
-               .orderByDesc(OrderMaster::getCreatedAt);
+                .orderByDesc(OrderMaster::getCreatedAt);
         return orderMasterMapper.selectPage(page, wrapper);
     }
 
@@ -171,10 +178,24 @@ public class OrderService {
             throw new RuntimeException("只能取消待支付订单");
         }
 
-        order.setOrderStatus(5);  // 已取消
+        order.setOrderStatus(5); // 已取消
         orderMasterMapper.updateById(order);
 
-        // 恢复库存
+        // 检查是否是团购订单，如果是则同步更新 GroupOrder 状态
+        LambdaQueryWrapper<GroupOrder> groupOrderWrapper = new LambdaQueryWrapper<>();
+        groupOrderWrapper.eq(GroupOrder::getOrderId, orderId);
+        GroupOrder groupOrder = groupOrderMapper.selectOne(groupOrderWrapper);
+
+        if (groupOrder != null) {
+            // 更新团购订单状态为已取消
+            groupOrder.setStatus(5);
+            groupOrderMapper.updateById(groupOrder);
+
+            // 恢复团购活动库存
+            groupActivityService.increaseStock(groupOrder.getActivityId(), groupOrder.getQuantity());
+        }
+
+        // 恢复普通商品库存
         LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(OrderItem::getOrderId, orderId);
         List<OrderItem> items = orderItemMapper.selectList(wrapper);
@@ -200,7 +221,7 @@ public class OrderService {
             throw new RuntimeException("订单状态不正确");
         }
 
-        order.setOrderStatus(2);  // 已支付
+        order.setOrderStatus(2); // 已支付
         order.setPaymentTime(LocalDateTime.now());
         orderMasterMapper.updateById(order);
     }
@@ -235,7 +256,7 @@ public class OrderService {
             throw new RuntimeException("只能发货已支付订单");
         }
 
-        order.setOrderStatus(3);  // 已发货
+        order.setOrderStatus(3); // 已发货
         orderMasterMapper.updateById(order);
     }
 
@@ -251,7 +272,7 @@ public class OrderService {
             throw new RuntimeException("只能完成已发货订单");
         }
 
-        order.setOrderStatus(4);  // 已完成
+        order.setOrderStatus(4); // 已完成
         orderMasterMapper.updateById(order);
     }
 
@@ -267,7 +288,7 @@ public class OrderService {
             throw new RuntimeException("只能取消待支付订单");
         }
 
-        order.setOrderStatus(5);  // 已取消
+        order.setOrderStatus(5); // 已取消
         orderMasterMapper.updateById(order);
 
         // 恢复库存
@@ -296,7 +317,7 @@ public class OrderService {
             throw new RuntimeException("只能退款已支付订单");
         }
 
-        order.setOrderStatus(7);  // 已退款
+        order.setOrderStatus(7); // 已退款
         orderMasterMapper.updateById(order);
 
         // 恢复库存
@@ -313,4 +334,3 @@ public class OrderService {
         }
     }
 }
-

@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 团购订单服务类
@@ -60,17 +61,27 @@ public class GroupOrderService {
         }
 
         // 2. 验证用户购买限制
-        LambdaQueryWrapper<GroupParticipant> participantWrapper = new LambdaQueryWrapper<>();
-        participantWrapper.eq(GroupParticipant::getActivityId, request.getActivityId())
-                .eq(GroupParticipant::getUserId, userId);
-        GroupParticipant participant = groupParticipantMapper.selectOne(participantWrapper);
+        // 查询用户在该活动中所有非取消状态的订单，计算已购买数量
+        LambdaQueryWrapper<GroupOrder> orderWrapper = new LambdaQueryWrapper<>();
+        orderWrapper.eq(GroupOrder::getActivityId, request.getActivityId())
+                .eq(GroupOrder::getUserId, userId)
+                .ne(GroupOrder::getStatus, 5); // 排除已取消的订单（状态5）
+        List<GroupOrder> existingOrders = groupOrderMapper.selectList(orderWrapper);
 
-        int currentTotal = (participant == null) ? 0 : participant.getTotalQuantity();
+        int currentTotal = existingOrders.stream()
+                .mapToInt(GroupOrder::getQuantity)
+                .sum();
         int newTotal = currentTotal + request.getQuantity();
 
         if (newTotal > activity.getLimitPerUser()) {
             throw new RuntimeException("超过限购数量，您最多可购买 " + activity.getLimitPerUser() + " 件，已购买 " + currentTotal + " 件");
         }
+
+        // 查询或创建参与者记录（用于统计）
+        LambdaQueryWrapper<GroupParticipant> participantWrapper = new LambdaQueryWrapper<>();
+        participantWrapper.eq(GroupParticipant::getActivityId, request.getActivityId())
+                .eq(GroupParticipant::getUserId, userId);
+        GroupParticipant participant = groupParticipantMapper.selectOne(participantWrapper);
 
         // 3. 验证收货地址
         Address address = addressMapper.selectById(request.getAddressId());
@@ -132,7 +143,7 @@ public class GroupOrderService {
             participant = new GroupParticipant();
             participant.setActivityId(activity.getId());
             participant.setUserId(userId);
-            participant.setTotalQuantity(request.getQuantity());
+            participant.setTotalQuantity(newTotal); // 使用新的总数
             participant.setLastOrderTime(LocalDateTime.now());
             groupParticipantMapper.insert(participant);
         } else {
