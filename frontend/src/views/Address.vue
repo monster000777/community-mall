@@ -16,17 +16,13 @@
         </div>
 
         <div v-else class="address-grid">
-          <div 
-            v-for="item in addressList" 
-            :key="item.id" 
-            class="address-item"
-            :class="{ 'default': item.isDefault === 1 }"
-          >
+          <div v-for="item in addressList" :key="item.id" class="address-item"
+            :class="{ 'default': item.isDefault === 1 }">
             <div class="item-header">
               <span class="name">{{ item.receiverName }}</span>
               <a-tag v-if="item.isDefault === 1" color="success">默认</a-tag>
             </div>
-            
+
             <div class="item-content">
               <div class="info-row">
                 <n-icon :size="16" :component="CallOutline" class="icon" />
@@ -43,12 +39,7 @@
                 <template #icon><n-icon :component="CreateOutline" /></template>
                 编辑
               </a-button>
-              <a-button 
-                v-if="item.isDefault !== 1" 
-                type="text" 
-                size="small" 
-                @click="handleSetDefault(item.id)"
-              >
+              <a-button v-if="item.isDefault !== 1" type="text" size="small" @click="handleSetDefault(item.id)">
                 <template #icon><n-icon :component="StarOutline" /></template>
                 设为默认
               </a-button>
@@ -63,14 +54,8 @@
     </div>
 
     <!-- 添加/编辑地址弹窗 -->
-    <a-modal
-      v-model:visible="modalVisible"
-      :title="editId ? '编辑地址' : '新增地址'"
-      width="600px"
-      @ok="handleSubmit"
-      :confirm-loading="submitLoading"
-      class="address-modal"
-    >
+    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑地址' : '新增地址'" width="600px" @ok="handleSubmit"
+      :confirm-loading="submitLoading" class="address-modal">
       <a-form :model="formState" layout="vertical">
         <div class="form-row">
           <a-form-item label="收货人" required class="form-col">
@@ -90,11 +75,7 @@
         </a-form-item>
 
         <a-form-item label="详细地址" required>
-          <a-textarea
-            v-model:value="formState.detail"
-            placeholder="请输入详细地址，如街道、门牌号等"
-            :rows="3"
-          />
+          <a-textarea v-model:value="formState.detail" placeholder="请输入详细地址，如街道、门牌号等" :rows="3" />
         </a-form-item>
 
         <a-form-item>
@@ -205,11 +186,17 @@ async function handleSubmit() {
 
   try {
     submitLoading.value = true
+    // 确保 isDefault 为数字类型
+    const submitData = {
+      ...formState.value,
+      isDefault: Number(formState.value.isDefault)
+    }
+
     if (editId.value) {
-      await updateAddress(editId.value, formState.value)
+      await updateAddress(editId.value, submitData)
       message.success('更新成功')
     } else {
-      await addAddress(formState.value)
+      await addAddress(submitData)
       message.success('添加成功')
     }
     modalVisible.value = false
