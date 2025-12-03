@@ -492,7 +492,7 @@ onUnmounted(() => {
 
 
 .detail-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: 32px;
   box-shadow: var(--shadow-sm);
@@ -571,13 +571,13 @@ onUnmounted(() => {
 }
 
 .countdown-box.active {
-  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
-  border: 1px solid #ffd591;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid var(--accent-color);
 }
 
 .countdown-box.pending {
-  background: #e6f7ff;
-  border: 1px solid #bae7ff;
+  background: var(--bg-body);
+  border: 1px solid var(--border-color);
 }
 
 .countdown-box .icon {
@@ -586,13 +586,13 @@ onUnmounted(() => {
 
 .countdown-box.active .icon,
 .countdown-box.active .label {
-  color: #fa541c;
+  color: var(--accent-color);
   font-weight: 600;
 }
 
 .countdown-box.pending .icon,
 .countdown-box.pending .label {
-  color: #096dd9;
+  color: var(--info-color);
 }
 
 .countdown-box .label {
@@ -610,7 +610,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: white;
+  background: var(--bg-card);
   padding: 4px 8px;
   border-radius: 4px;
   min-width: 40px;
@@ -637,10 +637,10 @@ onUnmounted(() => {
 
 .price-box {
   padding: 24px;
-  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
+  background: rgba(245, 158, 11, 0.05);
   border-radius: var(--radius-md);
   margin-bottom: 24px;
-  border: 2px solid #ffd591;
+  border: 2px solid var(--accent-color);
 }
 
 .price-row {
@@ -651,7 +651,7 @@ onUnmounted(() => {
 }
 
 .group-price-wrapper {
-  color: #ff4d4f;
+  color: var(--warning-color);
   font-weight: 800;
   display: flex;
   align-items: baseline;
@@ -717,7 +717,7 @@ onUnmounted(() => {
 
 .rule-item .icon {
   font-size: 18px;
-  color: #fa8c16;
+  color: var(--primary-color);
 }
 
 .rule-item .label {

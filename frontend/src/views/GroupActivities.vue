@@ -120,10 +120,16 @@
             </div>
           </a-spin>
 
-          <!-- 分页 -->
-          <div v-if="total > 0" class="pagination">
-            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total" show-size-changer
-              :page-size-options="['12', '24', '36']" @change="handlePageChange" />
+          <!-- Desktop Pagination -->
+          <div v-if="total > 0" class="pagination desktop-pagination">
+            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total"
+              @change="handlePageChange" />
+          </div>
+
+          <!-- Mobile Pagination -->
+          <div v-if="total > 0" class="pagination mobile-pagination">
+            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total" simple
+              @change="handlePageChange" />
           </div>
         </div>
       </div>
@@ -315,7 +321,7 @@ onUnmounted(() => {
 }
 
 .filter-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -355,12 +361,12 @@ onUnmounted(() => {
 
 .category-item:hover {
   background: var(--bg-body);
-  color: #fa8c16;
+  color: var(--accent-color);
 }
 
 .category-item.active {
-  background: #fff7e6;
-  color: #fa8c16;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-color);
   font-weight: 600;
 }
 
@@ -388,7 +394,7 @@ onUnmounted(() => {
 
 .toolbar {
   margin-bottom: 24px;
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -419,7 +425,7 @@ onUnmounted(() => {
 }
 
 .activity-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -515,7 +521,7 @@ onUnmounted(() => {
 }
 
 .group-price {
-  color: #ff4d4f;
+  color: var(--warning-color);
   font-weight: 800;
   line-height: 1;
 }
@@ -572,15 +578,15 @@ onUnmounted(() => {
 }
 
 .countdown.active {
-  background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%);
-  color: #fa541c;
-  border: 1px solid #ffd591;
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
   font-weight: 600;
 }
 
 .countdown.pending {
-  background: #e6f7ff;
-  color: #096dd9;
+  background: var(--bg-body);
+  color: var(--info-color);
 }
 
 .action-area {
@@ -592,6 +598,7 @@ onUnmounted(() => {
   border-color: #ff6b35;
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
   font-weight: 600;
+  color: #fff;
 }
 
 .action-area :deep(.ant-btn-primary):hover:not(:disabled) {
@@ -601,10 +608,14 @@ onUnmounted(() => {
   transform: translateY(-2px);
 }
 
+.action-area :deep(.ant-btn-primary[disabled]) {
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .empty-state {
   padding: 60px;
   text-align: center;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
@@ -616,9 +627,22 @@ onUnmounted(() => {
 }
 
 .pagination {
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   display: flex;
-  justify-content: center;
-  margin-top: 40px;
+  width: fit-content;
+}
+
+.desktop-pagination {
+  margin-left: auto;
+}
+
+.mobile-pagination {
+  display: none;
+  margin: 24px auto 0;
 }
 
 /* Responsive */
@@ -644,7 +668,7 @@ onUnmounted(() => {
     display: flex;
     overflow-x: auto;
     padding: 10px;
-    background: white;
+    background: var(--bg-card);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
     margin-bottom: 20px;
@@ -719,6 +743,15 @@ onUnmounted(() => {
   .countdown {
     padding: 6px 10px;
     margin-bottom: 12px;
+  }
+
+  .desktop-pagination {
+    display: none;
+  }
+
+  .mobile-pagination {
+    display: flex;
+    margin-top: 20px;
   }
 }
 </style>

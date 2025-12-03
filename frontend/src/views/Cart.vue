@@ -7,42 +7,81 @@
           <span class="item-count">共 {{ cartList.length }} 件商品</span>
         </div>
 
-        <a-table :columns="columns" :data-source="cartList" :pagination="false" row-key="id" :loading="loading"
-          class="cart-table" :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }">
-          <template #bodyCell="{ column, record }">
-            <template v-if="column.key === 'product'">
-              <div class="product-info" @click="$router.push(`/product/${record.productId}`)" style="cursor: pointer">
-                <img :src="record.mainImage" :alt="record.productName" />
-                <span class="product-name">{{ record.productName }}</span>
-              </div>
-            </template>
-            <template v-else-if="column.key === 'price'">
-              <span class="price-text">¥{{ record.price }}</span>
-            </template>
-            <template v-else-if="column.key === 'quantity'">
-              <div class="quantity-stepper">
-                <a-button size="small" shape="circle" @click="decreaseQuantity(record)" :disabled="record.quantity <= 1"
-                  class="stepper-btn">
-                  <template #icon><n-icon :component="RemoveOutline" /></template>
+        <div class="desktop-cart">
+          <a-table :columns="columns" :data-source="cartList" :pagination="false" row-key="id" :loading="loading"
+            class="cart-table" :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }">
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'product'">
+                <div class="product-info" @click="$router.push(`/product/${record.productId}`)" style="cursor: pointer">
+                  <img :src="record.mainImage" :alt="record.productName" />
+                  <span class="product-name">{{ record.productName }}</span>
+                </div>
+              </template>
+              <template v-else-if="column.key === 'price'">
+                <span class="price-text">¥{{ record.price }}</span>
+              </template>
+              <template v-else-if="column.key === 'quantity'">
+                <div class="quantity-stepper">
+                  <a-button size="small" shape="circle" @click="decreaseQuantity(record)"
+                    :disabled="record.quantity <= 1" class="stepper-btn">
+                    <template #icon><n-icon :component="RemoveOutline" /></template>
+                  </a-button>
+                  <span class="qty-display">{{ record.quantity }}</span>
+                  <a-button size="small" shape="circle" @click="increaseQuantity(record)"
+                    :disabled="record.quantity >= record.stock" class="stepper-btn">
+                    <template #icon><n-icon :component="AddOutline" /></template>
+                  </a-button>
+                </div>
+              </template>
+              <template v-else-if="column.key === 'total'">
+                <span class="total-text">¥{{ (record.price * record.quantity).toFixed(2) }}</span>
+              </template>
+              <template v-else-if="column.key === 'action'">
+                <a-button type="text" danger @click="handleDelete(record.id)" class="delete-btn">
+                  <template #icon><n-icon :component="TrashOutline" /></template>
+                  删除
                 </a-button>
-                <span class="qty-display">{{ record.quantity }}</span>
-                <a-button size="small" shape="circle" @click="increaseQuantity(record)"
-                  :disabled="record.quantity >= record.stock" class="stepper-btn">
-                  <template #icon><n-icon :component="AddOutline" /></template>
-                </a-button>
+              </template>
+            </template>
+          </a-table>
+        </div>
+
+        <!-- Mobile Cart List -->
+        <div class="mobile-cart-list">
+          <div v-if="cartList.length === 0 && !loading" class="empty-cart-mobile">
+            <n-icon :size="48" :component="BasketOutline" style="color: #ddd" />
+            <p>购物车还是空的</p>
+          </div>
+          <div v-else class="cart-item-card" v-for="item in cartList" :key="item.id">
+            <div class="cart-item-image" @click="$router.push(`/product/${item.productId}`)">
+              <img :src="item.mainImage" :alt="item.productName" />
+            </div>
+            <div class="cart-item-content">
+              <div class="cart-item-header">
+                <h3 class="cart-item-title" @click="$router.push(`/product/${item.productId}`)">{{ item.productName }}
+                </h3>
+                <n-icon :component="TrashOutline" class="delete-icon" @click="handleDelete(item.id)" />
               </div>
-            </template>
-            <template v-else-if="column.key === 'total'">
-              <span class="total-text">¥{{ (record.price * record.quantity).toFixed(2) }}</span>
-            </template>
-            <template v-else-if="column.key === 'action'">
-              <a-button type="text" danger @click="handleDelete(record.id)" class="delete-btn">
-                <template #icon><n-icon :component="TrashOutline" /></template>
-                删除
-              </a-button>
-            </template>
-          </template>
-        </a-table>
+              <div class="cart-item-price">¥{{ item.price }}</div>
+              <div class="cart-item-footer">
+                <div class="quantity-stepper">
+                  <a-button size="small" shape="circle" @click="decreaseQuantity(item)" :disabled="item.quantity <= 1"
+                    class="stepper-btn">
+                    <template #icon><n-icon :component="RemoveOutline" /></template>
+                  </a-button>
+                  <span class="qty-display">{{ item.quantity }}</span>
+                  <a-button size="small" shape="circle" @click="increaseQuantity(item)"
+                    :disabled="item.quantity >= item.stock" class="stepper-btn">
+                    <template #icon><n-icon :component="AddOutline" /></template>
+                  </a-button>
+                </div>
+                <div class="item-subtotal">
+                  小计: <span>¥{{ (item.price * item.quantity).toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="cart-footer">
           <div class="left-actions">
@@ -107,7 +146,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import { NIcon } from 'naive-ui'
-import { TrashOutline, CheckmarkCircleOutline, AddOutline, RemoveOutline } from '@vicons/ionicons5'
+import { TrashOutline, CheckmarkCircleOutline, AddOutline, RemoveOutline, BasketOutline } from '@vicons/ionicons5'
 import { getCartList, updateCartQuantity, deleteCartItem, clearCart } from '@/api/cart'
 import { createOrder } from '@/api/order'
 import { getAddressList } from '@/api/address'
@@ -289,7 +328,7 @@ function goToAddressManage() {
 }
 
 .cart-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: 24px;
@@ -474,5 +513,139 @@ function goToAddressManage() {
   text-align: center;
   font-weight: 500;
   color: var(--text-primary);
+}
+
+/* Mobile Cart Styles */
+.mobile-cart-list {
+  display: none;
+}
+
+.cart-item-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  background: var(--bg-body);
+}
+
+.cart-item-image {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.cart-item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cart-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 4px;
+}
+
+.cart-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.delete-icon {
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.cart-item-price {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.cart-item-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-subtotal {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.item-subtotal span {
+  color: var(--warning-color);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.empty-cart-mobile {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-secondary);
+}
+
+.empty-cart-mobile p {
+  margin-top: 12px;
+}
+
+@media (max-width: 768px) {
+  .desktop-cart {
+    display: none;
+  }
+
+  .mobile-cart-list {
+    display: block;
+  }
+
+  .cart-footer {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+
+  .right-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+  }
+
+  .total-price {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .checkout-btn {
+    width: 100%;
+  }
+
+  .left-actions {
+    text-align: center;
+  }
 }
 </style>

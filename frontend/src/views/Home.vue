@@ -432,7 +432,7 @@ function goToGroupActivityDetail(activityId) {
   text-align: center;
   padding: 24px;
   border-radius: var(--radius-lg);
-  background: white;
+  background: var(--bg-card);
   box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -477,7 +477,7 @@ function goToGroupActivityDetail(activityId) {
 }
 
 .product-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -622,6 +622,12 @@ function goToGroupActivityDetail(activityId) {
 
 /* 响应式 */
 @media (max-width: 768px) {
+
+  .banner,
+  .banner-item {
+    height: 300px;
+  }
+
   .banner-title {
     font-size: 32px;
   }

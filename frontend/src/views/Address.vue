@@ -265,7 +265,7 @@ function resetForm() {
 }
 
 .address-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: 24px;
@@ -310,7 +310,7 @@ function resetForm() {
   padding: 20px;
   transition: all 0.3s ease;
   position: relative;
-  background: white;
+  background: var(--bg-card);
 }
 
 .address-item:hover {
@@ -394,5 +394,24 @@ function resetForm() {
 
 .area-inputs .ant-input {
   flex: 1;
+}
+
+@media (max-width: 576px) {
+  .address-card {
+    padding: 16px;
+  }
+
+  .address-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .area-inputs {
+    flex-direction: column;
+  }
 }
 </style>

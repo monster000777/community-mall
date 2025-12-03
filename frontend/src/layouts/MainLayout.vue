@@ -2,73 +2,69 @@
   <a-layout class="layout">
     <a-layout-header class="header">
       <div class="logo">
-        <n-icon :size="32" :component="StorefrontOutline" class="logo-icon"/>
+        <n-icon :size="38" :component="StorefrontOutline" class="logo-icon" />
         <span class="logo-text">社区团购</span>
       </div>
-      <a-menu
-          v-model:selectedKeys="selectedKeys"
-          mode="horizontal"
-          :style="{ lineHeight: '64px', flex: 1 }"
-          class="nav-menu"
-      >
+      <a-menu v-model:selectedKeys="selectedKeys" mode="horizontal" :style="{ lineHeight: '64px', flex: 1 }"
+        class="nav-menu desktop-menu">
         <a-menu-item key="home" @click="$router.push('/')">
-          <n-icon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+          <n-icon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;" />
           首页
         </a-menu-item>
         <a-menu-item key="products" @click="$router.push('/products')">
-          <n-icon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+          <n-icon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;" />
           商品列表
         </a-menu-item>
         <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
-          <n-icon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+          <n-icon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;" />
           团购活动
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
           <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
-            <n-icon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+            <n-icon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;" />
             购物车
           </a-badge>
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
-          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 6px; vertical-align: -3px;"/>
+          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 6px; vertical-align: -3px;" />
           我的订单
         </a-menu-item>
       </a-menu>
       <div class="user-info">
+        <a-button type="text" shape="circle" @click="themeStore.toggleTheme" class="theme-toggle">
+          <template #icon>
+            <n-icon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+          </template>
+        </a-button>
         <template v-if="userStore.token">
           <a-dropdown>
             <a class="ant-dropdown-link user-dropdown-trigger" @click.prevent>
-              <a-avatar
-                :size="32"
-                :src="userStore.userInfo?.avatar"
-                class="header-avatar"
-                :style="headerAvatarStyle"
-              >
+              <a-avatar :size="32" :src="userStore.userInfo?.avatar" class="header-avatar" :style="headerAvatarStyle">
                 <span v-if="!userStore.userInfo?.avatar">{{ avatarText }}</span>
               </a-avatar>
               <span class="header-username">
                 {{ userStore.userInfo?.nickname || userStore.userInfo?.username }}
               </span>
-              <n-icon :size="16" :component="ChevronDownOutline" style="margin-left: 4px; vertical-align: -2px;"/>
+              <n-icon :size="16" :component="ChevronDownOutline" style="margin-left: 4px; vertical-align: -2px;" />
             </a>
             <template #overlay>
               <a-menu class="user-dropdown-menu">
                 <a-menu-item v-if="userStore.isAdmin()" @click="$router.push('/admin')">
                   <n-icon :size="16" :component="ShieldCheckmarkOutline"
-                          style="margin-right: 8px; vertical-align: -2px;"/>
+                    style="margin-right: 8px; vertical-align: -2px;" />
                   管理后台
                 </a-menu-item>
                 <a-menu-item @click="$router.push('/profile')">
-                  <n-icon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;"/>
+                  <n-icon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   个人中心
                 </a-menu-item>
                 <a-menu-item @click="$router.push('/address')">
-                  <n-icon :size="16" :component="LocationOutline" style="margin-right: 8px; vertical-align: -2px;"/>
+                  <n-icon :size="16" :component="LocationOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   收货地址
                 </a-menu-item>
-                <a-menu-divider/>
+                <a-menu-divider />
                 <a-menu-item @click="handleLogout" class="logout-item">
-                  <n-icon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;"/>
+                  <n-icon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   退出登录
                 </a-menu-item>
               </a-menu>
@@ -77,16 +73,53 @@
         </template>
         <template v-else>
           <a-button type="link" @click="$router.push('/login')" class="login-btn">
-            <n-icon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;"/>
+            <n-icon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;" />
             登录
           </a-button>
           <a-button type="primary" @click="$router.push('/register')" class="register-btn">
-            <n-icon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;"/>
+            <n-icon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;" />
             注册
           </a-button>
         </template>
       </div>
+      <div class="mobile-menu-trigger">
+        <n-icon :size="24" :component="MenuOutline" @click="mobileMenuOpen = true" />
+      </div>
     </a-layout-header>
+
+    <a-drawer v-model:open="mobileMenuOpen" placement="right" :closable="false" class="mobile-drawer">
+      <div class="mobile-menu-header">
+        <div class="logo">
+          <n-icon :size="28" :component="StorefrontOutline" class="logo-icon" />
+          <span class="logo-text">社区团购</span>
+        </div>
+        <n-icon :size="24" :component="CloseOutline" @click="mobileMenuOpen = false" />
+      </div>
+      <a-menu v-model:selectedKeys="selectedKeys" mode="inline" class="mobile-nav-menu" @click="mobileMenuOpen = false">
+        <a-menu-item key="home" @click="$router.push('/')">
+          <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px;" />
+          首页
+        </a-menu-item>
+        <a-menu-item key="products" @click="$router.push('/products')">
+          <n-icon :size="18" :component="GridOutline" style="margin-right: 12px;" />
+          商品列表
+        </a-menu-item>
+        <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
+          <n-icon :size="18" :component="FlameOutline" style="margin-right: 12px;" />
+          团购活动
+        </a-menu-item>
+        <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
+          <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
+            <n-icon :size="18" :component="CartOutline" style="margin-right: 12px;" />
+            购物车
+          </a-badge>
+        </a-menu-item>
+        <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
+          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 12px;" />
+          我的订单
+        </a-menu-item>
+      </a-menu>
+    </a-drawer>
     <a-layout-content class="content">
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
@@ -96,18 +129,63 @@
     </a-layout-content>
     <a-layout-footer class="footer">
       <div class="footer-content">
-        <div class="footer-logo">
-          <n-icon :size="28" :component="StorefrontOutline" style="margin-right: 8px;"/>
-          社区团购系统
+        <div class="footer-top">
+          <div class="footer-col brand-col">
+            <div class="footer-logo">
+              <n-icon :size="32" :component="StorefrontOutline" class="footer-icon" />
+              <span>社区团购</span>
+            </div>
+            <p class="brand-desc">
+              致力于为社区居民提供新鲜、优质、实惠的生鲜果蔬和生活用品。源头直采，全程冷链，品质更有保障。
+            </p>
+            <div class="social-links">
+              <a href="#" class="social-link"><n-icon :size="20" :component="LogoWechat" /></a>
+              <a href="#" class="social-link"><n-icon :size="20" :component="LogoAlipay" /></a>
+              <a href="#" class="social-link"><n-icon :size="20" :component="LogoTux" /></a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h3>快速入口</h3>
+            <div class="footer-links-col">
+              <a @click="$router.push('/')">首页</a>
+              <a @click="$router.push('/products')">商品列表</a>
+              <a @click="$router.push('/group-activities')">团购活动</a>
+              <a @click="$router.push('/cart')">购物车</a>
+            </div>
+          </div>
+
+          <div class="footer-col">
+            <h3>客户服务</h3>
+            <div class="footer-links-col">
+              <a href="#">帮助中心</a>
+              <a href="#">售后政策</a>
+              <a href="#">配送说明</a>
+              <a href="#">意见反馈</a>
+            </div>
+          </div>
+
+          <div class="footer-col contact-col">
+            <h3>联系我们</h3>
+            <div class="contact-info">
+              <p><n-icon :component="CallOutline" /> 400-123-4567</p>
+              <p><n-icon :component="MailOutline" /> support@community-mall.com</p>
+              <p><n-icon :component="LocationOutline" /> 北京市朝阳区科技园88号</p>
+            </div>
+          </div>
         </div>
-        <div class="footer-links">
-          <a href="#">关于我们</a>
-          <a href="#">联系客服</a>
-          <a href="#">配送服务</a>
-          <a href="#">隐私政策</a>
-        </div>
-        <div class="footer-info">
-          © 2024 社区团购 | 新鲜优质 价格实惠
+
+        <div class="footer-bottom">
+          <div class="copyright">
+            © 2025 社区团购系统. All Rights Reserved.
+          </div>
+          <div class="footer-bottom-links">
+            <a href="#">隐私政策</a>
+            <span class="divider">|</span>
+            <a href="#">服务条款</a>
+            <span class="divider">|</span>
+            <a href="#">网站地图</a>
+          </div>
         </div>
       </div>
     </a-layout-footer>
@@ -117,7 +195,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import {NIcon} from 'naive-ui'
+import { NIcon } from 'naive-ui'
 import {
   StorefrontOutline,
   HomeOutline,
@@ -132,17 +210,29 @@ import {
   LogOutOutline,
   LogInOutline,
   PersonAddOutline,
-  LocationOutline
+  LocationOutline,
+  MoonOutline,
+  SunnyOutline,
+  MenuOutline,
+  CloseOutline,
+  LogoWechat,
+  LogoAlipay,
+  LogoTux,
+  CallOutline,
+  MailOutline
 } from '@vicons/ionicons5'
-import {useUserStore} from '@/stores/user'
-import {useCartStore} from '@/stores/cart'
-import {message} from 'ant-design-vue'
+import { useUserStore } from '@/stores/user'
+import { useCartStore } from '@/stores/cart'
+import { useThemeStore } from '@/stores/theme'
+import { message } from 'ant-design-vue'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
 const cartStore = useCartStore()
+const themeStore = useThemeStore()
 const selectedKeys = ref(['home'])
+const mobileMenuOpen = ref(false)
 
 const avatarText = computed(() => {
   const name = userStore.userInfo?.nickname || userStore.userInfo?.username || ''
@@ -209,6 +299,7 @@ async function handleLogout() {
 .header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   padding: 0 60px;
@@ -218,6 +309,30 @@ async function handleLogout() {
   z-index: 999;
   border-bottom: 1px solid var(--border-color);
   height: 64px;
+}
+
+[data-theme='dark'] .header {
+  background: rgba(31, 41, 55, 0.95);
+}
+
+.mobile-menu-trigger {
+  display: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  margin-left: 16px;
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.mobile-nav-menu {
+  border-right: none;
 }
 
 .logo {
@@ -237,7 +352,7 @@ async function handleLogout() {
 }
 
 .logo-text {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 800;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
   -webkit-background-clip: text;
@@ -304,6 +419,15 @@ async function handleLogout() {
   align-items: center;
 }
 
+.theme-toggle {
+  color: var(--text-primary);
+}
+
+.theme-toggle:hover {
+  color: var(--primary-color);
+  background: var(--bg-body);
+}
+
 .user-dropdown-trigger {
   display: flex;
   align-items: center;
@@ -353,49 +477,145 @@ async function handleLogout() {
 .content {
   padding: 0;
   background: var(--bg-body);
-  min-height: calc(100vh - 64px - 200px); /* Adjust based on footer height */
+  min-height: calc(100vh - 64px - 320px);
 }
 
 .footer {
-  background: #111827; /* Dark gray almost black */
-  color: rgba(255, 255, 255, 0.7);
-  padding: 48px 60px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  padding: 60px 0 30px;
+  margin-top: auto;
+  border-top: 1px solid var(--border-color);
 }
 
 .footer-content {
   max-width: 1200px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 24px;
+  padding: 0 24px;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 40px;
+  padding-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.footer-col h3 {
+  color: var(--text-primary);
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.brand-col {
+  padding-right: 40px;
 }
 
 .footer-logo {
   display: flex;
   align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  color: var(--text-primary);
   font-size: 20px;
   font-weight: 700;
+}
+
+.footer-icon {
   color: var(--primary-color);
 }
 
-.footer-links {
-  display: flex;
-  gap: 32px;
+.brand-desc {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
 }
 
-.footer-links a {
-  color: rgba(255, 255, 255, 0.6);
+.social-links {
+  display: flex;
+  gap: 16px;
+}
+
+.social-link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-body);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.footer-links-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links-col a {
+  color: var(--text-secondary);
+  font-size: 14px;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.footer-links-col a:hover {
+  color: var(--primary-color);
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact-info p {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0;
+}
+
+.footer-bottom {
+  padding-top: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+.footer-bottom-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.footer-bottom-links a {
+  color: var(--text-tertiary);
   transition: color 0.3s ease;
 }
 
-.footer-links a:hover {
-  color: white;
+.footer-bottom-links a:hover {
+  color: var(--primary-color);
 }
 
-.footer-info {
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.4);
+.divider {
+  color: var(--border-color);
 }
 
 /* Transitions */
@@ -414,13 +634,44 @@ async function handleLogout() {
   .header {
     padding: 0 20px;
   }
-  
+
   .logo {
-    margin-right: 20px;
+    margin-right: 0;
   }
-  
+
   .logo-text {
+    display: block;
+  }
+
+  .header .logo-text {
     display: none;
+  }
+
+  .desktop-menu {
+    display: none;
+  }
+
+  .mobile-menu-trigger {
+    display: block;
+  }
+
+  .user-info {
+    margin-left: auto;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+
+  .brand-col {
+    padding-right: 0;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
   }
 }
 </style>

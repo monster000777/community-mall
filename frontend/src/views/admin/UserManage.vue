@@ -30,7 +30,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">正常用户</p>
-          <h3 class="stat-value">{{ users.filter(u => u.status === 1).length }}</h3>
+          <h3 class="stat-value">{{users.filter(u => u.status === 1).length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -39,7 +39,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">管理员</p>
-          <h3 class="stat-value">{{ users.filter(u => u.role === 'admin').length }}</h3>
+          <h3 class="stat-value">{{users.filter(u => u.role === 'admin').length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -48,32 +48,19 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已禁用</p>
-          <h3 class="stat-value">{{ users.filter(u => u.status === 0).length }}</h3>
+          <h3 class="stat-value">{{users.filter(u => u.status === 0).length}}</h3>
         </div>
       </div>
     </div>
 
     <a-card class="table-card" :bordered="false">
-      <a-table
-        :columns="columns"
-        :data-source="users"
-        :pagination="pagination"
-        row-key="id"
-        @change="handleTableChange"
-      >
+      <a-table :columns="columns" :data-source="users" :pagination="pagination" row-key="id"
+        @change="handleTableChange">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'avatar'">
-            <a-upload
-              :show-upload-list="false"
-              :before-upload="beforeAvatarUpload"
-              :custom-request="options => handleAvatarUpload(options, record)"
-            >
-              <a-avatar
-                :size="40"
-                :src="record.avatar"
-                :style="getAvatarStyle(record)"
-                class="user-avatar"
-              >
+            <a-upload :show-upload-list="false" :before-upload="beforeAvatarUpload"
+              :custom-request="options => handleAvatarUpload(options, record)">
+              <a-avatar :size="40" :src="record.avatar" :style="getAvatarStyle(record)" class="user-avatar">
                 <template v-if="!record.avatar" #icon>
                   <n-icon :size="20" :component="PersonOutline" />
                 </template>
@@ -102,14 +89,10 @@
                 <template #icon><n-icon :component="CreateOutline" /></template>
                 编辑
               </a-button>
-              <a-button
-                type="text"
-                size="small"
-                @click="handleToggleStatus(record)"
-                class="action-btn"
-                :danger="record.status === 1"
-              >
-                <template #icon><n-icon :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" /></template>
+              <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn"
+                :danger="record.status === 1">
+                <template #icon><n-icon
+                    :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" /></template>
                 {{ record.status === 1 ? '禁用' : '启用' }}
               </a-button>
               <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
@@ -123,13 +106,8 @@
     </a-card>
 
     <!-- 添加/编辑用户弹窗 -->
-    <a-modal
-      v-model:visible="modalVisible"
-      :title="editId ? '编辑用户' : '添加用户'"
-      width="600px"
-      @ok="handleSubmit"
-      :ok-button-props="{ class: 'modal-ok-btn' }"
-    >
+    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑用户' : '添加用户'" width="600px" @ok="handleSubmit"
+      :ok-button-props="{ class: 'modal-ok-btn' }">
       <a-form :model="formState" :label-col="{ span: 5 }" class="user-form">
         <a-form-item label="用户名" required>
           <a-input v-model:value="formState.username" size="large" placeholder="请输入用户名" :disabled="!!editId" />
@@ -144,7 +122,8 @@
           <a-input v-model:value="formState.nickname" size="large" placeholder="请输入昵称" />
         </a-form-item>
         <a-form-item label="密码" :required="!editId">
-          <a-input-password v-model:value="formState.password" size="large" :placeholder="editId ? '不修改请留空' : '请输入密码'" />
+          <a-input-password v-model:value="formState.password" size="large"
+            :placeholder="editId ? '不修改请留空' : '请输入密码'" />
         </a-form-item>
         <a-form-item label="角色" required>
           <a-select v-model:value="formState.role" size="large" placeholder="请选择角色">
@@ -153,13 +132,8 @@
           </a-select>
         </a-form-item>
         <a-form-item label="状态">
-          <a-switch
-            v-model:checked="formState.status"
-            :checked-value="1"
-            :un-checked-value="0"
-            checked-children="正常"
-            un-checked-children="禁用"
-          />
+          <a-switch v-model:checked="formState.status" :checked-value="1" :un-checked-value="0" checked-children="正常"
+            un-checked-children="禁用" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -475,7 +449,7 @@ function resetForm() {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -497,10 +471,21 @@ function resetForm() {
   flex-shrink: 0;
 }
 
-.icon-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); }
-.icon-success { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
-.icon-info { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
-.icon-error { background: linear-gradient(135deg, #EF4444 0%, #F87171 100%); }
+.icon-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.icon-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.icon-info {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+.icon-error {
+  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+}
 
 .stat-info {
   flex: 1;
@@ -570,7 +555,7 @@ function resetForm() {
   .stats-cards {
     grid-template-columns: 1fr;
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;

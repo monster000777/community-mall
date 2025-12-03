@@ -10,7 +10,7 @@
 
         <div class="product-info-section">
           <h1 class="product-title">{{ product.productName }}</h1>
-          
+
           <div class="price-block">
             <div class="price-row">
               <span class="currency">¥</span>
@@ -31,13 +31,8 @@
           <div class="action-area">
             <div class="quantity-selector">
               <span class="label">数量</span>
-              <a-input-number 
-                v-model:value="quantity" 
-                :min="1" 
-                :max="product.stock" 
-                size="large"
-                class="custom-number-input"
-              />
+              <a-input-number v-model:value="quantity" :min="1" :max="product.stock" size="large"
+                class="custom-number-input" />
             </div>
 
             <div class="button-group">
@@ -76,11 +71,11 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { NIcon } from 'naive-ui'
-import { 
-  CartOutline, 
-  CheckmarkCircleOutline, 
-  RocketOutline, 
-  ShieldCheckmarkOutline 
+import {
+  CartOutline,
+  CheckmarkCircleOutline,
+  RocketOutline,
+  ShieldCheckmarkOutline
 } from '@vicons/ionicons5'
 import { getProductDetail } from '@/api/product'
 import { addToCart } from '@/api/cart'
@@ -129,7 +124,7 @@ async function handleAddToCart() {
 }
 
 .product-main-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: 40px;
@@ -299,15 +294,15 @@ async function handleAddToCart() {
   .product-main-card {
     padding: 20px;
   }
-  
+
   .product-title {
     font-size: 24px;
   }
-  
+
   .button-group {
     flex-direction: column;
   }
-  
+
   .back-btn {
     width: 100%;
   }

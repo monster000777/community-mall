@@ -24,18 +24,9 @@
           <p>登录您的账户继续购物</p>
         </div>
 
-        <a-form
-          :model="loginForm"
-          class="login-form"
-          @finish="handleLogin"
-        >
+        <a-form :model="loginForm" class="login-form" @finish="handleLogin">
           <a-form-item name="username">
-            <a-input
-              v-model:value="loginForm.username"
-              size="large"
-              placeholder="请输入用户名"
-              class="custom-input"
-            >
+            <a-input v-model:value="loginForm.username" size="large" placeholder="请输入用户名" class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
@@ -43,12 +34,7 @@
           </a-form-item>
 
           <a-form-item name="password">
-            <a-input-password
-              v-model:value="loginForm.password"
-              size="large"
-              placeholder="请输入密码"
-              class="custom-input"
-            >
+            <a-input-password v-model:value="loginForm.password" size="large" placeholder="请输入密码" class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
@@ -56,14 +42,7 @@
           </a-form-item>
 
           <a-form-item>
-            <a-button
-              type="primary"
-              html-type="submit"
-              size="large"
-              :loading="loading"
-              block
-              class="login-button"
-            >
+            <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="login-button">
               <n-icon :size="20" :component="LogInOutline" style="margin-right: 8px; vertical-align: -4px;" />
               立即登录
             </a-button>
@@ -198,7 +177,7 @@ function handleQuickLogin(type) {
   position: absolute;
   width: 200%;
   height: 200%;
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
   animation: float 20s ease-in-out infinite;
@@ -207,8 +186,15 @@ function handleQuickLogin(type) {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-20px, -20px) rotate(5deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-20px, -20px) rotate(5deg);
+  }
 }
 
 .left-overlay {
@@ -271,10 +257,21 @@ function handleQuickLogin(type) {
   animation: fadeIn 0.8s ease;
 }
 
-.feature-item:nth-child(1) { animation-delay: 0.3s; }
-.feature-item:nth-child(2) { animation-delay: 0.4s; }
-.feature-item:nth-child(3) { animation-delay: 0.5s; }
-.feature-item:nth-child(4) { animation-delay: 0.6s; }
+.feature-item:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.feature-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.feature-item:nth-child(3) {
+  animation-delay: 0.5s;
+}
+
+.feature-item:nth-child(4) {
+  animation-delay: 0.6s;
+}
 
 .feature-item:hover {
   background: rgba(255, 255, 255, 0.2);
@@ -291,8 +288,8 @@ function handleQuickLogin(type) {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background: white;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.02);
+  background: var(--bg-card);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.02);
 }
 
 .login-form-wrapper {
@@ -424,34 +421,73 @@ function handleQuickLogin(type) {
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .login-left { display: none; }
-  .login-right { flex: 1; }
+  .login-left {
+    display: none;
+  }
+
+  .login-right {
+    flex: 1;
+  }
 }
 
 @media (max-width: 576px) {
-  .login-right { padding: 20px; }
-  .login-form-wrapper { max-width: 100%; }
-  .form-header h2 { font-size: 1.5rem; }
+  .login-right {
+    padding: 20px;
+  }
+
+  .login-form-wrapper {
+    max-width: 100%;
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>

@@ -13,12 +13,8 @@
                 <span v-if="!form.avatar">{{ avatarText }}</span>
               </a-avatar>
               <div class="avatar-overlay">
-                <a-upload
-                  :show-upload-list="false"
-                  :before-upload="beforeUpload"
-                  :custom-request="handleAvatarUpload"
-                  class="upload-trigger"
-                >
+                <a-upload :show-upload-list="false" :before-upload="beforeUpload" :custom-request="handleAvatarUpload"
+                  class="upload-trigger">
                   <n-icon :size="24" :component="CameraOutline" style="color: white" />
                 </a-upload>
               </div>
@@ -31,7 +27,7 @@
               <a-form-item label="用户名">
                 <a-input :value="userStore.userInfo?.username" disabled size="large" />
               </a-form-item>
-              
+
               <a-form-item label="昵称">
                 <a-input v-model:value="form.nickname" size="large" placeholder="请输入昵称" />
               </a-form-item>
@@ -83,9 +79,9 @@
 import { ref, computed } from 'vue'
 import { message } from 'ant-design-vue'
 import { NIcon } from 'naive-ui'
-import { 
-  ShieldCheckmarkOutline, 
-  ReceiptOutline, 
+import {
+  ShieldCheckmarkOutline,
+  ReceiptOutline,
   LocationOutline,
   CameraOutline
 } from '@vicons/ionicons5'
@@ -188,7 +184,7 @@ async function handleSave() {
 }
 
 .profile-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   padding: 40px;
@@ -320,7 +316,7 @@ async function handleSave() {
 
 .link-item:hover {
   transform: translateY(-4px);
-  background: white;
+  background: var(--bg-card);
   box-shadow: var(--shadow-md);
 }
 
@@ -346,11 +342,11 @@ async function handleSave() {
     align-items: center;
     gap: 40px;
   }
-  
+
   .profile-form {
     max-width: 100%;
   }
-  
+
   .links-grid {
     grid-template-columns: repeat(2, 1fr);
   }

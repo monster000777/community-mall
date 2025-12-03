@@ -628,7 +628,7 @@ onMounted(() => {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;

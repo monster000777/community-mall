@@ -1,9 +1,21 @@
 <template>
-  <router-view />
+  <a-config-provider :theme="{ algorithm: themeAlgorithm }">
+    <n-config-provider :theme="naiveTheme">
+      <router-view />
+    </n-config-provider>
+  </a-config-provider>
 </template>
 
 <script setup>
-// 应用根组件
+import { computed } from 'vue'
+import { useThemeStore } from '@/stores/theme'
+import { darkTheme } from 'naive-ui'
+import { theme } from 'ant-design-vue'
+
+const themeStore = useThemeStore()
+
+const naiveTheme = computed(() => themeStore.theme === 'dark' ? darkTheme : null)
+const themeAlgorithm = computed(() => themeStore.theme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm)
 </script>
 
 <style>
@@ -20,4 +32,3 @@
     'Noto Color Emoji';
 }
 </style>
-

@@ -8,7 +8,7 @@
           开启团购之旅
         </h1>
         <p class="brand-subtitle">注册即享新人专属优惠</p>
-        
+
         <div class="benefits">
           <div class="benefit-item" v-for="(benefit, index) in benefits" :key="index">
             <div class="benefit-icon-wrapper">
@@ -28,18 +28,9 @@
           <p>填写以下信息完成注册</p>
         </div>
 
-        <a-form
-          :model="registerForm"
-          class="register-form"
-          @finish="handleRegister"
-        >
+        <a-form :model="registerForm" class="register-form" @finish="handleRegister">
           <a-form-item name="username">
-            <a-input
-              v-model:value="registerForm.username"
-              size="large"
-              placeholder="用户名（4-20个字符）"
-              class="custom-input"
-            >
+            <a-input v-model:value="registerForm.username" size="large" placeholder="用户名（4-20个字符）" class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
@@ -47,13 +38,8 @@
           </a-form-item>
 
           <a-form-item name="phone">
-            <a-input
-              v-model:value="registerForm.phone"
-              size="large"
-              placeholder="手机号"
-              maxlength="11"
-              class="custom-input"
-            >
+            <a-input v-model:value="registerForm.phone" size="large" placeholder="手机号" maxlength="11"
+              class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="CallOutline" class="input-icon" />
               </template>
@@ -61,12 +47,7 @@
           </a-form-item>
 
           <a-form-item name="nickname">
-            <a-input
-              v-model:value="registerForm.nickname"
-              size="large"
-              placeholder="昵称（可选）"
-              class="custom-input"
-            >
+            <a-input v-model:value="registerForm.nickname" size="large" placeholder="昵称（可选）" class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="HappyOutline" class="input-icon" />
               </template>
@@ -74,12 +55,8 @@
           </a-form-item>
 
           <a-form-item name="password">
-            <a-input-password
-              v-model:value="registerForm.password"
-              size="large"
-              placeholder="密码（至少6位）"
-              class="custom-input"
-            >
+            <a-input-password v-model:value="registerForm.password" size="large" placeholder="密码（至少6位）"
+              class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
@@ -87,12 +64,8 @@
           </a-form-item>
 
           <a-form-item name="confirmPassword">
-            <a-input-password
-              v-model:value="registerForm.confirmPassword"
-              size="large"
-              placeholder="确认密码"
-              class="custom-input"
-            >
+            <a-input-password v-model:value="registerForm.confirmPassword" size="large" placeholder="确认密码"
+              class="custom-input">
               <template #prefix>
                 <n-icon :size="18" :component="CheckmarkCircleOutline" class="input-icon" />
               </template>
@@ -100,14 +73,7 @@
           </a-form-item>
 
           <a-form-item>
-            <a-button
-              type="primary"
-              html-type="submit"
-              size="large"
-              :loading="loading"
-              block
-              class="register-button"
-            >
+            <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="register-button">
               <n-icon :size="20" :component="PersonAddOutline" style="margin-right: 8px; vertical-align: -4px;" />
               立即注册
             </a-button>
@@ -247,7 +213,7 @@ async function handleRegister() {
   position: absolute;
   width: 200%;
   height: 200%;
-  background-image: 
+  background-image:
     radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
     radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.18) 0%, transparent 50%);
   animation: float 25s ease-in-out infinite;
@@ -256,8 +222,15 @@ async function handleRegister() {
 }
 
 @keyframes float {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  50% { transform: translate(-30px, -30px) rotate(-5deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  50% {
+    transform: translate(-30px, -30px) rotate(-5deg);
+  }
 }
 
 .left-overlay {
@@ -315,9 +288,17 @@ async function handleRegister() {
   animation: fadeIn 0.8s ease;
 }
 
-.benefit-item:nth-child(1) { animation-delay: 0.3s; }
-.benefit-item:nth-child(2) { animation-delay: 0.4s; }
-.benefit-item:nth-child(3) { animation-delay: 0.5s; }
+.benefit-item:nth-child(1) {
+  animation-delay: 0.3s;
+}
+
+.benefit-item:nth-child(2) {
+  animation-delay: 0.4s;
+}
+
+.benefit-item:nth-child(3) {
+  animation-delay: 0.5s;
+}
 
 .benefit-item:hover {
   background: rgba(255, 255, 255, 0.2);
@@ -361,8 +342,8 @@ async function handleRegister() {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background: white;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.02);
+  background: var(--bg-card);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.02);
 }
 
 .register-form-wrapper {
@@ -454,38 +435,79 @@ async function handleRegister() {
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeInRight {
-  from { opacity: 0; transform: translateX(30px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
-  .register-left { display: none; }
-  .register-right { flex: 1; }
+  .register-left {
+    display: none;
+  }
+
+  .register-right {
+    flex: 1;
+  }
 }
 
 @media (max-width: 768px) {
-  .benefits { grid-template-columns: 1fr; }
+  .benefits {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 576px) {
-  .register-right { padding: 20px; }
-  .register-form-wrapper { max-width: 100%; }
-  .form-header h2 { font-size: 1.5rem; }
+  .register-right {
+    padding: 20px;
+  }
+
+  .register-form-wrapper {
+    max-width: 100%;
+  }
+
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
 }
 </style>

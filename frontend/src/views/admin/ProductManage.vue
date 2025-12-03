@@ -30,7 +30,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已上架</p>
-          <h3 class="stat-value">{{ products.filter(p => p.isOnSale === 1).length }}</h3>
+          <h3 class="stat-value">{{products.filter(p => p.isOnSale === 1).length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -39,7 +39,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已下架</p>
-          <h3 class="stat-value">{{ products.filter(p => p.isOnSale === 0).length }}</h3>
+          <h3 class="stat-value">{{products.filter(p => p.isOnSale === 0).length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -48,20 +48,14 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">库存总数</p>
-          <h3 class="stat-value">{{ products.reduce((sum, p) => sum + p.stock, 0) }}</h3>
+          <h3 class="stat-value">{{products.reduce((sum, p) => sum + p.stock, 0)}}</h3>
         </div>
       </div>
     </div>
 
     <a-card class="table-card" :bordered="false">
-      <a-table
-        :columns="columns"
-        :data-source="products"
-        :pagination="pagination"
-        row-key="id"
-        @change="handleTableChange"
-        :scroll="{ x: 1200 }"
-      >
+      <a-table :columns="columns" :data-source="products" :pagination="pagination" row-key="id"
+        @change="handleTableChange" :scroll="{ x: 1200 }">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'mainImage'">
             <div class="product-image-wrapper">
@@ -90,12 +84,7 @@
                 <template #icon><n-icon :component="CreateOutline" /></template>
                 编辑
               </a-button>
-              <a-button
-                type="text"
-                size="small"
-                @click="handleToggleStatus(record)"
-                class="action-btn"
-              >
+              <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn">
                 <template #icon><n-icon :component="record.isOnSale === 1 ? EyeOffOutline : EyeOutline" /></template>
                 {{ record.isOnSale === 1 ? '下架' : '上架' }}
               </a-button>
@@ -110,13 +99,8 @@
     </a-card>
 
     <!-- 添加/编辑商品弹窗 -->
-    <a-modal
-      v-model:visible="modalVisible"
-      :title="editId ? '编辑商品' : '添加商品'"
-      width="700px"
-      @ok="handleSubmit"
-      :ok-button-props="{ class: 'modal-ok-btn' }"
-    >
+    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑商品' : '添加商品'" width="700px" @ok="handleSubmit"
+      :ok-button-props="{ class: 'modal-ok-btn' }">
       <a-form :model="formState" :label-col="{ span: 5 }" class="product-form">
         <a-form-item label="商品名称" required>
           <a-input v-model:value="formState.productName" size="large" placeholder="请输入商品名称" />
@@ -125,25 +109,14 @@
           <a-input-number v-model:value="formState.categoryId" size="large" style="width: 100%" placeholder="请输入分类ID" />
         </a-form-item>
         <a-form-item label="价格" required>
-          <a-input-number
-            v-model:value="formState.price"
-            :min="0"
-            :precision="2"
-            size="large"
-            style="width: 100%"
-            placeholder="请输入价格"
-          >
+          <a-input-number v-model:value="formState.price" :min="0" :precision="2" size="large" style="width: 100%"
+            placeholder="请输入价格">
             <template #addonBefore>¥</template>
           </a-input-number>
         </a-form-item>
         <a-form-item label="库存" required>
-          <a-input-number
-            v-model:value="formState.stock"
-            :min="0"
-            size="large"
-            style="width: 100%"
-            placeholder="请输入库存数量"
-          />
+          <a-input-number v-model:value="formState.stock" :min="0" size="large" style="width: 100%"
+            placeholder="请输入库存数量" />
         </a-form-item>
         <a-form-item label="主图URL">
           <a-input v-model:value="formState.mainImage" size="large" placeholder="请输入图片URL" />
@@ -155,13 +128,8 @@
           <a-textarea v-model:value="formState.description" :rows="4" size="large" placeholder="请输入商品描述" />
         </a-form-item>
         <a-form-item label="是否上架">
-          <a-switch
-            v-model:checked="formState.isOnSale"
-            :checked-value="1"
-            :un-checked-value="0"
-            checked-children="上架"
-            un-checked-children="下架"
-          />
+          <a-switch v-model:checked="formState.isOnSale" :checked-value="1" :un-checked-value="0" checked-children="上架"
+            un-checked-children="下架" />
         </a-form-item>
       </a-form>
     </a-modal>
@@ -399,7 +367,7 @@ function resetForm() {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -421,10 +389,21 @@ function resetForm() {
   flex-shrink: 0;
 }
 
-.icon-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); }
-.icon-success { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
-.icon-error { background: linear-gradient(135deg, #EF4444 0%, #F87171 100%); }
-.icon-info { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
+.icon-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.icon-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.icon-error {
+  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+}
+
+.icon-info {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
 
 .stat-info {
   flex: 1;
@@ -531,7 +510,7 @@ function resetForm() {
   .stats-cards {
     grid-template-columns: 1fr;
   }
-  
+
   .page-header {
     flex-direction: column;
     align-items: flex-start;

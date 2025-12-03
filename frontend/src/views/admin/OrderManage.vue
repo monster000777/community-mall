@@ -26,7 +26,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">待支付</p>
-          <h3 class="stat-value">{{ orders.filter(o => o.orderStatus === 1).length }}</h3>
+          <h3 class="stat-value">{{orders.filter(o => o.orderStatus === 1).length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -35,7 +35,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已完成</p>
-          <h3 class="stat-value">{{ orders.filter(o => o.orderStatus === 4).length }}</h3>
+          <h3 class="stat-value">{{orders.filter(o => o.orderStatus === 4).length}}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -50,15 +50,8 @@
     </div>
 
     <a-card class="table-card" :bordered="false">
-      <a-table
-        :columns="columns"
-        :data-source="orders"
-        :pagination="pagination"
-        row-key="id"
-        @change="handleTableChange"
-        :loading="loading"
-        :locale="{ emptyText: '暂无订单' }"
-      >
+      <a-table :columns="columns" :data-source="orders" :pagination="pagination" row-key="id"
+        @change="handleTableChange" :loading="loading" :locale="{ emptyText: '暂无订单' }">
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'orderNo'">
             <div class="order-no">{{ record.orderNo }}</div>
@@ -76,44 +69,20 @@
           </template>
           <template v-else-if="column.key === 'action'">
             <a-space>
-              <a-button
-                v-if="record.orderStatus === 1"
-                type="text"
-                size="small"
-                class="action-btn"
-                :loading="cancelingOrderId === record.id"
-                @click="handleAdminCancel(record)"
-              >
+              <a-button v-if="record.orderStatus === 1" type="text" size="small" class="action-btn"
+                :loading="cancelingOrderId === record.id" @click="handleAdminCancel(record)">
                 取消
               </a-button>
-              <a-button
-                v-if="record.orderStatus === 2"
-                type="text"
-                size="small"
-                class="action-btn"
-                :loading="shippingOrderId === record.id"
-                @click="handleShip(record)"
-              >
+              <a-button v-if="record.orderStatus === 2" type="text" size="small" class="action-btn"
+                :loading="shippingOrderId === record.id" @click="handleShip(record)">
                 发货
               </a-button>
-              <a-button
-                v-if="record.orderStatus === 2"
-                type="text"
-                size="small"
-                class="action-btn"
-                :loading="refundingOrderId === record.id"
-                @click="handleRefund(record)"
-              >
+              <a-button v-if="record.orderStatus === 2" type="text" size="small" class="action-btn"
+                :loading="refundingOrderId === record.id" @click="handleRefund(record)">
                 退款
               </a-button>
-              <a-button
-                v-if="record.orderStatus === 3"
-                type="text"
-                size="small"
-                class="action-btn"
-                :loading="completingOrderId === record.id"
-                @click="handleComplete(record)"
-              >
+              <a-button v-if="record.orderStatus === 3" type="text" size="small" class="action-btn"
+                :loading="completingOrderId === record.id" @click="handleComplete(record)">
                 完成
               </a-button>
               <a-button type="text" size="small" @click="viewDetail(record)" class="action-btn">
@@ -127,12 +96,7 @@
     </a-card>
 
     <!-- 订单详情弹窗 -->
-    <a-modal
-      v-model:visible="detailVisible"
-      title="订单详情"
-      width="800px"
-      :footer="null"
-    >
+    <a-modal v-model:visible="detailVisible" title="订单详情" width="800px" :footer="null">
       <div v-if="currentOrder" class="order-detail">
         <a-descriptions :column="2" bordered>
           <a-descriptions-item label="订单号">
@@ -424,7 +388,7 @@ function viewDetail(order) {
   align-items: center;
   gap: 16px;
   padding: 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   transition: all 0.3s ease;
@@ -446,10 +410,21 @@ function viewDetail(order) {
   flex-shrink: 0;
 }
 
-.icon-primary { background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); }
-.icon-info { background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%); }
-.icon-success { background: linear-gradient(135deg, #10B981 0%, #34D399 100%); }
-.icon-purple { background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%); }
+.icon-primary {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+}
+
+.icon-info {
+  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+.icon-success {
+  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+}
+
+.icon-purple {
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+}
 
 .stat-info {
   flex: 1;

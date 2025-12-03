@@ -10,24 +10,16 @@
               <h3>商品分类</h3>
             </div>
             <div class="category-list">
-              <div 
-                class="category-item" 
-                :class="{ active: selectedCategory[0] === '0' || !selectedCategory[0] }"
-                @click="handleCategoryChange(null)"
-              >
+              <div class="category-item" :class="{ active: selectedCategory[0] === '0' || !selectedCategory[0] }"
+                @click="handleCategoryChange(null)">
                 <div class="category-icon">
                   <n-icon :size="18" :component="GridOutline" />
                 </div>
                 <span>全部商品</span>
                 <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div 
-                v-for="category in categories"
-                :key="category.id"
-                class="category-item"
-                :class="{ active: selectedCategory[0] === category.id }"
-                @click="handleCategoryChange(category.id)"
-              >
+              <div v-for="category in categories" :key="category.id" class="category-item"
+                :class="{ active: selectedCategory[0] === category.id }" @click="handleCategoryChange(category.id)">
                 <div class="category-icon">
                   <n-icon :size="18" :component="LeafOutline" />
                 </div>
@@ -42,13 +34,8 @@
         <div class="main-content">
           <div class="toolbar">
             <div class="search-wrapper">
-              <a-input-search
-                v-model:value="keyword"
-                placeholder="搜索新鲜食材..."
-                size="large"
-                class="custom-search"
-                @search="loadProducts"
-              >
+              <a-input-search v-model:value="keyword" placeholder="搜索新鲜食材..." size="large" class="custom-search"
+                @search="loadProducts">
                 <template #prefix>
                   <n-icon :size="18" :component="SearchOutline" style="color: #999" />
                 </template>
@@ -69,7 +56,8 @@
           </div>
 
           <div v-else class="product-grid">
-            <div v-for="product in products" :key="product.id" class="product-card" @click="goToProductDetail(product.id)">
+            <div v-for="product in products" :key="product.id" class="product-card"
+              @click="goToProductDetail(product.id)">
               <div class="product-image-wrapper">
                 <img :src="product.mainImage" :alt="product.productName" class="product-image" />
                 <div class="product-overlay">
@@ -90,14 +78,16 @@
             </div>
           </div>
 
-          <div class="pagination-wrapper" v-if="products.length > 0">
-            <a-pagination
-              v-model:current="pagination.current"
-              v-model:page-size="pagination.pageSize"
-              :total="pagination.total"
-              show-size-changer
-              @change="loadProducts"
-            />
+          <!-- Desktop Pagination -->
+          <div class="pagination-wrapper desktop-pagination" v-if="products.length > 0">
+            <a-pagination v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
+              :total="pagination.total" @change="loadProducts" />
+          </div>
+
+          <!-- Mobile Pagination -->
+          <div class="pagination-wrapper mobile-pagination" v-if="products.length > 0">
+            <a-pagination v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
+              :total="pagination.total" simple @change="loadProducts" />
           </div>
         </div>
       </div>
@@ -109,10 +99,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { NIcon } from 'naive-ui'
-import { 
-  FilterOutline, 
-  GridOutline, 
-  LeafOutline, 
+import {
+  FilterOutline,
+  GridOutline,
+  LeafOutline,
   ChevronForwardOutline,
   SearchOutline,
   BasketOutline
@@ -201,7 +191,7 @@ function goToProductDetail(productId) {
 }
 
 .filter-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -274,7 +264,7 @@ function goToProductDetail(productId) {
 
 .toolbar {
   margin-bottom: 24px;
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -305,7 +295,7 @@ function goToProductDetail(productId) {
 }
 
 .product-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
@@ -409,16 +399,29 @@ function goToProductDetail(productId) {
 }
 
 .pagination-wrapper {
-  margin-top: 40px;
+  margin-top: 24px;
+  padding: 12px 24px;
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   display: flex;
-  justify-content: center;
+  width: fit-content;
+}
+
+.desktop-pagination {
+  margin-left: auto;
+}
+
+.mobile-pagination {
+  display: none;
+  margin: 24px auto 0;
 }
 
 .loading-state,
 .empty-state {
   padding: 60px;
   text-align: center;
-  background: white;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
 }
@@ -434,29 +437,38 @@ function goToProductDetail(productId) {
   .products-layout {
     flex-direction: column;
   }
-  
+
   .sidebar {
     width: 100%;
   }
-  
+
   .filter-card {
     position: static;
   }
-  
+
   .category-list {
     display: flex;
     overflow-x: auto;
     padding-bottom: 10px;
   }
-  
+
   .category-item {
     flex-shrink: 0;
     margin-right: 10px;
     margin-bottom: 0;
   }
-  
+
   .arrow-icon {
     display: none;
+  }
+
+  .desktop-pagination {
+    display: none;
+  }
+
+  .mobile-pagination {
+    display: flex;
+    margin-top: 20px;
   }
 }
 </style>
