@@ -3,13 +3,13 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="GridOutline" class="title-icon" />
+          <AppIcon :size="28" :component="GridOutline" class="title-icon" />
           商品管理
         </h2>
         <p class="page-desc">管理所有商品信息，包括上下架、库存等</p>
       </div>
       <a-button type="primary" size="large" @click="showAddModal" class="add-button">
-        <n-icon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
         添加商品
       </a-button>
     </div>
@@ -17,7 +17,7 @@
     <div class="stats-cards">
       <div class="stat-card">
         <div class="stat-icon icon-primary">
-          <n-icon :size="28" :component="CubeOutline" />
+          <AppIcon :size="28" :component="CubeOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">商品总数</p>
@@ -26,7 +26,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-success">
-          <n-icon :size="28" :component="CheckmarkCircleOutline" />
+          <AppIcon :size="28" :component="CheckmarkCircleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">已上架</p>
@@ -35,7 +35,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-error">
-          <n-icon :size="28" :component="CloseCircleOutline" />
+          <AppIcon :size="28" :component="CloseCircleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">已下架</p>
@@ -44,7 +44,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-info">
-          <n-icon :size="28" :component="LayersOutline" />
+          <AppIcon :size="28" :component="LayersOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">库存总数</p>
@@ -81,15 +81,21 @@
           <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
-                <template #icon><n-icon :component="CreateOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="CreateOutline" />
+                </template>
                 编辑
               </a-button>
               <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn">
-                <template #icon><n-icon :component="record.isOnSale === 1 ? EyeOffOutline : EyeOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="record.isOnSale === 1 ? EyeOffOutline : EyeOutline" />
+                </template>
                 {{ record.isOnSale === 1 ? '下架' : '上架' }}
               </a-button>
               <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
-                <template #icon><n-icon :component="TrashOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="TrashOutline" />
+                </template>
                 删除
               </a-button>
             </a-space>
@@ -139,7 +145,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   GridOutline,
   AddOutline,
@@ -516,5 +522,13 @@ function resetForm() {
     align-items: flex-start;
     gap: 16px;
   }
+}
+
+.action-btn {
+  padding: 4px 8px;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 </style>

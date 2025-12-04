@@ -3,13 +3,13 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="FlameOutline" class="title-icon" />
+          <AppIcon :size="28" :component="FlameOutline" class="title-icon" />
           团购活动管理
         </h2>
         <p class="page-desc">管理所有团购活动，包括创建、编辑和删除</p>
       </div>
       <a-button type="primary" size="large" @click="showCreateModal" class="add-button">
-        <n-icon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
         创建活动
       </a-button>
     </div>
@@ -17,7 +17,7 @@
     <div class="stats-cards">
       <div class="stat-card">
         <div class="stat-icon icon-primary">
-          <n-icon :size="28" :component="FlameOutline" />
+          <AppIcon :size="28" :component="FlameOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">活动总数</p>
@@ -26,7 +26,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-success">
-          <n-icon :size="28" :component="CheckmarkCircleOutline" />
+          <AppIcon :size="28" :component="CheckmarkCircleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">进行中</p>
@@ -35,7 +35,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-info">
-          <n-icon :size="28" :component="TimeOutline" />
+          <AppIcon :size="28" :component="TimeOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">未开始</p>
@@ -44,7 +44,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-purple">
-          <n-icon :size="28" :component="StopCircleOutline" />
+          <AppIcon :size="28" :component="StopCircleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">已结束</p>
@@ -123,7 +123,7 @@
           <template v-else-if="column.key === 'status'">
             <a-tag :color="getStatusColor(record.status)" class="status-tag">
               <template #icon>
-                <n-icon :component="getStatusIcon(record.status)" />
+                <AppIcon :component="getStatusIcon(record.status)" />
               </template>
               {{ getStatusText(record.status) }}
             </a-tag>
@@ -133,7 +133,9 @@
           <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
-                <template #icon><n-icon :component="CreateOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="CreateOutline" />
+                </template>
                 编辑
               </a-button>
               <a-dropdown>
@@ -228,7 +230,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import { DownOutlined } from '@ant-design/icons-vue'
 import {
   AddOutline,
@@ -803,6 +805,9 @@ onMounted(() => {
 .action-btn {
   padding: 4px 8px;
   font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .activity-form :deep(.ant-input),

@@ -3,7 +3,7 @@ import { createPinia } from 'pinia'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/reset.css'
 import '@/styles/main.css'
-import naive from 'naive-ui'
+import AppIcon from '@/components/AppIcon.vue'
 import App from './App.vue'
 import router from './router'
 
@@ -13,6 +13,8 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 app.use(Antd)
-app.use(naive)
+
+// Register AppIcon as NIcon to maintain compatibility with existing templates
+app.component('AppIcon', AppIcon)
 
 app.mount('#app')

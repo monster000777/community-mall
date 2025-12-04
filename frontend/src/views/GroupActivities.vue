@@ -6,37 +6,37 @@
         <div class="sidebar">
           <div class="filter-card">
             <div class="filter-header">
-              <n-icon :size="20" :component="FilterOutline" />
+              <AppIcon :size="20" :component="FilterOutline" />
               <h3>活动状态</h3>
             </div>
             <div class="category-list">
               <div class="category-item" :class="{ active: statusFilter === null }" @click="handleFilterChange(null)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="GridOutline" />
+                  <AppIcon :size="18" :component="GridOutline" />
                 </div>
                 <span>全部活动</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
               <div class="category-item" :class="{ active: statusFilter === 1 }" @click="handleFilterChange(1)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="FlameOutline" />
+                  <AppIcon :size="18" :component="FlameOutline" />
                 </div>
                 <span>进行中</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
               <div class="category-item" :class="{ active: statusFilter === 0 }" @click="handleFilterChange(0)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="TimeOutline" />
+                  <AppIcon :size="18" :component="TimeOutline" />
                 </div>
                 <span>即将开始</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
               <div class="category-item" :class="{ active: statusFilter === 2 }" @click="handleFilterChange(2)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="StopCircleOutline" />
+                  <AppIcon :size="18" :component="StopCircleOutline" />
                 </div>
                 <span>已结束</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
             </div>
           </div>
@@ -115,7 +115,7 @@
 
             <!-- 空状态 -->
             <div v-else class="empty-state">
-              <n-icon :size="64" :component="BasketOutline" style="color: #ddd" />
+              <AppIcon :size="64" :component="BasketOutline" style="color: #ddd" />
               <p>暂无相关团购活动</p>
             </div>
           </a-spin>
@@ -142,7 +142,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { UserOutlined, ShoppingOutlined, ClockCircleOutlined } from '@ant-design/icons-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   FilterOutline,
   GridOutline,

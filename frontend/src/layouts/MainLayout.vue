@@ -2,42 +2,42 @@
   <a-layout class="layout">
     <a-layout-header class="header">
       <div class="logo">
-        <n-icon :size="38" :component="StorefrontOutline" class="logo-icon" />
+        <AppIcon :size="38" :component="StorefrontOutline" class="logo-icon" />
         <span class="logo-text">社区团购</span>
       </div>
       <a-menu v-model:selectedKeys="selectedKeys" mode="horizontal" :style="{ lineHeight: '64px', flex: 1 }"
         class="nav-menu desktop-menu">
         <a-menu-item key="home" @click="$router.push('/')">
-          <n-icon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;" />
           首页
         </a-menu-item>
         <a-menu-item key="products" @click="$router.push('/products')">
-          <n-icon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;" />
           商品列表
         </a-menu-item>
         <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
-          <n-icon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;" />
           团购活动
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
           <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
-            <n-icon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;" />
             购物车
           </a-badge>
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
-          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="ReceiptOutline" style="margin-right: 6px; vertical-align: -3px;" />
           我的订单
         </a-menu-item>
       </a-menu>
       <div class="user-info">
         <a-button type="text" shape="circle" @click="themeStore.toggleTheme" class="theme-toggle">
           <template #icon>
-            <n-icon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+            <AppIcon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
           </template>
         </a-button>
         <template v-if="userStore.token">
-          <a-dropdown>
+          <a-dropdown overlayClassName="header-user-dropdown" :trigger="['click', 'hover']">
             <a class="ant-dropdown-link user-dropdown-trigger" @click.prevent>
               <a-avatar :size="32" :src="userStore.userInfo?.avatar" class="header-avatar" :style="headerAvatarStyle">
                 <span v-if="!userStore.userInfo?.avatar">{{ avatarText }}</span>
@@ -45,26 +45,26 @@
               <span class="header-username">
                 {{ userStore.userInfo?.nickname || userStore.userInfo?.username }}
               </span>
-              <n-icon :size="16" :component="ChevronDownOutline" style="margin-left: 4px; vertical-align: -2px;" />
+              <AppIcon :size="16" :component="ChevronDownOutline" />
             </a>
             <template #overlay>
               <a-menu class="user-dropdown-menu">
                 <a-menu-item v-if="userStore.isAdmin()" @click="$router.push('/admin')">
-                  <n-icon :size="16" :component="ShieldCheckmarkOutline"
+                  <AppIcon :size="16" :component="ShieldCheckmarkOutline"
                     style="margin-right: 8px; vertical-align: -2px;" />
                   管理后台
                 </a-menu-item>
                 <a-menu-item @click="$router.push('/profile')">
-                  <n-icon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                  <AppIcon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   个人中心
                 </a-menu-item>
                 <a-menu-item @click="$router.push('/address')">
-                  <n-icon :size="16" :component="LocationOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                  <AppIcon :size="16" :component="LocationOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   收货地址
                 </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="handleLogout" class="logout-item">
-                  <n-icon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                  <AppIcon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   退出登录
                 </a-menu-item>
               </a-menu>
@@ -73,49 +73,49 @@
         </template>
         <template v-else>
           <a-button type="link" @click="$router.push('/login')" class="login-btn">
-            <n-icon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;" />
             登录
           </a-button>
           <a-button type="primary" @click="$router.push('/register')" class="register-btn">
-            <n-icon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;" />
             注册
           </a-button>
         </template>
       </div>
       <div class="mobile-menu-trigger">
-        <n-icon :size="24" :component="MenuOutline" @click="mobileMenuOpen = true" />
+        <AppIcon :size="24" :component="MenuOutline" @click="mobileMenuOpen = true" />
       </div>
     </a-layout-header>
 
     <a-drawer v-model:open="mobileMenuOpen" placement="right" :closable="false" class="mobile-drawer">
       <div class="mobile-menu-header">
         <div class="logo">
-          <n-icon :size="28" :component="StorefrontOutline" class="logo-icon" />
+          <AppIcon :size="28" :component="StorefrontOutline" class="logo-icon" />
           <span class="logo-text">社区团购</span>
         </div>
-        <n-icon :size="24" :component="CloseOutline" @click="mobileMenuOpen = false" />
+        <AppIcon :size="24" :component="CloseOutline" @click="mobileMenuOpen = false" />
       </div>
       <a-menu v-model:selectedKeys="selectedKeys" mode="inline" class="mobile-nav-menu" @click="mobileMenuOpen = false">
         <a-menu-item key="home" @click="$router.push('/')">
-          <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px;" />
+          <AppIcon :size="18" :component="HomeOutline" style="margin-right: 12px;" />
           首页
         </a-menu-item>
         <a-menu-item key="products" @click="$router.push('/products')">
-          <n-icon :size="18" :component="GridOutline" style="margin-right: 12px;" />
+          <AppIcon :size="18" :component="GridOutline" style="margin-right: 12px;" />
           商品列表
         </a-menu-item>
         <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
-          <n-icon :size="18" :component="FlameOutline" style="margin-right: 12px;" />
+          <AppIcon :size="18" :component="FlameOutline" style="margin-right: 12px;" />
           团购活动
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
           <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
-            <n-icon :size="18" :component="CartOutline" style="margin-right: 12px;" />
+            <AppIcon :size="18" :component="CartOutline" style="margin-right: 12px;" />
             购物车
           </a-badge>
         </a-menu-item>
         <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
-          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 12px;" />
+          <AppIcon :size="18" :component="ReceiptOutline" style="margin-right: 12px;" />
           我的订单
         </a-menu-item>
       </a-menu>
@@ -132,16 +132,22 @@
         <div class="footer-top">
           <div class="footer-col brand-col">
             <div class="footer-logo">
-              <n-icon :size="32" :component="StorefrontOutline" class="footer-icon" />
+              <AppIcon :size="32" :component="StorefrontOutline" class="footer-icon" />
               <span>社区团购</span>
             </div>
             <p class="brand-desc">
               致力于为社区居民提供新鲜、优质、实惠的生鲜果蔬和生活用品。源头直采，全程冷链，品质更有保障。
             </p>
             <div class="social-links">
-              <a href="#" class="social-link"><n-icon :size="20" :component="LogoWechat" /></a>
-              <a href="#" class="social-link"><n-icon :size="20" :component="LogoAlipay" /></a>
-              <a href="#" class="social-link"><n-icon :size="20" :component="LogoTux" /></a>
+              <a href="#" class="social-link">
+                <AppIcon :size="20" :component="LogoWechat" />
+              </a>
+              <a href="#" class="social-link">
+                <AppIcon :size="20" :component="LogoAlipay" />
+              </a>
+              <a href="#" class="social-link">
+                <AppIcon :size="20" :component="LogoTux" />
+              </a>
             </div>
           </div>
 
@@ -168,9 +174,15 @@
           <div class="footer-col contact-col">
             <h3>联系我们</h3>
             <div class="contact-info">
-              <p><n-icon :component="CallOutline" /> 400-123-4567</p>
-              <p><n-icon :component="MailOutline" /> support@community-mall.com</p>
-              <p><n-icon :component="LocationOutline" /> 北京市朝阳区科技园88号</p>
+              <p>
+                <AppIcon :component="CallOutline" /> 400-123-4567
+              </p>
+              <p>
+                <AppIcon :component="MailOutline" /> support@community-mall.com
+              </p>
+              <p>
+                <AppIcon :component="LocationOutline" /> 北京市朝阳区科技园88号
+              </p>
             </div>
           </div>
         </div>
@@ -195,7 +207,7 @@
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NIcon } from 'naive-ui'
+
 import {
   StorefrontOutline,
   HomeOutline,
@@ -417,6 +429,7 @@ async function handleLogout() {
   display: flex;
   gap: 16px;
   align-items: center;
+  font-size: 15px;
 }
 
 .theme-toggle {
@@ -431,19 +444,26 @@ async function handleLogout() {
 .user-dropdown-trigger {
   display: flex;
   align-items: center;
-  padding: 4px 8px;
-  border-radius: 20px;
-  transition: background 0.3s ease;
+  gap: 8px;
+  padding: 0 8px;
+  border-radius: var(--radius-md);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  color: var(--text-primary);
 }
 
-.user-dropdown-trigger:hover {
+.user-dropdown-trigger:hover,
+.user-dropdown-trigger:focus,
+.ant-dropdown-open .user-dropdown-trigger {
   background: var(--bg-body);
 }
 
 .header-avatar {
-  margin-right: 8px;
   border: 2px solid white;
   box-shadow: 0 0 0 1px var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-username {
@@ -673,5 +693,55 @@ async function handleLogout() {
     gap: 16px;
     text-align: center;
   }
+}
+</style>
+
+<style>
+/* Global styles for dropdown */
+.header-user-dropdown .ant-dropdown-menu {
+  border-radius: 12px;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme='dark'] .header-user-dropdown .ant-dropdown-menu {
+  background: rgba(31, 41, 55, 0.95);
+  border-color: var(--border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.header-user-dropdown .ant-dropdown-menu-item {
+  border-radius: 8px;
+  padding: 10px 16px;
+  margin-bottom: 4px;
+  transition: all 0.2s ease;
+  color: var(--text-primary);
+}
+
+.header-user-dropdown .ant-dropdown-menu-item:last-child {
+  margin-bottom: 0;
+}
+
+.header-user-dropdown .ant-dropdown-menu-item:hover {
+  background: var(--bg-body);
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.header-user-dropdown .ant-dropdown-menu-item-divider {
+  background-color: var(--border-color);
+  margin: 4px 0;
+}
+
+.header-user-dropdown .logout-item {
+  color: var(--error-color);
+}
+
+.header-user-dropdown .logout-item:hover {
+  background: var(--error-bg);
+  color: var(--error-color);
 }
 </style>

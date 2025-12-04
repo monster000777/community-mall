@@ -6,25 +6,25 @@
         <div class="sidebar">
           <div class="filter-card">
             <div class="filter-header">
-              <n-icon :size="20" :component="FilterOutline" />
+              <AppIcon :size="20" :component="FilterOutline" />
               <h3>商品分类</h3>
             </div>
             <div class="category-list">
               <div class="category-item" :class="{ active: selectedCategory[0] === '0' || !selectedCategory[0] }"
                 @click="handleCategoryChange(null)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="GridOutline" />
+                  <AppIcon :size="18" :component="GridOutline" />
                 </div>
                 <span>全部商品</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div v-for="category in categories" :key="category.id" class="category-item"
+              <div v-for="(category, index) in categories" :key="category.id" class="category-item"
                 :class="{ active: selectedCategory[0] === category.id }" @click="handleCategoryChange(category.id)">
                 <div class="category-icon">
-                  <n-icon :size="18" :component="LeafOutline" />
+                  <AppIcon :size="18" :component="getCategoryIcon(index)" />
                 </div>
                 <span>{{ category.categoryName }}</span>
-                <n-icon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
+                <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
             </div>
           </div>
@@ -37,7 +37,7 @@
               <a-input-search v-model:value="keyword" placeholder="搜索新鲜食材..." size="large" class="custom-search"
                 @search="loadProducts">
                 <template #prefix>
-                  <n-icon :size="18" :component="SearchOutline" style="color: #999" />
+                  <AppIcon :size="18" :component="SearchOutline" style="color: #999" />
                 </template>
               </a-input-search>
             </div>
@@ -51,7 +51,7 @@
           </div>
 
           <div v-else-if="products.length === 0" class="empty-state">
-            <n-icon :size="64" :component="BasketOutline" style="color: #ddd" />
+            <AppIcon :size="64" :component="BasketOutline" style="color: #ddd" />
             <p>暂无相关商品</p>
           </div>
 
@@ -98,14 +98,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NIcon } from 'naive-ui'
+
 import {
   FilterOutline,
   GridOutline,
   LeafOutline,
   ChevronForwardOutline,
   SearchOutline,
-  BasketOutline
+  BasketOutline,
+  NutritionOutline,
+  FishOutline,
+  FastFoodOutline,
+  WineOutline,
+  IceCreamOutline,
+  CafeOutline,
+  RestaurantOutline,
+  BeerOutline
 } from '@vicons/ionicons5'
 import { getAllCategories } from '@/api/category'
 import { getProductList } from '@/api/product'
@@ -124,6 +132,22 @@ const pagination = ref({
   pageSize: 12,
   total: 0
 })
+
+const categoryIcons = [
+  NutritionOutline,
+  FishOutline,
+  FastFoodOutline,
+  WineOutline,
+  IceCreamOutline,
+  CafeOutline,
+  RestaurantOutline,
+  BeerOutline,
+  LeafOutline
+]
+
+const getCategoryIcon = (index) => {
+  return categoryIcons[index % categoryIcons.length]
+}
 
 onMounted(() => {
   loadCategories()

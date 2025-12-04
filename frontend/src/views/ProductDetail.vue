@@ -37,7 +37,7 @@
 
             <div class="button-group">
               <a-button type="primary" size="large" class="add-cart-btn" @click="handleAddToCart">
-                <n-icon :size="20" :component="CartOutline" style="margin-right: 8px" />
+                <AppIcon :size="20" :component="CartOutline" style="margin-right: 8px" />
                 加入购物车
               </a-button>
               <a-button size="large" class="back-btn" @click="$router.back()">
@@ -48,15 +48,15 @@
 
           <div class="service-guarantee">
             <div class="service-item">
-              <n-icon :size="18" :component="CheckmarkCircleOutline" class="service-icon" />
+              <AppIcon :size="18" :component="CheckmarkCircleOutline" class="service-icon" />
               <span>正品保证</span>
             </div>
             <div class="service-item">
-              <n-icon :size="18" :component="RocketOutline" class="service-icon" />
+              <AppIcon :size="18" :component="RocketOutline" class="service-icon" />
               <span>极速发货</span>
             </div>
             <div class="service-item">
-              <n-icon :size="18" :component="ShieldCheckmarkOutline" class="service-icon" />
+              <AppIcon :size="18" :component="ShieldCheckmarkOutline" class="service-icon" />
               <span>售后无忧</span>
             </div>
           </div>
@@ -70,7 +70,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   CartOutline,
   CheckmarkCircleOutline,

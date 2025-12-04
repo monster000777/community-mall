@@ -4,13 +4,13 @@
       <div class="left-overlay"></div>
       <div class="left-content">
         <h1 class="brand-title">
-          <n-icon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
+          <AppIcon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
           社区团购商城
         </h1>
         <p class="brand-subtitle">新鲜食材 · 优惠价格 · 品质保证</p>
         <div class="features">
           <div class="feature-item" v-for="(feature, index) in features" :key="index">
-            <n-icon :size="24" :component="feature.icon" class="feature-icon" />
+            <AppIcon :size="24" :component="feature.icon" class="feature-icon" />
             <span>{{ feature.text }}</span>
           </div>
         </div>
@@ -28,7 +28,7 @@
           <a-form-item name="username">
             <a-input v-model:value="loginForm.username" size="large" placeholder="请输入用户名" class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="PersonOutline" class="input-icon" />
+                <AppIcon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -36,14 +36,14 @@
           <a-form-item name="password">
             <a-input-password v-model:value="loginForm.password" size="large" placeholder="请输入密码" class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="LockClosedOutline" class="input-icon" />
+                <AppIcon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
 
           <a-form-item>
             <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="login-button">
-              <n-icon :size="20" :component="LogInOutline" style="margin-right: 8px; vertical-align: -4px;" />
+              <AppIcon :size="20" :component="LogInOutline" style="margin-right: 8px; vertical-align: -4px;" />
               立即登录
             </a-button>
           </a-form-item>
@@ -53,7 +53,7 @@
           <span>还没有账户？</span>
           <a @click="$router.push('/register')" class="register-link">
             立即注册
-            <n-icon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
+            <AppIcon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
           </a>
         </div>
 
@@ -63,11 +63,11 @@
 
         <div class="quick-login">
           <a-button size="large" block @click="handleQuickLogin('user')" class="quick-btn">
-            <n-icon :size="18" :component="PersonCircleOutline" style="margin-right: 8px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="PersonCircleOutline" style="margin-right: 8px; vertical-align: -3px;" />
             普通用户登录
           </a-button>
           <a-button size="large" block @click="handleQuickLogin('admin')" class="quick-btn mt-3">
-            <n-icon :size="18" :component="ShieldCheckmarkOutline" style="margin-right: 8px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="ShieldCheckmarkOutline" style="margin-right: 8px; vertical-align: -3px;" />
             管理员登录
           </a-button>
         </div>
@@ -80,7 +80,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   StorefrontOutline,
   PersonOutline,

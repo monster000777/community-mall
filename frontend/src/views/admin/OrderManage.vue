@@ -3,7 +3,7 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="ReceiptOutline" class="title-icon" />
+          <AppIcon :size="28" :component="ReceiptOutline" class="title-icon" />
           订单管理
         </h2>
         <p class="page-desc">查看和管理所有订单信息</p>
@@ -13,7 +13,7 @@
     <div class="stats-cards">
       <div class="stat-card">
         <div class="stat-icon icon-primary">
-          <n-icon :size="28" :component="DocumentTextOutline" />
+          <AppIcon :size="28" :component="DocumentTextOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">订单总数</p>
@@ -22,7 +22,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-info">
-          <n-icon :size="28" :component="TimeOutline" />
+          <AppIcon :size="28" :component="TimeOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">待支付</p>
@@ -31,7 +31,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-success">
-          <n-icon :size="28" :component="CheckmarkDoneOutline" />
+          <AppIcon :size="28" :component="CheckmarkDoneOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">已完成</p>
@@ -40,7 +40,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-purple">
-          <n-icon :size="28" :component="CashOutline" />
+          <AppIcon :size="28" :component="CashOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">总金额</p>
@@ -59,7 +59,7 @@
           <template v-if="column.key === 'orderStatus'">
             <a-tag :color="getStatusColor(record.orderStatus)" class="status-tag">
               <template #icon>
-                <n-icon :component="getStatusIcon(record.orderStatus)" />
+                <AppIcon :component="getStatusIcon(record.orderStatus)" />
               </template>
               {{ getStatusText(record.orderStatus) }}
             </a-tag>
@@ -86,7 +86,9 @@
                 完成
               </a-button>
               <a-button type="text" size="small" @click="viewDetail(record)" class="action-btn">
-                <template #icon><n-icon :component="EyeOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="EyeOutline" />
+                </template>
                 详情
               </a-button>
             </a-space>
@@ -139,7 +141,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { Modal, message } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   ReceiptOutline,
   DocumentTextOutline,
@@ -480,6 +482,9 @@ function viewDetail(order) {
 .action-btn {
   padding: 4px 8px;
   font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .order-detail {

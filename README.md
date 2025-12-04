@@ -22,7 +22,6 @@
 - Vue 3.3.4 (Composition API)
 - Vite 4.4.9
 - Ant Design Vue 4.0.3
-- Naive UI (图标组件)
 - Axios 1.5.0
 - Pinia 2.1.6
 - Vue Router 4.2.4
@@ -75,6 +74,8 @@ community-mall/
 │   │   │   ├── profile.js            # 个人中心接口
 │   │   │   ├── user.js               # 用户管理接口
 │   │   │   └── request.js            # Axios封装
+│   │   ├── components/               # 公共组件
+│   │   │   └── AppIcon.vue           # 图标组件
 │   │   ├── layouts/                  # 布局组件
 │   │   │   ├── MainLayout.vue        # 主布局
 │   │   │   └── AdminLayout.vue       # 管理后台布局
@@ -83,6 +84,9 @@ community-mall/
 │   │   ├── stores/                   # Pinia状态管理
 │   │   │   ├── user.js               # 用户状态
 │   │   │   └── cart.js               # 购物车状态
+│   │   ├── styles/                   # 全局样式
+│   │   │   ├── main.css              # 主样式文件
+│   │   │   └── variables.css         # CSS变量定义
 │   │   ├── views/                    # 页面组件
 │   │   │   ├── Home.vue              # 首页
 │   │   │   ├── Login.vue             # 登录页

@@ -4,7 +4,7 @@
       <div class="left-overlay"></div>
       <div class="left-content">
         <h1 class="brand-title">
-          <n-icon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
+          <AppIcon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
           开启团购之旅
         </h1>
         <p class="brand-subtitle">注册即享新人专属优惠</p>
@@ -12,7 +12,7 @@
         <div class="benefits">
           <div class="benefit-item" v-for="(benefit, index) in benefits" :key="index">
             <div class="benefit-icon-wrapper">
-              <n-icon :size="32" :component="benefit.icon" />
+              <AppIcon :size="32" :component="benefit.icon" />
             </div>
             <h3>{{ benefit.title }}</h3>
             <p>{{ benefit.desc }}</p>
@@ -32,7 +32,7 @@
           <a-form-item name="username">
             <a-input v-model:value="registerForm.username" size="large" placeholder="用户名（4-20个字符）" class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="PersonOutline" class="input-icon" />
+                <AppIcon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -41,7 +41,7 @@
             <a-input v-model:value="registerForm.phone" size="large" placeholder="手机号" maxlength="11"
               class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="CallOutline" class="input-icon" />
+                <AppIcon :size="18" :component="CallOutline" class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -49,7 +49,7 @@
           <a-form-item name="nickname">
             <a-input v-model:value="registerForm.nickname" size="large" placeholder="昵称（可选）" class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="HappyOutline" class="input-icon" />
+                <AppIcon :size="18" :component="HappyOutline" class="input-icon" />
               </template>
             </a-input>
           </a-form-item>
@@ -58,7 +58,7 @@
             <a-input-password v-model:value="registerForm.password" size="large" placeholder="密码（至少6位）"
               class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="LockClosedOutline" class="input-icon" />
+                <AppIcon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
@@ -67,14 +67,14 @@
             <a-input-password v-model:value="registerForm.confirmPassword" size="large" placeholder="确认密码"
               class="custom-input">
               <template #prefix>
-                <n-icon :size="18" :component="CheckmarkCircleOutline" class="input-icon" />
+                <AppIcon :size="18" :component="CheckmarkCircleOutline" class="input-icon" />
               </template>
             </a-input-password>
           </a-form-item>
 
           <a-form-item>
             <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="register-button">
-              <n-icon :size="20" :component="PersonAddOutline" style="margin-right: 8px; vertical-align: -4px;" />
+              <AppIcon :size="20" :component="PersonAddOutline" style="margin-right: 8px; vertical-align: -4px;" />
               立即注册
             </a-button>
           </a-form-item>
@@ -84,7 +84,7 @@
           <span>已有账户？</span>
           <a @click="$router.push('/login')" class="login-link">
             立即登录
-            <n-icon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
+            <AppIcon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
           </a>
         </div>
       </div>
@@ -96,7 +96,7 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   StorefrontOutline,
   PersonOutline,

@@ -24,12 +24,16 @@
                 <div class="quantity-stepper">
                   <a-button size="small" shape="circle" @click="decreaseQuantity(record)"
                     :disabled="record.quantity <= 1" class="stepper-btn">
-                    <template #icon><n-icon :component="RemoveOutline" /></template>
+                    <template #icon>
+                      <AppIcon :size="14" :component="RemoveOutline" />
+                    </template>
                   </a-button>
                   <span class="qty-display">{{ record.quantity }}</span>
                   <a-button size="small" shape="circle" @click="increaseQuantity(record)"
                     :disabled="record.quantity >= record.stock" class="stepper-btn">
-                    <template #icon><n-icon :component="AddOutline" /></template>
+                    <template #icon>
+                      <AppIcon :size="14" :component="AddOutline" />
+                    </template>
                   </a-button>
                 </div>
               </template>
@@ -38,7 +42,9 @@
               </template>
               <template v-else-if="column.key === 'action'">
                 <a-button type="text" danger @click="handleDelete(record.id)" class="delete-btn">
-                  <template #icon><n-icon :component="TrashOutline" /></template>
+                  <template #icon>
+                    <AppIcon :size="16" :component="TrashOutline" />
+                  </template>
                   删除
                 </a-button>
               </template>
@@ -49,7 +55,7 @@
         <!-- Mobile Cart List -->
         <div class="mobile-cart-list">
           <div v-if="cartList.length === 0 && !loading" class="empty-cart-mobile">
-            <n-icon :size="48" :component="BasketOutline" style="color: #ddd" />
+            <AppIcon :size="48" :component="BasketOutline" style="color: #ddd" />
             <p>购物车还是空的</p>
           </div>
           <div v-else class="cart-item-card" v-for="item in cartList" :key="item.id">
@@ -60,19 +66,23 @@
               <div class="cart-item-header">
                 <h3 class="cart-item-title" @click="$router.push(`/product/${item.productId}`)">{{ item.productName }}
                 </h3>
-                <n-icon :component="TrashOutline" class="delete-icon" @click="handleDelete(item.id)" />
+                <AppIcon :size="18" :component="TrashOutline" class="delete-icon" @click="handleDelete(item.id)" />
               </div>
               <div class="cart-item-price">¥{{ item.price }}</div>
               <div class="cart-item-footer">
                 <div class="quantity-stepper">
                   <a-button size="small" shape="circle" @click="decreaseQuantity(item)" :disabled="item.quantity <= 1"
                     class="stepper-btn">
-                    <template #icon><n-icon :component="RemoveOutline" /></template>
+                    <template #icon>
+                      <AppIcon :size="14" :component="RemoveOutline" />
+                    </template>
                   </a-button>
                   <span class="qty-display">{{ item.quantity }}</span>
                   <a-button size="small" shape="circle" @click="increaseQuantity(item)"
                     :disabled="item.quantity >= item.stock" class="stepper-btn">
-                    <template #icon><n-icon :component="AddOutline" /></template>
+                    <template #icon>
+                      <AppIcon :size="14" :component="AddOutline" />
+                    </template>
                   </a-button>
                 </div>
                 <div class="item-subtotal">
@@ -127,7 +137,7 @@
               {{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}
             </div>
             <div class="check-icon" v-if="selectedAddressId === item.id">
-              <n-icon :size="20" :component="CheckmarkCircleOutline" />
+              <AppIcon :size="20" :component="CheckmarkCircleOutline" />
             </div>
           </div>
         </div>
@@ -145,7 +155,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import { TrashOutline, CheckmarkCircleOutline, AddOutline, RemoveOutline, BasketOutline } from '@vicons/ionicons5'
 import { getCartList, updateCartQuantity, deleteCartItem, clearCart } from '@/api/cart'
 import { createOrder } from '@/api/order'

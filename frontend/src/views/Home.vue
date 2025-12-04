@@ -6,12 +6,12 @@
         <div class="banner-overlay"></div>
         <div class="banner-content">
           <div class="banner-icon">
-            <n-icon :size="80" :component="BasketOutline" />
+            <AppIcon :size="80" :component="BasketOutline" />
           </div>
           <h1 class="banner-title">欢迎来到社区团购</h1>
           <p class="banner-subtitle">新鲜优质，价格实惠</p>
           <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
-            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
             立即选购
           </a-button>
         </div>
@@ -20,12 +20,12 @@
         <div class="banner-overlay"></div>
         <div class="banner-content">
           <div class="banner-icon">
-            <n-icon :size="80" :component="LeafOutline" />
+            <AppIcon :size="80" :component="LeafOutline" />
           </div>
           <h1 class="banner-title">每日新鲜直达</h1>
           <p class="banner-subtitle">从产地到餐桌，只需一天</p>
           <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
-            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
             查看商品
           </a-button>
         </div>
@@ -34,12 +34,12 @@
         <div class="banner-overlay"></div>
         <div class="banner-content">
           <div class="banner-icon">
-            <n-icon :size="80" :component="PricetagsOutline" />
+            <AppIcon :size="80" :component="PricetagsOutline" />
           </div>
           <h1 class="banner-title">团购更优惠</h1>
           <p class="banner-subtitle">参与团购，享受超低价格</p>
           <a-button type="primary" size="large" @click="$router.push('/group-activities')" class="banner-btn">
-            <n-icon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
             开始团购
           </a-button>
         </div>
@@ -138,7 +138,7 @@
           <a-col :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
-                <n-icon :size="52" :component="RocketOutline" />
+                <AppIcon :size="52" :component="RocketOutline" />
               </div>
               <h3>快速配送</h3>
               <p>当日下单，次日送达</p>
@@ -147,7 +147,7 @@
           <a-col :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
-                <n-icon :size="52" :component="ShieldCheckmarkOutline" />
+                <AppIcon :size="52" :component="ShieldCheckmarkOutline" />
               </div>
               <h3>品质保证</h3>
               <p>严选优质商品</p>
@@ -156,7 +156,7 @@
           <a-col :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
-                <n-icon :size="52" :component="CashOutline" />
+                <AppIcon :size="52" :component="CashOutline" />
               </div>
               <h3>价格实惠</h3>
               <p>团购更优惠</p>
@@ -165,7 +165,7 @@
           <a-col :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
-                <n-icon :size="52" :component="GiftOutline" />
+                <AppIcon :size="52" :component="GiftOutline" />
               </div>
               <h3>新人福利</h3>
               <p>新用户专享优惠</p>
@@ -180,7 +180,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { NIcon } from 'naive-ui'
+
 import {
   BasketOutline,
   LeafOutline,

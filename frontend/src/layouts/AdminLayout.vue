@@ -3,31 +3,31 @@
     <a-layout-sider v-model:collapsed="collapsed" :trigger="null" collapsible :width="240"
       class="admin-sider desktop-sider">
       <div class="admin-logo">
-        <n-icon :size="collapsed ? 32 : 38" :component="StorefrontOutline" class="logo-icon" />
+        <AppIcon :size="collapsed ? 32 : 38" :component="StorefrontOutline" class="logo-icon" />
         <span v-if="!collapsed" class="logo-text">后台管理</span>
       </div>
 
       <a-menu v-model:selectedKeys="selectedKeys" :theme="themeStore.theme === 'dark' ? 'dark' : 'light'" mode="inline"
         class="admin-menu">
         <a-menu-item key="products" @click="$router.push('/admin/products')">
-          <n-icon :size="18" :component="GridOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="GridOutline" class="menu-icon" />
           <span v-if="!collapsed">商品管理</span>
         </a-menu-item>
         <a-menu-item key="orders" @click="$router.push('/admin/orders')">
-          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="ReceiptOutline" class="menu-icon" />
           <span v-if="!collapsed">订单管理</span>
         </a-menu-item>
         <a-menu-item key="users" @click="$router.push('/admin/users')">
-          <n-icon :size="18" :component="PeopleOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="PeopleOutline" class="menu-icon" />
           <span v-if="!collapsed">用户管理</span>
         </a-menu-item>
         <a-menu-item key="group-activities" @click="$router.push('/admin/group-activities')">
-          <n-icon :size="18" :component="FlameOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="FlameOutline" class="menu-icon" />
           <span v-if="!collapsed">团购活动</span>
         </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="home" @click="$router.push('/')">
-          <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="HomeOutline" class="menu-icon" />
           <span v-if="!collapsed">返回前台</span>
         </a-menu-item>
       </a-menu>
@@ -36,31 +36,31 @@
     <a-drawer v-model:open="mobileMenuOpen" placement="left" :closable="false" class="mobile-drawer" width="240">
       <div class="mobile-menu-header">
         <div class="admin-logo mobile-logo">
-          <n-icon :size="32" :component="StorefrontOutline" class="logo-icon" />
+          <AppIcon :size="32" :component="StorefrontOutline" class="logo-icon" />
           <span class="logo-text">后台管理</span>
         </div>
       </div>
       <a-menu v-model:selectedKeys="selectedKeys" :theme="themeStore.theme === 'dark' ? 'dark' : 'light'" mode="inline"
         class="admin-menu mobile-menu" @click="mobileMenuOpen = false">
         <a-menu-item key="products" @click="$router.push('/admin/products')">
-          <n-icon :size="18" :component="GridOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="GridOutline" class="menu-icon" />
           <span>商品管理</span>
         </a-menu-item>
         <a-menu-item key="orders" @click="$router.push('/admin/orders')">
-          <n-icon :size="18" :component="ReceiptOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="ReceiptOutline" class="menu-icon" />
           <span>订单管理</span>
         </a-menu-item>
         <a-menu-item key="users" @click="$router.push('/admin/users')">
-          <n-icon :size="18" :component="PeopleOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="PeopleOutline" class="menu-icon" />
           <span>用户管理</span>
         </a-menu-item>
         <a-menu-item key="group-activities" @click="$router.push('/admin/group-activities')">
-          <n-icon :size="18" :component="FlameOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="FlameOutline" class="menu-icon" />
           <span>团购活动</span>
         </a-menu-item>
         <a-menu-divider />
         <a-menu-item key="home" @click="$router.push('/')">
-          <n-icon :size="18" :component="HomeOutline" style="margin-right: 12px; vertical-align: -3px;" />
+          <AppIcon :size="18" :component="HomeOutline" class="menu-icon" />
           <span>返回前台</span>
         </a-menu-item>
       </a-menu>
@@ -69,13 +69,13 @@
     <a-layout>
       <a-layout-header class="admin-header">
         <div class="header-left">
-          <n-icon :size="20" :component="collapsed ? MenuOutline : MenuOutline" @click="collapsed = !collapsed"
+          <AppIcon :size="20" :component="collapsed ? MenuOutline : MenuOutline" @click="collapsed = !collapsed"
             class="trigger-icon desktop-trigger" />
-          <n-icon :size="20" :component="MenuOutline" @click="mobileMenuOpen = true"
+          <AppIcon :size="20" :component="MenuOutline" @click="mobileMenuOpen = true"
             class="trigger-icon mobile-trigger" />
           <a-breadcrumb class="breadcrumb">
             <a-breadcrumb-item>
-              <n-icon :size="16" :component="HomeOutline" style="vertical-align: -2px; margin-right: 4px;" />
+              <AppIcon :size="16" :component="HomeOutline" style="vertical-align: -2px; margin-right: 4px;" />
               后台管理
             </a-breadcrumb-item>
             <a-breadcrumb-item>{{ currentPageName }}</a-breadcrumb-item>
@@ -85,28 +85,28 @@
         <div class="header-right">
           <a-button type="text" shape="circle" @click="themeStore.toggleTheme" class="theme-toggle">
             <template #icon>
-              <n-icon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+              <AppIcon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
             </template>
           </a-button>
           <a-dropdown>
             <div class="user-info">
               <a-avatar :size="36" class="user-avatar">
                 <template #icon>
-                  <n-icon :size="20" :component="PersonOutline" />
+                  <AppIcon :size="20" :component="PersonOutline" />
                 </template>
               </a-avatar>
               <span class="user-name">{{ userStore.userInfo?.nickname || userStore.userInfo?.username }}</span>
-              <n-icon :size="16" :component="ChevronDownOutline" />
+              <AppIcon :size="16" :component="ChevronDownOutline" />
             </div>
             <template #overlay>
               <a-menu>
                 <a-menu-item @click="$router.push('/profile')">
-                  <n-icon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                  <AppIcon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   个人中心
                 </a-menu-item>
                 <a-menu-divider />
                 <a-menu-item @click="handleLogout">
-                  <n-icon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                  <AppIcon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
                   退出登录
                 </a-menu-item>
               </a-menu>
@@ -128,16 +128,22 @@
       <div class="footer-top">
         <div class="footer-col brand-col">
           <div class="footer-logo">
-            <n-icon :size="32" :component="StorefrontOutline" class="footer-icon" />
+            <AppIcon :size="32" :component="StorefrontOutline" class="footer-icon" />
             <span>社区团购</span>
           </div>
           <p class="brand-desc">
             致力于为社区居民提供新鲜、优质、实惠的生鲜果蔬和生活用品。源头直采，全程冷链，品质更有保障。
           </p>
           <div class="social-links">
-            <a href="#" class="social-link"><n-icon :size="20" :component="LogoWechat" /></a>
-            <a href="#" class="social-link"><n-icon :size="20" :component="LogoAlipay" /></a>
-            <a href="#" class="social-link"><n-icon :size="20" :component="LogoTux" /></a>
+            <a href="#" class="social-link">
+              <AppIcon :size="20" :component="LogoWechat" />
+            </a>
+            <a href="#" class="social-link">
+              <AppIcon :size="20" :component="LogoAlipay" />
+            </a>
+            <a href="#" class="social-link">
+              <AppIcon :size="20" :component="LogoTux" />
+            </a>
           </div>
         </div>
 
@@ -164,9 +170,15 @@
         <div class="footer-col contact-col">
           <h3>联系我们</h3>
           <div class="contact-info">
-            <p><n-icon :component="CallOutline" /> 400-123-4567</p>
-            <p><n-icon :component="MailOutline" /> support@community-mall.com</p>
-            <p><n-icon :component="LocationOutline" /> 北京市朝阳区科技园88号</p>
+            <p>
+              <AppIcon :component="CallOutline" /> 400-123-4567
+            </p>
+            <p>
+              <AppIcon :component="MailOutline" /> support@community-mall.com
+            </p>
+            <p>
+              <AppIcon :component="LocationOutline" /> 北京市朝阳区科技园88号
+            </p>
           </div>
         </div>
       </div>
@@ -190,7 +202,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { NIcon } from 'naive-ui'
+
 import {
   StorefrontOutline,
   GridOutline,
@@ -310,6 +322,12 @@ function handleLogout() {
   font-size: 15px;
   transition: all 0.3s;
   color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+.menu-icon {
+  margin-right: 12px;
 }
 
 .admin-menu :deep(.ant-menu-item:hover) {
@@ -384,8 +402,8 @@ function handleLogout() {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 16px;
+  gap: 8px;
+  padding: 0 12px;
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: all 0.3s;
@@ -397,6 +415,9 @@ function handleLogout() {
 
 .user-avatar {
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .user-name {
@@ -556,6 +577,19 @@ function handleLogout() {
   color: var(--border-color);
 }
 
+.mobile-trigger {
+  display: none !important;
+}
+
+.mobile-menu-header {
+  padding: 0;
+}
+
+.mobile-logo {
+  border-bottom: none;
+  background: transparent;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .desktop-sider {
@@ -563,7 +597,7 @@ function handleLogout() {
   }
 
   .desktop-trigger {
-    display: none;
+    display: none !important;
   }
 
   .mobile-trigger {
@@ -600,18 +634,5 @@ function handleLogout() {
   .user-name {
     display: none;
   }
-}
-
-.mobile-trigger {
-  display: none;
-}
-
-.mobile-menu-header {
-  padding: 0;
-}
-
-.mobile-logo {
-  border-bottom: none;
-  background: transparent;
 }
 </style>

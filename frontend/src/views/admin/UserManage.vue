@@ -3,13 +3,13 @@
     <div class="page-header">
       <div class="header-content">
         <h2 class="page-title">
-          <n-icon :size="28" :component="PeopleOutline" class="title-icon" />
+          <AppIcon :size="28" :component="PeopleOutline" class="title-icon" />
           用户管理
         </h2>
         <p class="page-desc">管理所有用户信息和权限</p>
       </div>
       <a-button type="primary" size="large" @click="showAddModal" class="add-button">
-        <n-icon :size="18" :component="PersonAddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        <AppIcon :size="18" :component="PersonAddOutline" style="margin-right: 6px; vertical-align: -3px;" />
         添加用户
       </a-button>
     </div>
@@ -17,7 +17,7 @@
     <div class="stats-cards">
       <div class="stat-card">
         <div class="stat-icon icon-primary">
-          <n-icon :size="28" :component="PeopleOutline" />
+          <AppIcon :size="28" :component="PeopleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">用户总数</p>
@@ -26,7 +26,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-success">
-          <n-icon :size="28" :component="CheckmarkCircleOutline" />
+          <AppIcon :size="28" :component="CheckmarkCircleOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">正常用户</p>
@@ -35,7 +35,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-info">
-          <n-icon :size="28" :component="ShieldCheckmarkOutline" />
+          <AppIcon :size="28" :component="ShieldCheckmarkOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">管理员</p>
@@ -44,7 +44,7 @@
       </div>
       <div class="stat-card">
         <div class="stat-icon icon-error">
-          <n-icon :size="28" :component="BanOutline" />
+          <AppIcon :size="28" :component="BanOutline" />
         </div>
         <div class="stat-info">
           <p class="stat-label">已禁用</p>
@@ -62,7 +62,7 @@
               :custom-request="options => handleAvatarUpload(options, record)">
               <a-avatar :size="40" :src="record.avatar" :style="getAvatarStyle(record)" class="user-avatar">
                 <template v-if="!record.avatar" #icon>
-                  <n-icon :size="20" :component="PersonOutline" />
+                  <AppIcon :size="20" :component="PersonOutline" />
                 </template>
               </a-avatar>
             </a-upload>
@@ -73,7 +73,7 @@
           <template v-else-if="column.key === 'role'">
             <a-tag :color="record.role === 'admin' ? 'blue' : 'default'">
               <template #icon>
-                <n-icon :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline" />
+                <AppIcon :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline" />
               </template>
               {{ record.role === 'admin' ? '管理员' : '普通用户' }}
             </a-tag>
@@ -86,17 +86,22 @@
           <template v-else-if="column.key === 'action'">
             <a-space>
               <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
-                <template #icon><n-icon :component="CreateOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="CreateOutline" />
+                </template>
                 编辑
               </a-button>
               <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn"
                 :danger="record.status === 1">
-                <template #icon><n-icon
-                    :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" />
+                </template>
                 {{ record.status === 1 ? '禁用' : '启用' }}
               </a-button>
               <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
-                <template #icon><n-icon :component="TrashOutline" /></template>
+                <template #icon>
+                  <AppIcon :component="TrashOutline" />
+                </template>
                 删除
               </a-button>
             </a-space>
@@ -143,7 +148,7 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   PeopleOutline,
   PersonAddOutline,
@@ -525,9 +530,20 @@ function resetForm() {
   color: var(--text-primary);
 }
 
+.user-avatar {
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .action-btn {
   padding: 4px 8px;
   font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .user-form :deep(.ant-input),

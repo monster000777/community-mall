@@ -5,13 +5,13 @@
         <div class="card-header">
           <h2>收货地址管理</h2>
           <a-button type="primary" @click="showAddModal" class="add-btn">
-            <n-icon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+            <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
             新增地址
           </a-button>
         </div>
 
         <div v-if="!loading && addressList.length === 0" class="empty-state">
-          <n-icon :size="64" :component="LocationOutline" style="color: #ddd" />
+          <AppIcon :size="64" :component="LocationOutline" style="color: #ddd" />
           <p>还没有收货地址，快去添加吧</p>
         </div>
 
@@ -25,26 +25,32 @@
 
             <div class="item-content">
               <div class="info-row">
-                <n-icon :size="16" :component="CallOutline" class="icon" />
+                <AppIcon :size="16" :component="CallOutline" class="icon" />
                 <span>{{ item.receiverPhone }}</span>
               </div>
               <div class="info-row">
-                <n-icon :size="16" :component="LocationOutline" class="icon" />
+                <AppIcon :size="16" :component="LocationOutline" class="icon" />
                 <span>{{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}</span>
               </div>
             </div>
 
             <div class="item-actions">
               <a-button type="text" size="small" @click="handleEdit(item)">
-                <template #icon><n-icon :component="CreateOutline" /></template>
+                <template #icon>
+                  <AppIcon :size="16" :component="CreateOutline" style="vertical-align: -2px" />
+                </template>
                 编辑
               </a-button>
               <a-button v-if="item.isDefault !== 1" type="text" size="small" @click="handleSetDefault(item.id)">
-                <template #icon><n-icon :component="StarOutline" /></template>
+                <template #icon>
+                  <AppIcon :size="16" :component="StarOutline" style="vertical-align: -2px" />
+                </template>
                 设为默认
               </a-button>
               <a-button type="text" danger size="small" @click="handleDelete(item.id)">
-                <template #icon><n-icon :component="TrashOutline" /></template>
+                <template #icon>
+                  <AppIcon :size="16" :component="TrashOutline" style="vertical-align: -2px" />
+                </template>
                 删除
               </a-button>
             </div>
@@ -91,7 +97,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { message, Modal } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   AddOutline,
   CallOutline,

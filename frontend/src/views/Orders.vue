@@ -44,7 +44,7 @@
         <!-- Mobile Order List -->
         <div class="mobile-order-list">
           <div v-if="orders.length === 0 && !loading" class="empty-orders-mobile">
-            <n-icon :size="48" :component="ReceiptOutline" style="color: #ddd" />
+            <AppIcon :size="48" :component="ReceiptOutline" style="color: #ddd" />
             <p>暂无订单</p>
           </div>
           <div v-else class="order-card-mobile" v-for="order in orders" :key="order.id">
@@ -100,7 +100,7 @@
 import { ref, onMounted, h } from 'vue'
 import { message, Modal, Space, Button } from 'ant-design-vue'
 import { DollarOutlined, CloseCircleOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-import { NIcon } from 'naive-ui'
+
 import { ReceiptOutline } from '@vicons/ionicons5'
 import { getOrderList, cancelOrder, payOrder, deleteOrder } from '@/api/order'
 

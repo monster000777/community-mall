@@ -15,7 +15,7 @@
               <div class="avatar-overlay">
                 <a-upload :show-upload-list="false" :before-upload="beforeUpload" :custom-request="handleAvatarUpload"
                   class="upload-trigger">
-                  <n-icon :size="24" :component="CameraOutline" style="color: white" />
+                  <AppIcon :size="24" :component="CameraOutline" style="color: white" />
                 </a-upload>
               </div>
             </div>
@@ -50,19 +50,19 @@
               <div class="links-grid">
                 <div class="link-item" @click="$router.push('/orders')">
                   <div class="link-icon" style="background: #e0f2fe; color: #0284c7">
-                    <n-icon :size="24" :component="ReceiptOutline" />
+                    <AppIcon :size="24" :component="ReceiptOutline" />
                   </div>
                   <span>我的订单</span>
                 </div>
                 <div class="link-item" @click="$router.push('/address')">
                   <div class="link-icon" style="background: #fef3c7; color: #d97706">
-                    <n-icon :size="24" :component="LocationOutline" />
+                    <AppIcon :size="24" :component="LocationOutline" />
                   </div>
                   <span>收货地址</span>
                 </div>
                 <div v-if="userStore.isAdmin()" class="link-item" @click="$router.push('/admin')">
                   <div class="link-icon" style="background: #f3e8ff; color: #9333ea">
-                    <n-icon :size="24" :component="ShieldCheckmarkOutline" />
+                    <AppIcon :size="24" :component="ShieldCheckmarkOutline" />
                   </div>
                   <span>管理后台</span>
                 </div>
@@ -78,7 +78,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { message } from 'ant-design-vue'
-import { NIcon } from 'naive-ui'
+
 import {
   ShieldCheckmarkOutline,
   ReceiptOutline,
