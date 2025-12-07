@@ -131,6 +131,14 @@
           </div>
         </a-form-item>
         <a-form-item label="商品描述">
+          <div style="margin-bottom: 8px; text-align: right;">
+            <a-button type="link" size="small" @click="openAiModal">
+              <template #icon>
+                <AppIcon :component="FlashOutline" />
+              </template>
+              AI 一键生成文案
+            </a-button>
+          </div>
           <a-textarea v-model:value="formState.description" :rows="4" size="large" placeholder="请输入商品描述" />
         </a-form-item>
         <a-form-item label="是否上架">
@@ -138,6 +146,33 @@
             un-checked-children="下架" />
         </a-form-item>
       </a-form>
+    </a-modal>
+
+    <!-- AI 生成文案弹窗 -->
+    <a-modal v-model:visible="aiModalVisible" title="AI 智能文案生成" width="500px" :footer="null">
+      <a-form :model="aiForm" layout="vertical">
+        <a-form-item label="商品名称">
+          <a-input v-model:value="aiForm.name" disabled size="large" />
+        </a-form-item>
+        <a-form-item label="关键词 (用空格分隔)" required>
+          <a-input v-model:value="aiForm.keywords" placeholder="例如：新鲜 多汁 产地直采 限时特惠" size="large"
+            @pressEnter="handleAiGenerate" />
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" block size="large" :loading="aiLoading" @click="handleAiGenerate">
+            <template #icon>
+              <AppIcon :component="FlashOutline" />
+            </template>
+            开始生成
+          </a-button>
+        </a-form-item>
+      </a-form>
+
+      <div v-if="aiResult" class="ai-result-box">
+        <div class="result-header">生成结果：</div>
+        <div class="result-content">{{ aiResult }}</div>
+        <a-button type="dashed" block style="margin-top: 12px" @click="applyAiResult">使用此文案</a-button>
+      </div>
     </a-modal>
   </div>
 </template>
@@ -156,13 +191,24 @@ import {
   CreateOutline,
   TrashOutline,
   EyeOutline,
-  EyeOffOutline
+  EyeOffOutline,
+  FlashOutline
 } from '@vicons/ionicons5'
 import { getProductList, addProduct, updateProduct, deleteProduct, updateProductStatus } from '@/api/product'
+import { generateCopy } from '@/api/ai'
 
 const products = ref([])
 const modalVisible = ref(false)
 const editId = ref(null)
+
+// AI 相关状态
+const aiModalVisible = ref(false)
+const aiLoading = ref(false)
+const aiResult = ref('')
+const aiForm = reactive({
+  name: '',
+  keywords: ''
+})
 
 const pagination = ref({
   current: 1,
@@ -302,6 +348,51 @@ function resetForm() {
   formState.mainImage = ''
   formState.description = ''
   formState.isOnSale = 1
+}
+
+function openAiModal() {
+  if (!formState.productName) {
+    message.warning('请先输入商品名称')
+    return
+  }
+  aiForm.name = formState.productName
+  aiForm.keywords = ''
+  aiResult.value = ''
+  aiModalVisible.value = true
+}
+
+async function handleAiGenerate() {
+  if (!aiForm.keywords) {
+    message.warning('请输入关键词')
+    return
+  }
+  aiLoading.value = true
+  try {
+    const res = await generateCopy(aiForm)
+    console.log('AI Response:', res)
+    // alert('AI Response: ' + JSON.stringify(res)) // Debug
+    if (res.code === 200) {
+      aiResult.value = res.data
+      // 如果描述为空，自动填充
+      if (!formState.description) {
+        formState.description = res.message
+        message.success('已自动填充到商品描述')
+      }
+    } else {
+      message.error(res.message || '生成失败')
+    }
+  } catch (error) {
+    console.error('AI生成失败', error)
+    message.error('生成失败，请稍后重试')
+  } finally {
+    aiLoading.value = false
+  }
+}
+
+function applyAiResult() {
+  formState.description = aiResult.value
+  aiModalVisible.value = false
+  message.success('文案已应用')
 }
 </script>
 
@@ -530,5 +621,25 @@ function resetForm() {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.ai-result-box {
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--bg-body);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.result-header {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.result-content {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
 </style>

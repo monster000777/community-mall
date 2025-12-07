@@ -17,6 +17,7 @@ E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\AddressController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\CartService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\mapper\GroupOrderMapper.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\admin\AiController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\dto\LoginRequest.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\UserService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\ProductController.java
@@ -52,11 +53,13 @@ E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\dto\AdminUserRequest.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\GroupParticipant.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\vo\UserProfileVO.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\AiAssistant.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\common\Result.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\config\SwaggerConfig.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\admin\AdminOrderController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\vo\CartVo.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\dto\JoinGroupRequest.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\config\AiConfig.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\OrderItem.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\OrderMaster.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\OrderController.java

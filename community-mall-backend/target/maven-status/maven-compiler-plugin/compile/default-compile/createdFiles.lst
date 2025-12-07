@@ -1,3 +1,4 @@
+com\community\mall\controller\admin\AiController.class
 com\community\mall\controller\GroupActivityController.class
 com\community\mall\mapper\GroupParticipantMapper.class
 com\community\mall\controller\admin\AdminGroupActivityController.class
@@ -30,6 +31,7 @@ com\community\mall\controller\AuthController.class
 com\community\mall\service\UserService.class
 com\community\mall\config\SaTokenConfig.class
 com\community\mall\mapper\GroupActivityMapper.class
+com\community\mall\config\AiConfig.class
 com\community\mall\entity\GroupOrder.class
 com\community\mall\dto\GroupActivityRequest.class
 com\community\mall\config\PasswordEncoderConfig.class
@@ -37,6 +39,7 @@ com\community\mall\dto\LoginResponse.class
 com\community\mall\entity\Address.class
 com\community\mall\service\CartService.class
 com\community\mall\service\ProductService.class
+com\community\mall\service\AiAssistant.class
 com\community\mall\dto\CreateOrderRequest.class
 com\community\mall\controller\admin\AdminProductController.class
 com\community\mall\vo\GroupActivityVO.class
