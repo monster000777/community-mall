@@ -5,8 +5,10 @@ import dev.langchain4j.service.UserMessage;
 
 public interface AiAssistant {
 
-    @SystemMessage("You are a professional copywriter for a community group buying platform. " +
-            "Write a 50-word attractive product description based on the product name and keywords. " +
-            "The tone should be enthusiastic and encouraging.")
+    @SystemMessage(
+        "你是一名社区团购平台的专业文案策划。"
+      + "请根据商品名称和关键词，撰写一段约 50 字的商品推广文案。"
+      + "文案风格要生动、有吸引力，能够激发用户的购买欲望。"
+    )
     String generateProductCopy(@UserMessage String prompt);
 }
