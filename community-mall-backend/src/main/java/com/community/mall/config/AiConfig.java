@@ -33,9 +33,17 @@ public class AiConfig {
     }
 
     @Bean
-    public com.community.mall.service.CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel) {
-        return dev.langchain4j.service.AiServices.create(com.community.mall.service.CustomerAiService.class,
-                chatLanguageModel);
+    public dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider() {
+        return memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.withMaxMessages(10);
+    }
+
+    @Bean
+    public com.community.mall.service.CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel,
+            dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider) {
+        return dev.langchain4j.service.AiServices.builder(com.community.mall.service.CustomerAiService.class)
+                .chatLanguageModel(chatLanguageModel)
+                .chatMemoryProvider(chatMemoryProvider)
+                .build();
     }
 
     @Bean

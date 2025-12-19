@@ -139,12 +139,24 @@ watch(isAutoPlay, (newVal) => {
   localStorage.setItem('ai_chat_autoplay', newVal);
 });
 
+const sessionId = ref('');
+
+
 const messages = ref([
   { type: 'ai', content: '您好！我是团团，很高兴为您服务。请问您想买点什么？' }
 ]);
 
 // 初始化监听器
 onMounted(() => {
+  // Generate/Retrieve Session ID
+  let sid = localStorage.getItem('chat_session_id');
+  if (!sid) {
+    sid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('chat_session_id', sid);
+  }
+  sessionId.value = sid;
+  console.log('Chat Session ID:', sessionId.value);
+
   ttsPlayer.listen((status) => {
     isTalking.value = status;
   });
@@ -183,7 +195,10 @@ const sendMessage = async () => {
   stopTTS();
 
   try {
-    const res = await askAi({ question: content });
+    const res = await askAi({
+      question: content,
+      sessionId: sessionId.value
+    });
     const responseData = (res && res.data && res.data.code) ? res.data : res;
 
     if (responseData && responseData.code === 200) {

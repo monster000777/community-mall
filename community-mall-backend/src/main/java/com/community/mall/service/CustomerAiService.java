@@ -20,5 +20,7 @@ public interface CustomerAiService {
             "\n" +
             "记住：你的目标是让用户开心购物！")
     @UserMessage("【参考库存】：{{inventoryContext}}\n\n用户问题：{{userQuestion}}")
-    String chat(@V("userQuestion") String userQuestion, @V("inventoryContext") String inventoryContext);
+    String chat(@dev.langchain4j.service.MemoryId String sessionId,
+            @V("userQuestion") String userQuestion,
+            @V("inventoryContext") String inventoryContext);
 }
