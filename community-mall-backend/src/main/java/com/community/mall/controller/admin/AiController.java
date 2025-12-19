@@ -38,7 +38,7 @@ public class AiController {
         try {
             String copy = aiAssistant.generateProductCopy(prompt);
             System.out.println("AI Response Copy: " + copy);
-            return Result.success(copy);
+            return Result.success("生成成功", copy);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.error("AI Generation failed: " + e.getMessage());

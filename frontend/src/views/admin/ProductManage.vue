@@ -373,11 +373,9 @@ async function handleAiGenerate() {
     // alert('AI Response: ' + JSON.stringify(res)) // Debug
     if (res.code === 200) {
       aiResult.value = res.data
-      // 如果描述为空，自动填充
-      if (!formState.description) {
-        formState.description = res.message
-        message.success('已自动填充到商品描述')
-      }
+      // 总是自动填充到商品描述（覆盖原有内容）
+      formState.description = res.data
+      message.success('已自动填充到商品描述')
     } else {
       message.error(res.message || '生成失败')
     }
