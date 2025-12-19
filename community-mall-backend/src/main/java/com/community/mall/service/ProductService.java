@@ -21,7 +21,8 @@ public class ProductService {
     /**
      * 分页查询商品列表
      */
-    public IPage<Product> getProductList(Integer current, Integer size, Long categoryId, String keyword, Integer clientType) {
+    public IPage<Product> getProductList(Integer current, Integer size, Long categoryId, String keyword,
+            Integer clientType) {
         Page<Product> page = new Page<>(current, size);
         LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
 
@@ -85,5 +86,25 @@ public class ProductService {
         product.setIsOnSale(isOnSale);
         productMapper.updateById(product);
     }
-}
 
+    /**
+     * AI 专用搜索接口
+     * 根据关键词模糊搜索上架商品，限制返回 5 条
+     */
+    public java.util.List<Product> searchForAi(String keyword) {
+        LambdaQueryWrapper<Product> wrapper = new LambdaQueryWrapper<>();
+
+        // 只查上架商品
+        wrapper.eq(Product::getIsOnSale, 1);
+
+        // 模糊匹配商品名
+        if (StringUtils.hasText(keyword)) {
+            wrapper.like(Product::getProductName, keyword);
+        }
+
+        // 限制返回 5 条 (MySQL Limit)
+        wrapper.last("LIMIT 5");
+
+        return productMapper.selectList(wrapper);
+    }
+}

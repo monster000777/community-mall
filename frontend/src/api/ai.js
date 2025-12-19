@@ -7,3 +7,11 @@ export function generateCopy(data) {
         data
     })
 }
+
+export function askAi(data) {
+    return request({
+        url: '/chat/ask',
+        method: 'post',
+        data
+    })
+}

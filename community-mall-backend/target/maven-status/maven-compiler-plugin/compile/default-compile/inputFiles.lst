@@ -2,6 +2,7 @@ E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\admin\AdminGroupActivityController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\CategoryService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\CategoryController.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\ChatController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\Address.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\CartController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\ProductService.java
@@ -11,6 +12,7 @@ E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\OrderService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\dto\LoginResponse.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\mapper\AddressMapper.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\CustomerAiService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\dto\UpdateProfileRequest.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\Category.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\config\StpInterfaceImpl.java
@@ -43,6 +45,7 @@ E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\exception\GlobalExceptionHandler.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\entity\Product.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\config\StartupBannerConfig.java
+E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\service\KeywordExtractionService.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\mapper\OrderItemMapper.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\controller\AuthController.java
 E:\community-mall\community-mall-master\community-mall-backend\src\main\java\com\community\mall\config\ScheduledTasks.java

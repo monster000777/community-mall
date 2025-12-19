@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
+import com.community.mall.service.KeywordExtractionService;
+
 @Configuration
 public class AiConfig {
 
@@ -28,5 +30,16 @@ public class AiConfig {
                 .modelName(modelName)
                 .timeout(Duration.ofSeconds(60))
                 .build();
+    }
+
+    @Bean
+    public com.community.mall.service.CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel) {
+        return dev.langchain4j.service.AiServices.create(com.community.mall.service.CustomerAiService.class,
+                chatLanguageModel);
+    }
+
+    @Bean
+    public KeywordExtractionService keywordExtractionService(ChatLanguageModel chatLanguageModel) {
+        return dev.langchain4j.service.AiServices.create(KeywordExtractionService.class, chatLanguageModel);
     }
 }

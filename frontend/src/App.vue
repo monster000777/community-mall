@@ -1,6 +1,7 @@
 <template>
   <a-config-provider :theme="{ algorithm: themeAlgorithm }">
     <router-view />
+    <AiCustomerService />
   </a-config-provider>
 </template>
 
@@ -8,6 +9,7 @@
 import { computed } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { theme } from 'ant-design-vue'
+import AiCustomerService from '@/components/AiCustomerService.vue'
 
 const themeStore = useThemeStore()
 
