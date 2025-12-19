@@ -1,6 +1,8 @@
 <template>
   <a-config-provider :theme="{ algorithm: themeAlgorithm }">
     <router-view />
+    <!-- 全局隐藏音频播放器 -->
+    <audio id="globalVoiceAudio" hidden></audio>
     <AiCustomerService />
   </a-config-provider>
 </template>
