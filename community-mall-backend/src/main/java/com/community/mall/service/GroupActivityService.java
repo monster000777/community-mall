@@ -199,6 +199,17 @@ public class GroupActivityService {
             throw new RuntimeException("团购活动不存在");
         }
 
+        // 如果要设置为进行中，检查时间是否有效
+        if (status == 1) {
+            LocalDateTime now = LocalDateTime.now();
+            if (now.isBefore(activity.getStartTime())) {
+                throw new RuntimeException("活动尚未开始，无法设为进行中");
+            }
+            if (now.isAfter(activity.getEndTime())) {
+                throw new RuntimeException("活动已结束，如需重启请先修改活动时间");
+            }
+        }
+
         activity.setStatus(status);
         groupActivityMapper.updateById(activity);
     }

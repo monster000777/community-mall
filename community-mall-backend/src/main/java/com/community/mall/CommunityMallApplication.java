@@ -5,10 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * 社区团购系统启动类
  */
+@EnableScheduling
 @SpringBootApplication
 @MapperScan("com.community.mall.mapper")
 public class CommunityMallApplication {
@@ -26,4 +28,3 @@ public class CommunityMallApplication {
         System.out.println("========================================");
     }
 }
-
