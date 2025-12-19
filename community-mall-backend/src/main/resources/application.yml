@@ -22,7 +22,7 @@ spring:
     host: localhost
     port: 6379
     password:  # 如果有密码请填写
-    database: 0
+    database: 1
     timeout: 10s
     lettuce:
       pool:
