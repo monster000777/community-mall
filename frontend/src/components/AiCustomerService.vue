@@ -2,7 +2,7 @@
   <div class="ai-customer-service">
     <!-- 悬浮按钮 -->
     <div v-if="!isOpen" class="float-btn" @click="isOpen = true">
-      <customer-service-outlined style="font-size: 24px; color: #fff"/>
+      <customer-service-outlined style="font-size: 24px; color: #fff" />
       <span class="btn-text">团团导购</span>
     </div>
 
@@ -11,7 +11,7 @@
       <!-- 头部 -->
       <div class="chat-header">
         <div class="header-left">
-          <robot-outlined :class="{ 'talking-icon': isTalking }"/>
+          <robot-outlined :class="{ 'talking-icon': isTalking }" />
           <span style="margin-left: 8px">智能导购团团</span>
           <span v-if="isTalking" class="status-tag">播报中...</span>
         </div>
@@ -19,18 +19,18 @@
           <!-- 全局停止按钮：仅在播报时显示 -->
           <a-tooltip v-if="isTalking" title="停止当前播报">
             <div class="action-icon stop-global-btn" @click="stopTTS">
-              <stop-outlined/>
+              <stop-outlined />
             </div>
           </a-tooltip>
 
           <!-- 自动播放控制开关 -->
           <a-tooltip :title="isAutoPlay ? '点击关闭自动播报' : '点击开启自动播报'">
             <div class="action-icon" @click="isAutoPlay = !isAutoPlay">
-              <sound-outlined v-if="isAutoPlay"/>
-              <audio-muted-outlined v-else/>
+              <sound-outlined v-if="isAutoPlay" />
+              <audio-muted-outlined v-else />
             </div>
           </a-tooltip>
-          <close-outlined class="close-icon" @click="isOpen = false"/>
+          <close-outlined class="close-icon" @click="isOpen = false" />
         </div>
       </div>
 
@@ -42,13 +42,13 @@
             :class="{ 'is-talking': isTalking && msg.type === 'ai' && index === messages.length - 1 }">
             <!-- 用户头像：同步 Pinia Store 中的头像 -->
             <template v-if="msg.type === 'user'">
-              <img v-if="userAvatar" :src="userAvatar" class="avatar-img" alt="User"/>
-              <user-outlined v-else/>
+              <img v-if="userAvatar" :src="userAvatar" class="avatar-img" alt="User" />
+              <user-outlined v-else />
             </template>
 
             <!-- AI 头像：保持默认机器人图标不变 -->
             <template v-else>
-              <robot-outlined/>
+              <robot-outlined />
             </template>
 
             <!-- 语音播放时的波纹动画 -->
@@ -66,12 +66,12 @@
               <!-- 正在播报时显示停止按钮，否则显示播放按钮 -->
               <template v-if="isTalking && index === messages.length - 1">
                 <a-tooltip title="停止播放">
-                  <stop-outlined class="play-icon stop-icon-active" @click="stopTTS"/>
+                  <stop-outlined class="play-icon stop-icon-active" @click="stopTTS" />
                 </a-tooltip>
               </template>
               <template v-else>
                 <a-tooltip title="播放语音">
-                  <play-circle-outlined class="play-icon" @click="playTTS(msg.content)"/>
+                  <play-circle-outlined class="play-icon" @click="playTTS(msg.content)" />
                 </a-tooltip>
               </template>
             </div>
@@ -79,10 +79,10 @@
         </div>
         <div v-if="loading" class="message-item ai">
           <div class="avatar">
-            <robot-outlined/>
+            <robot-outlined />
           </div>
           <div class="content loading">
-            <loading-outlined/>
+            <loading-outlined />
             正在查询库存...
           </div>
         </div>
@@ -92,7 +92,7 @@
       <div class="chat-footer">
         <a-input v-model:value="inputVal" placeholder="问问团团有没有红富士？" @pressEnter="sendMessage" :disabled="loading">
           <template #suffix>
-            <send-outlined class="send-icon" @click="sendMessage"/>
+            <send-outlined class="send-icon" @click="sendMessage" />
           </template>
         </a-input>
       </div>
@@ -257,13 +257,15 @@ const sendMessage = async () => {
 .chat-window {
   width: 350px;
   height: 500px;
-  background: #fff;
+  background: var(--bg-card);
+  color: var(--text-primary);
   border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-lg);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   animation: slideUp 0.3s ease-out;
+  border: 1px solid var(--border-color);
 }
 
 @keyframes slideUp {
@@ -356,7 +358,7 @@ const sendMessage = async () => {
   flex: 1;
   padding: 16px;
   overflow-y: auto;
-  background: #f5f5f5;
+  background: var(--bg-body);
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -377,7 +379,7 @@ const sendMessage = async () => {
   position: relative;
   width: 32px;
   height: 32px;
-  background: #ddd;
+  background: var(--bg-input);
   border-radius: 50%;
   display: flex;
   justify-content: center;
@@ -386,7 +388,7 @@ const sendMessage = async () => {
 }
 
 .message-item.ai .avatar {
-  background: #e6f7ff;
+  background: var(--primary-light);
   color: var(--primary-color);
 }
 
@@ -437,13 +439,13 @@ const sendMessage = async () => {
 }
 
 .content {
-  background: #fff;
+  background: var(--bg-card);
   padding: 8px 12px;
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.5;
   word-break: break-all;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .message-item.user .content {
@@ -459,7 +461,7 @@ const sendMessage = async () => {
 
 .play-icon {
   font-size: 16px;
-  color: #999;
+  color: var(--text-tertiary);
   cursor: pointer;
   transition: color 0.3s;
 }
@@ -474,8 +476,8 @@ const sendMessage = async () => {
 
 .chat-footer {
   padding: 12px;
-  border-top: 1px solid #eee;
-  background: #fff;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card);
 }
 
 .send-icon {
