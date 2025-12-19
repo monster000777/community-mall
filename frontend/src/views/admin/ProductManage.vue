@@ -105,7 +105,7 @@
     </a-card>
 
     <!-- 添加/编辑商品弹窗 -->
-    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑商品' : '添加商品'" width="700px" @ok="handleSubmit"
+    <a-modal v-model:open="modalVisible" :title="editId ? '编辑商品' : '添加商品'" width="700px" @ok="handleSubmit"
       :ok-button-props="{ class: 'modal-ok-btn' }">
       <a-form :model="formState" :label-col="{ span: 5 }" class="product-form">
         <a-form-item label="商品名称" required>
@@ -149,7 +149,7 @@
     </a-modal>
 
     <!-- AI 生成文案弹窗 -->
-    <a-modal v-model:visible="aiModalVisible" title="AI 智能文案生成" width="500px" :footer="null">
+    <a-modal v-model:open="aiModalVisible" title="AI 智能文案生成" width="500px" :footer="null">
       <a-form :model="aiForm" layout="vertical">
         <a-form-item label="商品名称">
           <a-input v-model:value="aiForm.name" disabled size="large" />

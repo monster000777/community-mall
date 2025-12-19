@@ -60,7 +60,7 @@
     </div>
 
     <!-- 添加/编辑地址弹窗 -->
-    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑地址' : '新增地址'" width="600px" @ok="handleSubmit"
+    <a-modal v-model:open="modalVisible" :title="editId ? '编辑地址' : '新增地址'" width="600px" @ok="handleSubmit"
       :confirm-loading="submitLoading" class="address-modal">
       <a-form :model="formState" layout="vertical">
         <div class="form-row">

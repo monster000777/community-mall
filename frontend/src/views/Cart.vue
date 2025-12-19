@@ -113,7 +113,7 @@
     </div>
 
     <!-- 收货地址选择弹窗 -->
-    <a-modal v-model:visible="checkoutVisible" title="选择收货地址" width="600px" @ok="handleCreateOrder"
+    <a-modal v-model:open="checkoutVisible" title="选择收货地址" width="600px" @ok="handleCreateOrder"
       :confirm-loading="creatingOrder" class="address-modal">
       <a-alert v-if="addressList.length === 0" message="还没有收货地址" description="请先添加收货地址" type="warning" show-icon
         style="margin-bottom: 16px">

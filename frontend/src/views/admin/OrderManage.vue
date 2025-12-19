@@ -98,7 +98,7 @@
     </a-card>
 
     <!-- 订单详情弹窗 -->
-    <a-modal v-model:visible="detailVisible" title="订单详情" width="800px" :footer="null">
+    <a-modal v-model:open="detailVisible" title="订单详情" width="800px" :footer="null">
       <div v-if="currentOrder" class="order-detail">
         <a-descriptions :column="2" bordered>
           <a-descriptions-item label="订单号">

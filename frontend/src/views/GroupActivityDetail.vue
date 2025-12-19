@@ -143,7 +143,7 @@
     </div>
 
     <!-- 参团弹窗 -->
-    <a-modal v-model:visible="modalVisible" title="确认参团" width="600px" @ok="handleJoinSubmit"
+    <a-modal v-model:open="modalVisible" title="确认参团" width="600px" @ok="handleJoinSubmit"
       :confirm-loading="joinLoading" ok-text="确认参团" cancel-text="取消">
       <a-form layout="vertical">
         <a-form-item label="选择收货地址" required>
@@ -201,7 +201,7 @@
     </a-modal>
 
     <!-- 参团成功弹窗 -->
-    <a-modal v-model:visible="successModalVisible" title="参团成功" :footer="null" width="500px">
+    <a-modal v-model:open="successModalVisible" title="参团成功" :footer="null" width="500px">
       <div style="text-align: center; padding: 20px 0;">
         <div style="margin-bottom: 16px;">
           <a-icon type="check-circle" theme="filled" style="color: #52c41a; font-size: 48px;" />

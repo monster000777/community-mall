@@ -111,7 +111,7 @@
     </a-card>
 
     <!-- 添加/编辑用户弹窗 -->
-    <a-modal v-model:visible="modalVisible" :title="editId ? '编辑用户' : '添加用户'" width="600px" @ok="handleSubmit"
+    <a-modal v-model:open="modalVisible" :title="editId ? '编辑用户' : '添加用户'" width="600px" @ok="handleSubmit"
       :ok-button-props="{ class: 'modal-ok-btn' }">
       <a-form :model="formState" :label-col="{ span: 5 }" class="user-form">
         <a-form-item label="用户名" required>
