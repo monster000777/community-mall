@@ -14,7 +14,6 @@ app.use(pinia)
 app.use(router)
 app.use(Antd)
 
-// Register AppIcon as NIcon to maintain compatibility with existing templates
 app.component('AppIcon', AppIcon)
 
 app.mount('#app')
