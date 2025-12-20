@@ -70,7 +70,7 @@ const toggleChat = () => {
 .floating-menu {
     position: fixed;
     right: 20px;
-    bottom: 164px;
+    bottom: 150px;
     display: flex;
     flex-direction: column;
     gap: 16px;
