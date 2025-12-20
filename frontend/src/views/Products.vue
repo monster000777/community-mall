@@ -10,7 +10,8 @@
               <h3>商品分类</h3>
             </div>
             <div class="category-list">
-              <div class="category-item" :class="{ active: selectedCategory[0] === '0' || !selectedCategory[0] }"
+              <div class="category-item"
+                :class="{ active: String(selectedCategory[0]) === '0' || !selectedCategory[0] }"
                 @click="handleCategoryChange(null)">
                 <div class="category-icon">
                   <AppIcon :size="18" :component="GridOutline" />
@@ -19,7 +20,8 @@
                 <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
               <div v-for="(category, index) in categories" :key="category.id" class="category-item"
-                :class="{ active: selectedCategory[0] === category.id }" @click="handleCategoryChange(category.id)">
+                :class="{ active: String(selectedCategory[0]) === String(category.id) }"
+                @click="handleCategoryChange(category.id)">
                 <div class="category-icon">
                   <AppIcon :size="18" :component="getCategoryIcon(index)" />
                 </div>
