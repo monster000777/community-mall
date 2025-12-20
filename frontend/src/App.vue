@@ -3,16 +3,19 @@
     <router-view />
     <!-- 全局隐藏音频播放器 -->
     <audio id="globalVoiceAudio" hidden></audio>
-    <AiCustomerService />
+    <AiCustomerService v-model:visible="isChatOpen" />
+    <FloatingMenu v-model:isChatOpen="isChatOpen" />
   </a-config-provider>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useThemeStore } from '@/stores/theme'
 import { theme } from 'ant-design-vue'
 import AiCustomerService from '@/components/AiCustomerService.vue'
+import FloatingMenu from '@/components/FloatingMenu.vue'
 
+const isChatOpen = ref(false);
 const themeStore = useThemeStore()
 
 const themeAlgorithm = computed(() => themeStore.theme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm)

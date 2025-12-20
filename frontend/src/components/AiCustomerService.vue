@@ -1,13 +1,7 @@
 <template>
   <div class="ai-customer-service">
-    <!-- 悬浮按钮 -->
-    <div v-if="!isOpen" class="float-btn" @click="isOpen = true">
-      <customer-service-outlined style="font-size: 24px; color: #fff" />
-      <span class="btn-text">团团导购</span>
-    </div>
-
     <!-- 聊天窗口 -->
-    <div v-else class="chat-window">
+    <div v-if="visible" class="chat-window">
       <!-- 头部 -->
       <div class="chat-header">
         <div class="header-left">
@@ -30,7 +24,7 @@
               <audio-muted-outlined v-else />
             </div>
           </a-tooltip>
-          <close-outlined class="close-icon" @click="isOpen = false" />
+          <close-outlined class="close-icon action-icon" @click="emit('update:visible', false)" />
         </div>
       </div>
 
@@ -119,12 +113,20 @@ import { ttsPlayer, playTTS, stopTTS } from '@/utils/ttsPlayer'
 import { useUserStore } from '@/stores/user'
 import { message } from 'ant-design-vue';
 
+const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false
+  }
+});
+
+const emit = defineEmits(['update:visible']);
+
 // --- 头像同步逻辑 ---
 const userStore = useUserStore();
 // 从 Pinia 的 userInfo 中实时获取用户头像
 const userAvatar = computed(() => userStore.userInfo?.avatar);
 
-const isOpen = ref(false);
 const inputVal = ref('');
 const loading = ref(false);
 const chatBodyRef = ref(null);
@@ -163,7 +165,7 @@ onMounted(() => {
 });
 
 // 监听窗口关闭，自动停止语音播放
-watch(isOpen, (newVal) => {
+watch(() => props.visible, (newVal) => {
   if (!newVal) {
     stopTTS();
   }
@@ -243,31 +245,7 @@ const sendMessage = async () => {
   border-radius: 50%;
 }
 
-.float-btn {
-  width: 60px;
-  height: 60px;
-  background-color: var(--primary-color);
-  border-radius: 50%;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: white;
-  overflow: hidden;
-}
 
-.float-btn:hover {
-  transform: scale(1.1);
-  background-color: var(--primary-hover);
-}
-
-.btn-text {
-  font-size: 10px;
-  margin-top: 2px;
-}
 
 .chat-window {
   width: 350px;
