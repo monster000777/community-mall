@@ -201,6 +201,8 @@
         </div>
       </div>
     </a-layout-footer>
+    <FloatingMenu v-model:isChatOpen="isChatOpen" />
+    <AiCustomerService v-model:visible="isChatOpen" />
   </a-layout>
 </template>
 
@@ -237,6 +239,8 @@ import { useUserStore } from '@/stores/user'
 import { useCartStore } from '@/stores/cart'
 import { useThemeStore } from '@/stores/theme'
 import { message } from 'ant-design-vue'
+import FloatingMenu from '@/components/FloatingMenu.vue'
+import AiCustomerService from '@/components/AiCustomerService.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -245,6 +249,7 @@ const cartStore = useCartStore()
 const themeStore = useThemeStore()
 const selectedKeys = ref(['home'])
 const mobileMenuOpen = ref(false)
+const isChatOpen = ref(false)
 
 const avatarText = computed(() => {
   const name = userStore.userInfo?.nickname || userStore.userInfo?.username || ''
