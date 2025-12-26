@@ -5,48 +5,55 @@
       <!-- 头部 -->
       <div class="chat-header">
         <div class="header-left">
-          <robot-outlined :class="{ 'talking-icon': isTalking }" />
+          <RobotOutlined :class="{ 'talking-icon': isTalking }" />
           <span style="margin-left: 8px">智能导购团团</span>
           <span v-if="isTalking" class="status-tag">播报中...</span>
         </div>
         <div class="header-right">
           <!-- 全局停止按钮：仅在播报时显示 -->
-          <a-tooltip v-if="isTalking" title="停止当前播报">
+          <ATooltip v-if="isTalking" title="停止当前播报">
             <div class="action-icon stop-global-btn" @click="stopTTS">
-              <stop-outlined />
+              <StopOutlined />
             </div>
-          </a-tooltip>
+          </ATooltip>
 
           <!-- 自动播放控制开关 -->
-          <a-tooltip :title="isAutoPlay ? '点击关闭自动播报' : '点击开启自动播报'">
+          <ATooltip :title="isAutoPlay ? '点击关闭自动播报' : '点击开启自动播报'">
             <div class="action-icon" @click="isAutoPlay = !isAutoPlay">
-              <sound-outlined v-if="isAutoPlay" />
-              <audio-muted-outlined v-else />
+              <SoundOutlined v-if="isAutoPlay" />
+              <AudioMutedOutlined v-else />
             </div>
-          </a-tooltip>
-          <close-outlined class="close-icon action-icon" @click="emit('update:visible', false)" />
+          </ATooltip>
+          <CloseOutlined class="close-icon action-icon" @click="emit('update:visible', false)" />
         </div>
       </div>
 
       <!-- 消息列表 -->
-      <div class="chat-body" ref="chatBodyRef">
+      <div ref="chatBodyRef" class="chat-body">
         <div v-for="(msg, index) in messages" :key="index" :class="['message-item', msg.type]">
           <!-- 头像区域 -->
-          <div class="avatar"
-            :class="{ 'is-talking': isTalking && msg.type === 'ai' && index === messages.length - 1 }">
+          <div
+            class="avatar"
+            :class="{
+              'is-talking': isTalking && msg.type === 'ai' && index === messages.length - 1
+            }"
+          >
             <!-- 用户头像：同步 Pinia Store 中的头像 -->
             <template v-if="msg.type === 'user'">
               <img v-if="userAvatar" :src="userAvatar" class="avatar-img" alt="User" />
-              <user-outlined v-else />
+              <UserOutlined v-else />
             </template>
 
             <!-- AI 头像：保持默认机器人图标不变 -->
             <template v-else>
-              <robot-outlined />
+              <RobotOutlined />
             </template>
 
             <!-- 语音播放时的波纹动画 -->
-            <div v-if="isTalking && msg.type === 'ai' && index === messages.length - 1" class="wave-container">
+            <div
+              v-if="isTalking && msg.type === 'ai' && index === messages.length - 1"
+              class="wave-container"
+            >
               <span class="wave"></span>
               <span class="wave"></span>
             </div>
@@ -59,24 +66,24 @@
             <div v-if="msg.type === 'ai'" class="message-actions">
               <!-- 正在播报时显示停止按钮，否则显示播放按钮 -->
               <template v-if="isTalking && index === messages.length - 1">
-                <a-tooltip title="停止播放">
-                  <stop-outlined class="play-icon stop-icon-active" @click="stopTTS" />
-                </a-tooltip>
+                <ATooltip title="停止播放">
+                  <StopOutlined class="play-icon stop-icon-active" @click="stopTTS" />
+                </ATooltip>
               </template>
               <template v-else>
-                <a-tooltip title="播放语音">
-                  <play-circle-outlined class="play-icon" @click="playTTS(msg.content)" />
-                </a-tooltip>
+                <ATooltip title="播放语音">
+                  <PlayCircleOutlined class="play-icon" @click="playTTS(msg.content)" />
+                </ATooltip>
               </template>
             </div>
           </div>
         </div>
         <div v-if="loading" class="message-item ai">
           <div class="avatar">
-            <robot-outlined />
+            <RobotOutlined />
           </div>
           <div class="content loading">
-            <loading-outlined />
+            <LoadingOutlined />
             正在查询库存...
           </div>
         </div>
@@ -84,18 +91,23 @@
 
       <!-- 输入框 -->
       <div class="chat-footer">
-        <a-input v-model:value="inputVal" placeholder="问问团团有没有红富士？" @pressEnter="sendMessage" :disabled="loading">
+        <AInput
+          v-model:value="inputVal"
+          placeholder="问问团团有没有红富士？"
+          :disabled="loading"
+          @press-enter="sendMessage"
+        >
           <template #suffix>
-            <send-outlined class="send-icon" @click="sendMessage" />
+            <SendOutlined class="send-icon" @click="sendMessage" />
           </template>
-        </a-input>
+        </AInput>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, nextTick, watch, onUnmounted, onMounted, computed } from 'vue';
+import { ref, nextTick, watch, onUnmounted, onMounted, computed } from 'vue'
 import {
   CustomerServiceOutlined,
   CloseOutlined,
@@ -107,126 +119,128 @@ import {
   AudioMutedOutlined,
   PlayCircleOutlined,
   StopOutlined
-} from '@ant-design/icons-vue';
-import { askAi } from '@/api/ai';
+} from '@ant-design/icons-vue'
+import { askAi } from '@/api/ai'
 import { ttsPlayer, playTTS, stopTTS } from '@/utils/ttsPlayer'
 import { useUserStore } from '@/stores/user'
-import { message } from 'ant-design-vue';
+import { message } from 'ant-design-vue'
 
 const props = defineProps({
   visible: {
     type: Boolean,
     default: false
   }
-});
+})
 
-const emit = defineEmits(['update:visible']);
+const emit = defineEmits(['update:visible'])
 
 // --- 头像同步逻辑 ---
-const userStore = useUserStore();
+const userStore = useUserStore()
 // 从 Pinia 的 userInfo 中实时获取用户头像
-const userAvatar = computed(() => userStore.userInfo?.avatar);
+const userAvatar = computed(() => userStore.userInfo?.avatar)
 
-const inputVal = ref('');
-const loading = ref(false);
-const chatBodyRef = ref(null);
-const isTalking = ref(false); // 语音播放状态
+const inputVal = ref('')
+const loading = ref(false)
+const chatBodyRef = ref(null)
+const isTalking = ref(false) // 语音播放状态
 // 自动播放控制：优先读取本地缓存
-const savedAutoPlay = localStorage.getItem('ai_chat_autoplay');
+const savedAutoPlay = localStorage.getItem('ai_chat_autoplay')
 // 默认为 true (如果本地没有存过)
-const isAutoPlay = ref(savedAutoPlay === null ? true : savedAutoPlay === 'true');
+const isAutoPlay = ref(savedAutoPlay === null ? true : savedAutoPlay === 'true')
 
 // 监听变化并持久化
 watch(isAutoPlay, (newVal) => {
-  localStorage.setItem('ai_chat_autoplay', newVal);
-});
+  localStorage.setItem('ai_chat_autoplay', newVal)
+})
 
-const sessionId = ref('');
-
+const sessionId = ref('')
 
 const messages = ref([
   { type: 'ai', content: '您好！我是团团，很高兴为您服务。请问您想买点什么？' }
-]);
+])
 
 // 初始化监听器
 onMounted(() => {
   // Generate/Retrieve Session ID
-  let sid = localStorage.getItem('chat_session_id');
+  let sid = localStorage.getItem('chat_session_id')
   if (!sid) {
-    sid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('chat_session_id', sid);
+    sid = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9)
+    localStorage.setItem('chat_session_id', sid)
   }
-  sessionId.value = sid;
-  console.log('Chat Session ID:', sessionId.value);
+  sessionId.value = sid
+  console.log('Chat Session ID:', sessionId.value)
 
   ttsPlayer.listen((status) => {
-    isTalking.value = status;
-  });
-});
+    isTalking.value = status
+  })
+})
 
 // 监听窗口关闭，自动停止语音播放
-watch(() => props.visible, (newVal) => {
-  if (!newVal) {
-    stopTTS();
+watch(
+  () => props.visible,
+  (newVal) => {
+    if (!newVal) {
+      stopTTS()
+    }
   }
-});
+)
 
 // 组件卸载时停止播放
 onUnmounted(() => {
-  stopTTS();
-});
+  stopTTS()
+})
 
 const scrollToBottom = async () => {
-  await nextTick();
+  await nextTick()
   if (chatBodyRef.value) {
-    chatBodyRef.value.scrollTop = chatBodyRef.value.scrollHeight;
+    chatBodyRef.value.scrollTop = chatBodyRef.value.scrollHeight
   }
-};
+}
 
 const sendMessage = async () => {
-  const content = inputVal.value.trim();
-  if (!content || loading.value) return;
+  const content = inputVal.value.trim()
+  if (!content || loading.value) return
 
   // 1. 添加用户消息
-  messages.value.push({ type: 'user', content });
-  inputVal.value = '';
-  await scrollToBottom();
+  messages.value.push({ type: 'user', content })
+  inputVal.value = ''
+  await scrollToBottom()
 
   // 2. 调用后端
-  loading.value = true;
-  stopTTS();
+  loading.value = true
+  stopTTS()
 
   try {
     const res = await askAi({
       question: content,
       sessionId: sessionId.value
-    });
-    const responseData = (res && res.data && res.data.code) ? res.data : res;
+    })
+    const responseData = res && res.data && res.data.code ? res.data : res
 
     if (responseData && responseData.code === 200) {
-      const answer = responseData.data;
+      const answer = responseData.data
       if (answer) {
-        messages.value.push({ type: 'ai', content: answer });
+        messages.value.push({ type: 'ai', content: answer })
         // 根据开关决定是否自动播放
         if (isAutoPlay.value) {
-          playTTS(answer);
+          playTTS(answer)
         }
       } else {
-        messages.value.push({ type: 'ai', content: '（AI回复为空）' });
+        messages.value.push({ type: 'ai', content: '（AI回复为空）' })
       }
     } else {
-      const subMsg = responseData?.message || responseData?.msg || '未知错误';
-      message.error(subMsg);
-      messages.value.push({ type: 'ai', content: '抱歉，团团开小差了。' });
+      const subMsg = responseData?.message || responseData?.msg || '未知错误'
+      message.error(subMsg)
+      messages.value.push({ type: 'ai', content: '抱歉，团团开小差了。' })
     }
   } catch (error) {
-    message.error('网络请求失败');
-    messages.value.push({ type: 'ai', content: '网络连接失败，请检查网络。' });
+    message.error('网络请求失败')
+    messages.value.push({ type: 'ai', content: '网络连接失败，请检查网络。' })
   } finally {
-    loading.value = false;
-    await scrollToBottom();
+    loading.value = false
+    await scrollToBottom()
   }
-};
+}
 </script>
 
 <style scoped>
@@ -244,8 +258,6 @@ const sendMessage = async () => {
   object-fit: cover;
   border-radius: 50%;
 }
-
-
 
 .chat-window {
   width: 350px;

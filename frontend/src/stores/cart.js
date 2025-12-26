@@ -31,4 +31,3 @@ export const useCartStore = defineStore('cart', () => {
     clearCartData
   }
 })
-

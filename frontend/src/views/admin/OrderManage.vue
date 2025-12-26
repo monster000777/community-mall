@@ -26,7 +26,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">待支付</p>
-          <h3 class="stat-value">{{orders.filter(o => o.orderStatus === 1).length}}</h3>
+          <h3 class="stat-value">{{ orders.filter((o) => o.orderStatus === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -35,7 +35,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已完成</p>
-          <h3 class="stat-value">{{orders.filter(o => o.orderStatus === 4).length}}</h3>
+          <h3 class="stat-value">{{ orders.filter((o) => o.orderStatus === 4).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -49,92 +49,121 @@
       </div>
     </div>
 
-    <a-card class="table-card" :bordered="false">
-      <a-table :columns="columns" :data-source="orders" :pagination="pagination" row-key="id"
-        @change="handleTableChange" :loading="loading" :locale="{ emptyText: '暂无订单' }">
+    <ACard class="table-card" :bordered="false">
+      <ATable
+        :columns="columns"
+        :data-source="orders"
+        :pagination="pagination"
+        row-key="id"
+        :loading="loading"
+        :locale="{ emptyText: '暂无订单' }"
+        @change="handleTableChange"
+      >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'orderNo'">
             <div class="order-no">{{ record.orderNo }}</div>
           </template>
           <template v-if="column.key === 'orderStatus'">
-            <a-tag :color="getStatusColor(record.orderStatus)" class="status-tag">
+            <ATag :color="getStatusColor(record.orderStatus)" class="status-tag">
               <template #icon>
                 <AppIcon :component="getStatusIcon(record.orderStatus)" />
               </template>
               {{ getStatusText(record.orderStatus) }}
-            </a-tag>
+            </ATag>
           </template>
           <template v-else-if="column.key === 'actualAmount'">
             <span class="amount-text">¥{{ record.actualAmount }}</span>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button v-if="record.orderStatus === 1" type="text" size="small" class="action-btn"
-                :loading="cancelingOrderId === record.id" @click="handleAdminCancel(record)">
+            <ASpace>
+              <AButton
+                v-if="record.orderStatus === 1"
+                type="text"
+                size="small"
+                class="action-btn"
+                :loading="cancelingOrderId === record.id"
+                @click="handleAdminCancel(record)"
+              >
                 取消
-              </a-button>
-              <a-button v-if="record.orderStatus === 2" type="text" size="small" class="action-btn"
-                :loading="shippingOrderId === record.id" @click="handleShip(record)">
+              </AButton>
+              <AButton
+                v-if="record.orderStatus === 2"
+                type="text"
+                size="small"
+                class="action-btn"
+                :loading="shippingOrderId === record.id"
+                @click="handleShip(record)"
+              >
                 发货
-              </a-button>
-              <a-button v-if="record.orderStatus === 2" type="text" size="small" class="action-btn"
-                :loading="refundingOrderId === record.id" @click="handleRefund(record)">
+              </AButton>
+              <AButton
+                v-if="record.orderStatus === 2"
+                type="text"
+                size="small"
+                class="action-btn"
+                :loading="refundingOrderId === record.id"
+                @click="handleRefund(record)"
+              >
                 退款
-              </a-button>
-              <a-button v-if="record.orderStatus === 3" type="text" size="small" class="action-btn"
-                :loading="completingOrderId === record.id" @click="handleComplete(record)">
+              </AButton>
+              <AButton
+                v-if="record.orderStatus === 3"
+                type="text"
+                size="small"
+                class="action-btn"
+                :loading="completingOrderId === record.id"
+                @click="handleComplete(record)"
+              >
                 完成
-              </a-button>
-              <a-button type="text" size="small" @click="viewDetail(record)" class="action-btn">
+              </AButton>
+              <AButton type="text" size="small" class="action-btn" @click="viewDetail(record)">
                 <template #icon>
                   <AppIcon :component="EyeOutline" />
                 </template>
                 详情
-              </a-button>
-            </a-space>
+              </AButton>
+            </ASpace>
           </template>
         </template>
-      </a-table>
-    </a-card>
+      </ATable>
+    </ACard>
 
     <!-- 订单详情弹窗 -->
-    <a-modal v-model:open="detailVisible" title="订单详情" width="800px" :footer="null">
+    <AModal v-model:open="detailVisible" title="订单详情" width="800px" :footer="null">
       <div v-if="currentOrder" class="order-detail">
-        <a-descriptions :column="2" bordered>
-          <a-descriptions-item label="订单号">
+        <ADescriptions :column="2" bordered>
+          <ADescriptionsItem label="订单号">
             {{ currentOrder.orderNo }}
-          </a-descriptions-item>
-          <a-descriptions-item label="订单状态">
-            <a-tag :color="getStatusColor(currentOrder.orderStatus)">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="订单状态">
+            <ATag :color="getStatusColor(currentOrder.orderStatus)">
               {{ getStatusText(currentOrder.orderStatus) }}
-            </a-tag>
-          </a-descriptions-item>
-          <a-descriptions-item label="用户ID">
+            </ATag>
+          </ADescriptionsItem>
+          <ADescriptionsItem label="用户ID">
             {{ currentOrder.userId }}
-          </a-descriptions-item>
-          <a-descriptions-item label="订单金额">
-            <span class="amount-text">
-              ¥{{ currentOrder.actualAmount }}
-            </span>
-          </a-descriptions-item>
-          <a-descriptions-item label="收货人">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="订单金额">
+            <span class="amount-text"> ¥{{ currentOrder.actualAmount }} </span>
+          </ADescriptionsItem>
+          <ADescriptionsItem label="收货人">
             {{ currentOrder.receiverName }}
-          </a-descriptions-item>
-          <a-descriptions-item label="联系电话">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="联系电话">
             {{ currentOrder.receiverPhone }}
-          </a-descriptions-item>
-          <a-descriptions-item label="收货地址" :span="2">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="收货地址" :span="2">
             {{ currentOrder.receiverAddress }}
-          </a-descriptions-item>
-          <a-descriptions-item label="创建时间">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="创建时间">
             {{ currentOrder.createdAt }}
-          </a-descriptions-item>
-          <a-descriptions-item label="更新时间">
+          </ADescriptionsItem>
+          <ADescriptionsItem label="更新时间">
             {{ currentOrder.updatedAt }}
-          </a-descriptions-item>
-        </a-descriptions>
+          </ADescriptionsItem>
+        </ADescriptions>
       </div>
-    </a-modal>
+    </AModal>
   </div>
 </template>
 
@@ -155,7 +184,13 @@ import {
   RocketOutline,
   RefreshOutline
 } from '@vicons/ionicons5'
-import { getAdminOrderList, adminShipOrder, adminCompleteOrder, adminCancelOrder, adminRefundOrder } from '@/api/order'
+import {
+  getAdminOrderList,
+  adminShipOrder,
+  adminCompleteOrder,
+  adminCancelOrder,
+  adminRefundOrder
+} from '@/api/order'
 
 const orders = ref([])
 const detailVisible = ref(false)
@@ -175,16 +210,30 @@ const pagination = ref({
 const columns = [
   { title: '订单号', dataIndex: 'orderNo', key: 'orderNo', width: 180, align: 'center' },
   { title: '用户ID', dataIndex: 'userId', key: 'userId', width: 80, align: 'center' },
-  { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount', width: 100, align: 'center' },
+  {
+    title: '订单金额',
+    key: 'actualAmount',
+    dataIndex: 'actualAmount',
+    width: 100,
+    align: 'center'
+  },
   { title: '收货人', dataIndex: 'receiverName', key: 'receiverName', width: 120, align: 'center' },
-  { title: '收货电话', dataIndex: 'receiverPhone', key: 'receiverPhone', width: 140, align: 'center' },
+  {
+    title: '收货电话',
+    dataIndex: 'receiverPhone',
+    key: 'receiverPhone',
+    width: 140,
+    align: 'center'
+  },
   { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus', width: 120, align: 'center' },
   { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, align: 'center' },
   { title: '操作', key: 'action', width: 140, align: 'center' }
 ]
 
 const totalAmount = computed(() => {
-  return orders.value.reduce((sum, order) => sum + parseFloat(order.actualAmount || 0), 0).toFixed(2)
+  return orders.value
+    .reduce((sum, order) => sum + parseFloat(order.actualAmount || 0), 0)
+    .toFixed(2)
 })
 
 onMounted(() => {
@@ -417,15 +466,15 @@ function viewDetail(order) {
 }
 
 .icon-info {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .icon-success {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .icon-purple {
-  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
 }
 
 .stat-info {

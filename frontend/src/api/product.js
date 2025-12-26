@@ -63,4 +63,3 @@ export function updateProductStatus(id, isOnSale) {
     params: { isOnSale }
   })
 }
-

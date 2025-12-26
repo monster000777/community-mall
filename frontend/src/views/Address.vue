@@ -4,10 +4,14 @@
       <div class="address-card">
         <div class="card-header">
           <h2>收货地址管理</h2>
-          <a-button type="primary" @click="showAddModal" class="add-btn">
-            <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          <AButton type="primary" class="add-btn" @click="showAddModal">
+            <AppIcon
+              :size="18"
+              :component="AddOutline"
+              style="margin-right: 6px; vertical-align: -3px"
+            />
             新增地址
-          </a-button>
+          </AButton>
         </div>
 
         <div v-if="!loading && addressList.length === 0" class="empty-state">
@@ -16,11 +20,15 @@
         </div>
 
         <div v-else class="address-grid">
-          <div v-for="item in addressList" :key="item.id" class="address-item"
-            :class="{ 'default': item.isDefault === 1 }">
+          <div
+            v-for="item in addressList"
+            :key="item.id"
+            class="address-item"
+            :class="{ default: item.isDefault === 1 }"
+          >
             <div class="item-header">
               <span class="name">{{ item.receiverName }}</span>
-              <a-tag v-if="item.isDefault === 1" color="success">默认</a-tag>
+              <ATag v-if="item.isDefault === 1" color="success">默认</ATag>
             </div>
 
             <div class="item-content">
@@ -30,29 +38,36 @@
               </div>
               <div class="info-row">
                 <AppIcon :size="16" :component="LocationOutline" class="icon" />
-                <span>{{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}</span>
+                <span
+                  >{{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}</span
+                >
               </div>
             </div>
 
             <div class="item-actions">
-              <a-button type="text" size="small" @click="handleEdit(item)">
+              <AButton type="text" size="small" @click="handleEdit(item)">
                 <template #icon>
                   <AppIcon :size="16" :component="CreateOutline" style="vertical-align: -2px" />
                 </template>
                 编辑
-              </a-button>
-              <a-button v-if="item.isDefault !== 1" type="text" size="small" @click="handleSetDefault(item.id)">
+              </AButton>
+              <AButton
+                v-if="item.isDefault !== 1"
+                type="text"
+                size="small"
+                @click="handleSetDefault(item.id)"
+              >
                 <template #icon>
                   <AppIcon :size="16" :component="StarOutline" style="vertical-align: -2px" />
                 </template>
                 设为默认
-              </a-button>
-              <a-button type="text" danger size="small" @click="handleDelete(item.id)">
+              </AButton>
+              <AButton type="text" danger size="small" @click="handleDelete(item.id)">
                 <template #icon>
                   <AppIcon :size="16" :component="TrashOutline" style="vertical-align: -2px" />
                 </template>
                 删除
-              </a-button>
+              </AButton>
             </div>
           </div>
         </div>
@@ -60,37 +75,47 @@
     </div>
 
     <!-- 添加/编辑地址弹窗 -->
-    <a-modal v-model:open="modalVisible" :title="editId ? '编辑地址' : '新增地址'" width="600px" @ok="handleSubmit"
-      :confirm-loading="submitLoading" class="address-modal">
-      <a-form :model="formState" layout="vertical">
+    <AModal
+      v-model:open="modalVisible"
+      :title="editId ? '编辑地址' : '新增地址'"
+      width="600px"
+      :confirm-loading="submitLoading"
+      class="address-modal"
+      @ok="handleSubmit"
+    >
+      <AForm :model="formState" layout="vertical">
         <div class="form-row">
-          <a-form-item label="收货人" required class="form-col">
-            <a-input v-model:value="formState.receiverName" placeholder="请输入收货人姓名" />
-          </a-form-item>
-          <a-form-item label="联系电话" required class="form-col">
-            <a-input v-model:value="formState.receiverPhone" placeholder="请输入手机号" />
-          </a-form-item>
+          <AFormItem label="收货人" required class="form-col">
+            <AInput v-model:value="formState.receiverName" placeholder="请输入收货人姓名" />
+          </AFormItem>
+          <AFormItem label="联系电话" required class="form-col">
+            <AInput v-model:value="formState.receiverPhone" placeholder="请输入手机号" />
+          </AFormItem>
         </div>
 
-        <a-form-item label="所在地区" required>
+        <AFormItem label="所在地区" required>
           <div class="area-inputs">
-            <a-input v-model:value="formState.province" placeholder="省份" />
-            <a-input v-model:value="formState.city" placeholder="城市" />
-            <a-input v-model:value="formState.district" placeholder="区县" />
+            <AInput v-model:value="formState.province" placeholder="省份" />
+            <AInput v-model:value="formState.city" placeholder="城市" />
+            <AInput v-model:value="formState.district" placeholder="区县" />
           </div>
-        </a-form-item>
+        </AFormItem>
 
-        <a-form-item label="详细地址" required>
-          <a-textarea v-model:value="formState.detail" placeholder="请输入详细地址，如街道、门牌号等" :rows="3" />
-        </a-form-item>
+        <AFormItem label="详细地址" required>
+          <ATextarea
+            v-model:value="formState.detail"
+            placeholder="请输入详细地址，如街道、门牌号等"
+            :rows="3"
+          />
+        </AFormItem>
 
-        <a-form-item>
-          <a-checkbox v-model:checked="formState.isDefault" :true-value="1" :false-value="0">
+        <AFormItem>
+          <ACheckbox v-model:checked="formState.isDefault" :true-value="1" :false-value="0">
             设为默认收货地址
-          </a-checkbox>
-        </a-form-item>
-      </a-form>
-    </a-modal>
+          </ACheckbox>
+        </AFormItem>
+      </AForm>
+    </AModal>
   </div>
 </template>
 

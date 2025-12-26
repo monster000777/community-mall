@@ -1,9 +1,9 @@
 <template>
-  <a-config-provider :theme="{ algorithm: themeAlgorithm }">
-    <router-view />
+  <AConfigProvider :theme="{ algorithm: themeAlgorithm }">
+    <RouterView />
     <!-- 全局隐藏音频播放器 -->
     <audio id="globalVoiceAudio" hidden></audio>
-  </a-config-provider>
+  </AConfigProvider>
 </template>
 
 <script setup>
@@ -12,7 +12,9 @@ import { useThemeStore } from '@/stores/theme'
 import { theme } from 'ant-design-vue'
 const themeStore = useThemeStore()
 
-const themeAlgorithm = computed(() => themeStore.theme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm)
+const themeAlgorithm = computed(() =>
+  themeStore.theme === 'dark' ? theme.darkAlgorithm : theme.defaultAlgorithm
+)
 </script>
 
 <style>
@@ -24,8 +26,8 @@ const themeAlgorithm = computed(() => themeStore.theme === 'dark' ? theme.darkAl
 
 #app {
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    'Noto Color Emoji';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans',
+    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 </style>

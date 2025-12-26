@@ -4,13 +4,17 @@
       <div class="left-overlay"></div>
       <div class="left-content">
         <h1 class="brand-title">
-          <AppIcon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
+          <AppIcon
+            :size="48"
+            :component="StorefrontOutline"
+            style="vertical-align: -8px; margin-right: 12px"
+          />
           开启团购之旅
         </h1>
         <p class="brand-subtitle">注册即享新人专属优惠</p>
 
         <div class="benefits">
-          <div class="benefit-item" v-for="(benefit, index) in benefits" :key="index">
+          <div v-for="(benefit, index) in benefits" :key="index" class="benefit-item">
             <div class="benefit-icon-wrapper">
               <AppIcon :size="32" :component="benefit.icon" />
             </div>
@@ -28,63 +32,101 @@
           <p>填写以下信息完成注册</p>
         </div>
 
-        <a-form :model="registerForm" class="register-form" @finish="handleRegister">
-          <a-form-item name="username">
-            <a-input v-model:value="registerForm.username" size="large" placeholder="用户名（4-20个字符）" class="custom-input">
+        <AForm :model="registerForm" class="register-form" @finish="handleRegister">
+          <AFormItem name="username">
+            <AInput
+              v-model:value="registerForm.username"
+              size="large"
+              placeholder="用户名（4-20个字符）"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
-            </a-input>
-          </a-form-item>
+            </AInput>
+          </AFormItem>
 
-          <a-form-item name="phone">
-            <a-input v-model:value="registerForm.phone" size="large" placeholder="手机号" maxlength="11"
-              class="custom-input">
+          <AFormItem name="phone">
+            <AInput
+              v-model:value="registerForm.phone"
+              size="large"
+              placeholder="手机号"
+              maxlength="11"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="CallOutline" class="input-icon" />
               </template>
-            </a-input>
-          </a-form-item>
+            </AInput>
+          </AFormItem>
 
-          <a-form-item name="nickname">
-            <a-input v-model:value="registerForm.nickname" size="large" placeholder="昵称（可选）" class="custom-input">
+          <AFormItem name="nickname">
+            <AInput
+              v-model:value="registerForm.nickname"
+              size="large"
+              placeholder="昵称（可选）"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="HappyOutline" class="input-icon" />
               </template>
-            </a-input>
-          </a-form-item>
+            </AInput>
+          </AFormItem>
 
-          <a-form-item name="password">
-            <a-input-password v-model:value="registerForm.password" size="large" placeholder="密码（至少6位）"
-              class="custom-input">
+          <AFormItem name="password">
+            <AInputPassword
+              v-model:value="registerForm.password"
+              size="large"
+              placeholder="密码（至少6位）"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
-            </a-input-password>
-          </a-form-item>
+            </AInputPassword>
+          </AFormItem>
 
-          <a-form-item name="confirmPassword">
-            <a-input-password v-model:value="registerForm.confirmPassword" size="large" placeholder="确认密码"
-              class="custom-input">
+          <AFormItem name="confirmPassword">
+            <AInputPassword
+              v-model:value="registerForm.confirmPassword"
+              size="large"
+              placeholder="确认密码"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="CheckmarkCircleOutline" class="input-icon" />
               </template>
-            </a-input-password>
-          </a-form-item>
+            </AInputPassword>
+          </AFormItem>
 
-          <a-form-item>
-            <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="register-button">
-              <AppIcon :size="20" :component="PersonAddOutline" style="margin-right: 8px; vertical-align: -4px;" />
+          <AFormItem>
+            <AButton
+              type="primary"
+              html-type="submit"
+              size="large"
+              :loading="loading"
+              block
+              class="register-button"
+            >
+              <AppIcon
+                :size="20"
+                :component="PersonAddOutline"
+                style="margin-right: 8px; vertical-align: -4px"
+              />
               立即注册
-            </a-button>
-          </a-form-item>
-        </a-form>
+            </AButton>
+          </AFormItem>
+        </AForm>
 
         <div class="form-footer">
           <span>已有账户？</span>
-          <a @click="$router.push('/login')" class="login-link">
+          <a class="login-link" @click="$router.push('/login')">
             立即登录
-            <AppIcon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
+            <AppIcon
+              :size="16"
+              :component="ArrowForwardOutline"
+              style="vertical-align: -2px; margin-left: 4px"
+            />
           </a>
         </div>
       </div>
@@ -201,7 +243,8 @@ async function handleRegister() {
 .register-left {
   flex: 1;
   position: relative;
-  background: url('https://images.unsplash.com/photo-1601599561213-832382fd07ba?w=1200&q=80') center/cover;
+  background: url('https://images.unsplash.com/photo-1601599561213-832382fd07ba?w=1200&q=80')
+    center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -222,7 +265,6 @@ async function handleRegister() {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);

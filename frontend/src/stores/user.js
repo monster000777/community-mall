@@ -19,7 +19,7 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   async function login(username, password) {
     const res = await loginApi({ username, password })
-    
+
     // 保存 token (Sa-Token 使用 satoken 作为 key)
     token.value = res.data.token
     userInfo.value = {
@@ -29,7 +29,7 @@ export const useUserStore = defineStore('user', () => {
       role: res.data.role,
       avatar: res.data.avatar
     }
-    
+
     localStorage.setItem('satoken', res.data.token)
     localStorage.setItem('userInfo', JSON.stringify(userInfo.value))
   }
@@ -72,4 +72,3 @@ export const useUserStore = defineStore('user', () => {
     updateUserInfo
   }
 })
-

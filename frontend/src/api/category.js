@@ -19,4 +19,3 @@ export function getCategoriesByParentId(parentId) {
     method: 'get'
   })
 }
-

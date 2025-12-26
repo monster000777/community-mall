@@ -9,41 +9,56 @@
         <div class="profile-content">
           <div class="avatar-section">
             <div class="avatar-wrapper">
-              <a-avatar :size="120" :src="form.avatar" :style="profileAvatarStyle" class="profile-avatar">
+              <AAvatar
+                :size="120"
+                :src="form.avatar"
+                :style="profileAvatarStyle"
+                class="profile-avatar"
+              >
                 <span v-if="!form.avatar">{{ avatarText }}</span>
-              </a-avatar>
+              </AAvatar>
               <div class="avatar-overlay">
-                <a-upload :show-upload-list="false" :before-upload="beforeUpload" :custom-request="handleAvatarUpload"
-                  class="upload-trigger">
+                <AUpload
+                  :show-upload-list="false"
+                  :before-upload="beforeUpload"
+                  :custom-request="handleAvatarUpload"
+                  class="upload-trigger"
+                >
                   <AppIcon :size="24" :component="CameraOutline" style="color: white" />
-                </a-upload>
+                </AUpload>
               </div>
             </div>
             <div class="avatar-tip">点击更换头像</div>
           </div>
 
           <div class="info-section">
-            <a-form layout="vertical" class="profile-form">
-              <a-form-item label="用户名">
-                <a-input :value="userStore.userInfo?.username" disabled size="large" />
-              </a-form-item>
+            <AForm layout="vertical" class="profile-form">
+              <AFormItem label="用户名">
+                <AInput :value="userStore.userInfo?.username" disabled size="large" />
+              </AFormItem>
 
-              <a-form-item label="昵称">
-                <a-input v-model:value="form.nickname" size="large" placeholder="请输入昵称" />
-              </a-form-item>
+              <AFormItem label="昵称">
+                <AInput v-model:value="form.nickname" size="large" placeholder="请输入昵称" />
+              </AFormItem>
 
-              <a-form-item label="角色">
-                <a-tag :color="userStore.isAdmin() ? 'purple' : 'blue'" class="role-tag">
+              <AFormItem label="角色">
+                <ATag :color="userStore.isAdmin() ? 'purple' : 'blue'" class="role-tag">
                   {{ userStore.isAdmin() ? '管理员' : '普通用户' }}
-                </a-tag>
-              </a-form-item>
+                </ATag>
+              </AFormItem>
 
               <div class="form-actions">
-                <a-button type="primary" size="large" :loading="saving" @click="handleSave" class="save-btn">
+                <AButton
+                  type="primary"
+                  size="large"
+                  :loading="saving"
+                  class="save-btn"
+                  @click="handleSave"
+                >
                   保存修改
-                </a-button>
+                </AButton>
               </div>
-            </a-form>
+            </AForm>
 
             <div class="quick-links">
               <h3>快捷入口</h3>

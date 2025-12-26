@@ -10,18 +10,24 @@
               <h3>商品分类</h3>
             </div>
             <div class="category-list">
-              <div class="category-item"
+              <div
+                class="category-item"
                 :class="{ active: String(selectedCategory[0]) === '0' || !selectedCategory[0] }"
-                @click="handleCategoryChange(null)">
+                @click="handleCategoryChange(null)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="GridOutline" />
                 </div>
                 <span>全部商品</span>
                 <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div v-for="(category, index) in categories" :key="category.id" class="category-item"
+              <div
+                v-for="(category, index) in categories"
+                :key="category.id"
+                class="category-item"
                 :class="{ active: String(selectedCategory[0]) === String(category.id) }"
-                @click="handleCategoryChange(category.id)">
+                @click="handleCategoryChange(category.id)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="getCategoryIcon(index)" />
                 </div>
@@ -36,12 +42,17 @@
         <div class="main-content">
           <div class="toolbar">
             <div class="search-wrapper">
-              <a-input-search v-model:value="keyword" placeholder="搜索新鲜食材..." size="large" class="custom-search"
-                @search="loadProducts">
+              <AInputSearch
+                v-model:value="keyword"
+                placeholder="搜索新鲜食材..."
+                size="large"
+                class="custom-search"
+                @search="loadProducts"
+              >
                 <template #prefix>
                   <AppIcon :size="18" :component="SearchOutline" style="color: #999" />
                 </template>
-              </a-input-search>
+              </AInputSearch>
             </div>
             <div class="sort-wrapper">
               <!-- 可以添加排序功能 -->
@@ -49,7 +60,7 @@
           </div>
 
           <div v-if="loading" class="loading-state">
-            <a-spin size="large" />
+            <ASpin size="large" />
           </div>
 
           <div v-else-if="products.length === 0" class="empty-state">
@@ -58,14 +69,18 @@
           </div>
 
           <div v-else class="product-grid">
-            <div v-for="product in products" :key="product.id" class="product-card"
-              @click="goToProductDetail(product.id)">
+            <div
+              v-for="product in products"
+              :key="product.id"
+              class="product-card"
+              @click="goToProductDetail(product.id)"
+            >
               <div class="product-image-wrapper">
                 <img :src="product.mainImage" :alt="product.productName" class="product-image" />
                 <div class="product-overlay">
-                  <a-button type="primary" shape="round">查看详情</a-button>
+                  <AButton type="primary" shape="round">查看详情</AButton>
                 </div>
-                <div class="stock-tag" v-if="product.stock < 10">仅剩 {{ product.stock }} 件</div>
+                <div v-if="product.stock < 10" class="stock-tag">仅剩 {{ product.stock }} 件</div>
               </div>
               <div class="product-info">
                 <h3 class="product-title">{{ product.productName }}</h3>
@@ -81,15 +96,24 @@
           </div>
 
           <!-- Desktop Pagination -->
-          <div class="pagination-wrapper desktop-pagination" v-if="products.length > 0">
-            <a-pagination v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
-              :total="pagination.total" @change="loadProducts" />
+          <div v-if="products.length > 0" class="pagination-wrapper desktop-pagination">
+            <APagination
+              v-model:current="pagination.current"
+              v-model:page-size="pagination.pageSize"
+              :total="pagination.total"
+              @change="loadProducts"
+            />
           </div>
 
           <!-- Mobile Pagination -->
-          <div class="pagination-wrapper mobile-pagination" v-if="products.length > 0">
-            <a-pagination v-model:current="pagination.current" v-model:page-size="pagination.pageSize"
-              :total="pagination.total" simple @change="loadProducts" />
+          <div v-if="products.length > 0" class="pagination-wrapper mobile-pagination">
+            <APagination
+              v-model:current="pagination.current"
+              v-model:page-size="pagination.pageSize"
+              :total="pagination.total"
+              simple
+              @change="loadProducts"
+            />
           </div>
         </div>
       </div>

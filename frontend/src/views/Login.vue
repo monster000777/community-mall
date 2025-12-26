@@ -4,12 +4,16 @@
       <div class="left-overlay"></div>
       <div class="left-content">
         <h1 class="brand-title">
-          <AppIcon :size="48" :component="StorefrontOutline" style="vertical-align: -8px; margin-right: 12px;" />
+          <AppIcon
+            :size="48"
+            :component="StorefrontOutline"
+            style="vertical-align: -8px; margin-right: 12px"
+          />
           社区团购商城
         </h1>
         <p class="brand-subtitle">新鲜食材 · 优惠价格 · 品质保证</p>
         <div class="features">
-          <div class="feature-item" v-for="(feature, index) in features" :key="index">
+          <div v-for="(feature, index) in features" :key="index" class="feature-item">
             <AppIcon :size="24" :component="feature.icon" class="feature-icon" />
             <span>{{ feature.text }}</span>
           </div>
@@ -24,36 +28,61 @@
           <p>登录您的账户继续购物</p>
         </div>
 
-        <a-form :model="loginForm" class="login-form" @finish="handleLogin">
-          <a-form-item name="username">
-            <a-input v-model:value="loginForm.username" size="large" placeholder="请输入用户名" class="custom-input">
+        <AForm :model="loginForm" class="login-form" @finish="handleLogin">
+          <AFormItem name="username">
+            <AInput
+              v-model:value="loginForm.username"
+              size="large"
+              placeholder="请输入用户名"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="PersonOutline" class="input-icon" />
               </template>
-            </a-input>
-          </a-form-item>
+            </AInput>
+          </AFormItem>
 
-          <a-form-item name="password">
-            <a-input-password v-model:value="loginForm.password" size="large" placeholder="请输入密码" class="custom-input">
+          <AFormItem name="password">
+            <AInputPassword
+              v-model:value="loginForm.password"
+              size="large"
+              placeholder="请输入密码"
+              class="custom-input"
+            >
               <template #prefix>
                 <AppIcon :size="18" :component="LockClosedOutline" class="input-icon" />
               </template>
-            </a-input-password>
-          </a-form-item>
+            </AInputPassword>
+          </AFormItem>
 
-          <a-form-item>
-            <a-button type="primary" html-type="submit" size="large" :loading="loading" block class="login-button">
-              <AppIcon :size="20" :component="LogInOutline" style="margin-right: 8px; vertical-align: -4px;" />
+          <AFormItem>
+            <AButton
+              type="primary"
+              html-type="submit"
+              size="large"
+              :loading="loading"
+              block
+              class="login-button"
+            >
+              <AppIcon
+                :size="20"
+                :component="LogInOutline"
+                style="margin-right: 8px; vertical-align: -4px"
+              />
               立即登录
-            </a-button>
-          </a-form-item>
-        </a-form>
+            </AButton>
+          </AFormItem>
+        </AForm>
 
         <div class="form-footer">
           <span>还没有账户？</span>
-          <a @click="$router.push('/register')" class="register-link">
+          <a class="register-link" @click="$router.push('/register')">
             立即注册
-            <AppIcon :size="16" :component="ArrowForwardOutline" style="vertical-align: -2px; margin-left: 4px;" />
+            <AppIcon
+              :size="16"
+              :component="ArrowForwardOutline"
+              style="vertical-align: -2px; margin-left: 4px"
+            />
           </a>
         </div>
 
@@ -62,14 +91,22 @@
         </div>
 
         <div class="quick-login">
-          <a-button size="large" block @click="handleQuickLogin('user')" class="quick-btn">
-            <AppIcon :size="18" :component="PersonCircleOutline" style="margin-right: 8px; vertical-align: -3px;" />
+          <AButton size="large" block class="quick-btn" @click="handleQuickLogin('user')">
+            <AppIcon
+              :size="18"
+              :component="PersonCircleOutline"
+              style="margin-right: 8px; vertical-align: -3px"
+            />
             普通用户登录
-          </a-button>
-          <a-button size="large" block @click="handleQuickLogin('admin')" class="quick-btn mt-3">
-            <AppIcon :size="18" :component="ShieldCheckmarkOutline" style="margin-right: 8px; vertical-align: -3px;" />
+          </AButton>
+          <AButton size="large" block class="quick-btn mt-3" @click="handleQuickLogin('admin')">
+            <AppIcon
+              :size="18"
+              :component="ShieldCheckmarkOutline"
+              style="margin-right: 8px; vertical-align: -3px"
+            />
             管理员登录
-          </a-button>
+          </AButton>
         </div>
       </div>
     </div>
@@ -165,7 +202,8 @@ function handleQuickLogin(type) {
 .login-left {
   flex: 1;
   position: relative;
-  background: url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80') center/cover;
+  background: url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80')
+    center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -186,7 +224,6 @@ function handleQuickLogin(type) {
 }
 
 @keyframes float {
-
   0%,
   100% {
     transform: translate(0, 0) rotate(0deg);

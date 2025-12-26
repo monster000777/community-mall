@@ -10,28 +10,44 @@
               <h3>活动状态</h3>
             </div>
             <div class="category-list">
-              <div class="category-item" :class="{ active: statusFilter === null }" @click="handleFilterChange(null)">
+              <div
+                class="category-item"
+                :class="{ active: statusFilter === null }"
+                @click="handleFilterChange(null)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="GridOutline" />
                 </div>
                 <span>全部活动</span>
                 <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div class="category-item" :class="{ active: statusFilter === 1 }" @click="handleFilterChange(1)">
+              <div
+                class="category-item"
+                :class="{ active: statusFilter === 1 }"
+                @click="handleFilterChange(1)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="FlameOutline" />
                 </div>
                 <span>进行中</span>
                 <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div class="category-item" :class="{ active: statusFilter === 0 }" @click="handleFilterChange(0)">
+              <div
+                class="category-item"
+                :class="{ active: statusFilter === 0 }"
+                @click="handleFilterChange(0)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="TimeOutline" />
                 </div>
                 <span>即将开始</span>
                 <AppIcon :size="16" :component="ChevronForwardOutline" class="arrow-icon" />
               </div>
-              <div class="category-item" :class="{ active: statusFilter === 2 }" @click="handleFilterChange(2)">
+              <div
+                class="category-item"
+                :class="{ active: statusFilter === 2 }"
+                @click="handleFilterChange(2)"
+              >
                 <div class="category-icon">
                   <AppIcon :size="18" :component="StopCircleOutline" />
                 </div>
@@ -53,13 +69,21 @@
           </div>
 
           <!-- 活动列表 -->
-          <a-spin :spinning="loading">
+          <ASpin :spinning="loading">
             <div v-if="activities.length > 0" class="activities-grid">
-              <div v-for="activity in activities" :key="activity.id" class="activity-card"
-                @click="goToDetail(activity.id)">
+              <div
+                v-for="activity in activities"
+                :key="activity.id"
+                class="activity-card"
+                @click="goToDetail(activity.id)"
+              >
                 <!-- 商品图片 -->
                 <div class="activity-image-wrapper">
-                  <img :src="activity.productImage" :alt="activity.productName" class="activity-image" />
+                  <img
+                    :src="activity.productImage"
+                    :alt="activity.productName"
+                    class="activity-image"
+                  />
                   <div v-if="activity.status === 0" class="status-badge not-started">即将开始</div>
                   <div v-else-if="activity.status === 1" class="status-badge active">进行中</div>
                   <div v-else class="status-badge ended">已结束</div>
@@ -76,9 +100,7 @@
                       <span class="currency">¥</span>
                       <span class="price">{{ activity.groupPrice }}</span>
                     </div>
-                    <div class="original-price">
-                      ¥{{ activity.originalPrice }}
-                    </div>
+                    <div class="original-price">¥{{ activity.originalPrice }}</div>
                     <div class="discount-tag">{{ activity.discount }}折</div>
                   </div>
 
@@ -95,7 +117,10 @@
                   </div>
 
                   <!-- 倒计时 -->
-                  <div v-if="activity.status === 1 && activity.remainingTime > 0" class="countdown active">
+                  <div
+                    v-if="activity.status === 1 && activity.remainingTime > 0"
+                    class="countdown active"
+                  >
                     <ClockCircleOutlined />
                     <span>距结束 {{ formatTime(activity.remainingTime) }}</span>
                   </div>
@@ -105,9 +130,15 @@
                   </div>
 
                   <div class="action-area">
-                    <a-button type="primary" block :disabled="activity.status !== 1">
-                      {{ activity.status === 1 ? '立即参团' : (activity.status === 0 ? '即将开始' : '已结束') }}
-                    </a-button>
+                    <AButton type="primary" block :disabled="activity.status !== 1">
+                      {{
+                        activity.status === 1
+                          ? '立即参团'
+                          : activity.status === 0
+                            ? '即将开始'
+                            : '已结束'
+                      }}
+                    </AButton>
                   </div>
                 </div>
               </div>
@@ -118,18 +149,27 @@
               <AppIcon :size="64" :component="BasketOutline" style="color: #ddd" />
               <p>暂无相关团购活动</p>
             </div>
-          </a-spin>
+          </ASpin>
 
           <!-- Desktop Pagination -->
           <div v-if="total > 0" class="pagination desktop-pagination">
-            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total"
-              @change="handlePageChange" />
+            <APagination
+              v-model:current="currentPage"
+              v-model:page-size="pageSize"
+              :total="total"
+              @change="handlePageChange"
+            />
           </div>
 
           <!-- Mobile Pagination -->
           <div v-if="total > 0" class="pagination mobile-pagination">
-            <a-pagination v-model:current="currentPage" v-model:page-size="pageSize" :total="total" simple
-              @change="handlePageChange" />
+            <APagination
+              v-model:current="currentPage"
+              v-model:page-size="pageSize"
+              :total="total"
+              simple
+              @change="handlePageChange"
+            />
           </div>
         </div>
       </div>
@@ -180,7 +220,7 @@ const loadActivities = async () => {
     }
 
     const res = await getGroupActivities(params)
-    let records = res.data.records.map(item => {
+    let records = res.data.records.map((item) => {
       // 如果剩余时间<=0，强制设置状态为已结束
       if (item.remainingTime <= 0 && item.status === 1) {
         return { ...item, status: 2 }
@@ -190,7 +230,7 @@ const loadActivities = async () => {
 
     // 如果当前筛选的是"进行中"(1)，则过滤掉那些刚刚被强制改为"已结束"(2)的活动
     if (statusFilter.value === 1) {
-      records = records.filter(item => item.status === 1)
+      records = records.filter((item) => item.status === 1)
     }
 
     activities.value = records
@@ -222,10 +262,14 @@ const goToDetail = (id) => {
 // 获取状态标题
 const getStatusTitle = () => {
   switch (statusFilter.value) {
-    case 1: return '进行中的活动'
-    case 0: return '即将开始的活动'
-    case 2: return '已结束的活动'
-    default: return '全部团购活动'
+    case 1:
+      return '进行中的活动'
+    case 0:
+      return '即将开始的活动'
+    case 2:
+      return '已结束的活动'
+    default:
+      return '全部团购活动'
   }
 }
 
@@ -251,7 +295,7 @@ const formatTime = (seconds) => {
 
 // 更新倒计时
 const updateCountdown = () => {
-  activities.value = activities.value.map(activity => {
+  activities.value = activities.value.map((activity) => {
     if (activity.remainingTime > 0) {
       const newRemainingTime = activity.remainingTime - 1
 

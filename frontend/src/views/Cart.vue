@@ -8,11 +8,22 @@
         </div>
 
         <div class="desktop-cart">
-          <a-table :columns="columns" :data-source="cartList" :pagination="false" row-key="id" :loading="loading"
-            class="cart-table" :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }">
+          <ATable
+            :columns="columns"
+            :data-source="cartList"
+            :pagination="false"
+            row-key="id"
+            :loading="loading"
+            class="cart-table"
+            :locale="{ emptyText: '购物车还是空的，快去选购商品吧～' }"
+          >
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'product'">
-                <div class="product-info" @click="$router.push(`/product/${record.productId}`)" style="cursor: pointer">
+                <div
+                  class="product-info"
+                  style="cursor: pointer"
+                  @click="$router.push(`/product/${record.productId}`)"
+                >
                   <img :src="record.mainImage" :alt="record.productName" />
                   <span class="product-name">{{ record.productName }}</span>
                 </div>
@@ -22,34 +33,44 @@
               </template>
               <template v-else-if="column.key === 'quantity'">
                 <div class="quantity-stepper">
-                  <a-button size="small" shape="circle" @click="decreaseQuantity(record)"
-                    :disabled="record.quantity <= 1" class="stepper-btn">
+                  <AButton
+                    size="small"
+                    shape="circle"
+                    :disabled="record.quantity <= 1"
+                    class="stepper-btn"
+                    @click="decreaseQuantity(record)"
+                  >
                     <template #icon>
                       <AppIcon :size="14" :component="RemoveOutline" />
                     </template>
-                  </a-button>
+                  </AButton>
                   <span class="qty-display">{{ record.quantity }}</span>
-                  <a-button size="small" shape="circle" @click="increaseQuantity(record)"
-                    :disabled="record.quantity >= record.stock" class="stepper-btn">
+                  <AButton
+                    size="small"
+                    shape="circle"
+                    :disabled="record.quantity >= record.stock"
+                    class="stepper-btn"
+                    @click="increaseQuantity(record)"
+                  >
                     <template #icon>
                       <AppIcon :size="14" :component="AddOutline" />
                     </template>
-                  </a-button>
+                  </AButton>
                 </div>
               </template>
               <template v-else-if="column.key === 'total'">
                 <span class="total-text">¥{{ (record.price * record.quantity).toFixed(2) }}</span>
               </template>
               <template v-else-if="column.key === 'action'">
-                <a-button type="text" danger @click="handleDelete(record.id)" class="delete-btn">
+                <AButton type="text" danger class="delete-btn" @click="handleDelete(record.id)">
                   <template #icon>
                     <AppIcon :size="16" :component="TrashOutline" />
                   </template>
                   删除
-                </a-button>
+                </AButton>
               </template>
             </template>
-          </a-table>
+          </ATable>
         </div>
 
         <!-- Mobile Cart List -->
@@ -58,32 +79,48 @@
             <AppIcon :size="48" :component="BasketOutline" style="color: #ddd" />
             <p>购物车还是空的</p>
           </div>
-          <div v-else class="cart-item-card" v-for="item in cartList" :key="item.id">
+          <div v-for="item in cartList" v-else :key="item.id" class="cart-item-card">
             <div class="cart-item-image" @click="$router.push(`/product/${item.productId}`)">
               <img :src="item.mainImage" :alt="item.productName" />
             </div>
             <div class="cart-item-content">
               <div class="cart-item-header">
-                <h3 class="cart-item-title" @click="$router.push(`/product/${item.productId}`)">{{ item.productName }}
+                <h3 class="cart-item-title" @click="$router.push(`/product/${item.productId}`)">
+                  {{ item.productName }}
                 </h3>
-                <AppIcon :size="18" :component="TrashOutline" class="delete-icon" @click="handleDelete(item.id)" />
+                <AppIcon
+                  :size="18"
+                  :component="TrashOutline"
+                  class="delete-icon"
+                  @click="handleDelete(item.id)"
+                />
               </div>
               <div class="cart-item-price">¥{{ item.price }}</div>
               <div class="cart-item-footer">
                 <div class="quantity-stepper">
-                  <a-button size="small" shape="circle" @click="decreaseQuantity(item)" :disabled="item.quantity <= 1"
-                    class="stepper-btn">
+                  <AButton
+                    size="small"
+                    shape="circle"
+                    :disabled="item.quantity <= 1"
+                    class="stepper-btn"
+                    @click="decreaseQuantity(item)"
+                  >
                     <template #icon>
                       <AppIcon :size="14" :component="RemoveOutline" />
                     </template>
-                  </a-button>
+                  </AButton>
                   <span class="qty-display">{{ item.quantity }}</span>
-                  <a-button size="small" shape="circle" @click="increaseQuantity(item)"
-                    :disabled="item.quantity >= item.stock" class="stepper-btn">
+                  <AButton
+                    size="small"
+                    shape="circle"
+                    :disabled="item.quantity >= item.stock"
+                    class="stepper-btn"
+                    @click="increaseQuantity(item)"
+                  >
                     <template #icon>
                       <AppIcon :size="14" :component="AddOutline" />
                     </template>
-                  </a-button>
+                  </AButton>
                 </div>
                 <div class="item-subtotal">
                   小计: <span>¥{{ (item.price * item.quantity).toFixed(2) }}</span>
@@ -95,59 +132,86 @@
 
         <div class="cart-footer">
           <div class="left-actions">
-            <a-button @click="handleClearCart" :disabled="cartList.length === 0" type="text" danger>
+            <AButton :disabled="cartList.length === 0" type="text" danger @click="handleClearCart">
               清空购物车
-            </a-button>
+            </AButton>
           </div>
           <div class="right-actions">
             <div class="total-price">
               总计：<span>¥{{ totalPrice }}</span>
             </div>
-            <a-button type="primary" size="large" @click="handleCheckout" :disabled="cartList.length === 0"
-              :loading="checkoutLoading" class="checkout-btn">
+            <AButton
+              type="primary"
+              size="large"
+              :disabled="cartList.length === 0"
+              :loading="checkoutLoading"
+              class="checkout-btn"
+              @click="handleCheckout"
+            >
               去结算
-            </a-button>
+            </AButton>
           </div>
         </div>
       </div>
     </div>
 
     <!-- 收货地址选择弹窗 -->
-    <a-modal v-model:open="checkoutVisible" title="选择收货地址" width="600px" @ok="handleCreateOrder"
-      :confirm-loading="creatingOrder" class="address-modal">
-      <a-alert v-if="addressList.length === 0" message="还没有收货地址" description="请先添加收货地址" type="warning" show-icon
-        style="margin-bottom: 16px">
+    <AModal
+      v-model:open="checkoutVisible"
+      title="选择收货地址"
+      width="600px"
+      :confirm-loading="creatingOrder"
+      class="address-modal"
+      @ok="handleCreateOrder"
+    >
+      <AAlert
+        v-if="addressList.length === 0"
+        message="还没有收货地址"
+        description="请先添加收货地址"
+        type="warning"
+        show-icon
+        style="margin-bottom: 16px"
+      >
         <template #action>
-          <a-button type="primary" size="small" @click="goToAddressManage">
-            去添加
-          </a-button>
+          <AButton type="primary" size="small" @click="goToAddressManage"> 去添加 </AButton>
         </template>
-      </a-alert>
+      </AAlert>
 
-      <a-radio-group v-model:value="selectedAddressId" style="width: 100%;">
+      <ARadioGroup v-model:value="selectedAddressId" style="width: 100%">
         <div class="address-list">
-          <div v-for="item in addressList" :key="item.id" class="address-option"
-            :class="{ active: selectedAddressId === item.id }" @click="selectedAddressId = item.id">
+          <div
+            v-for="item in addressList"
+            :key="item.id"
+            class="address-option"
+            :class="{ active: selectedAddressId === item.id }"
+            @click="selectedAddressId = item.id"
+          >
             <div class="option-header">
               <span class="name">{{ item.receiverName }}</span>
               <span class="phone">{{ item.receiverPhone }}</span>
-              <a-tag v-if="item.isDefault === 1" color="success">默认</a-tag>
+              <ATag v-if="item.isDefault === 1" color="success">默认</ATag>
             </div>
             <div class="option-detail">
               {{ item.province }} {{ item.city }} {{ item.district }} {{ item.detail }}
             </div>
-            <div class="check-icon" v-if="selectedAddressId === item.id">
+            <div v-if="selectedAddressId === item.id" class="check-icon">
               <AppIcon :size="20" :component="CheckmarkCircleOutline" />
             </div>
           </div>
         </div>
-      </a-radio-group>
+      </ARadioGroup>
 
       <div class="order-note" style="margin-top: 24px">
         <div style="margin-bottom: 8px; font-weight: 500">订单备注</div>
-        <a-textarea v-model:value="orderNote" placeholder="选填：请输入备注信息（50字以内）" :rows="3" :maxlength="50" show-count />
+        <ATextarea
+          v-model:value="orderNote"
+          placeholder="选填：请输入备注信息（50字以内）"
+          :rows="3"
+          :maxlength="50"
+          show-count
+        />
       </div>
-    </a-modal>
+    </AModal>
   </div>
 </template>
 
@@ -156,7 +220,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 
-import { TrashOutline, CheckmarkCircleOutline, AddOutline, RemoveOutline, BasketOutline } from '@vicons/ionicons5'
+import {
+  TrashOutline,
+  CheckmarkCircleOutline,
+  AddOutline,
+  RemoveOutline,
+  BasketOutline
+} from '@vicons/ionicons5'
 import { getCartList, updateCartQuantity, deleteCartItem, clearCart } from '@/api/cart'
 import { createOrder } from '@/api/order'
 import { getAddressList } from '@/api/address'
@@ -173,7 +243,6 @@ const checkoutLoading = ref(false)
 const creatingOrder = ref(false)
 const orderNote = ref('')
 
-
 const columns = [
   { title: '商品', key: 'product', width: '40%' },
   { title: '单价', key: 'price' },
@@ -183,9 +252,7 @@ const columns = [
 ]
 
 const totalPrice = computed(() => {
-  return cartList.value
-    .reduce((sum, item) => sum + item.price * item.quantity, 0)
-    .toFixed(2)
+  return cartList.value.reduce((sum, item) => sum + item.price * item.quantity, 0).toFixed(2)
 })
 
 onMounted(() => {
@@ -280,7 +347,7 @@ async function handleCheckout() {
     const res = await getAddressList()
     addressList.value = res.data || []
 
-    const defaultAddr = addressList.value.find(addr => addr.isDefault === 1)
+    const defaultAddr = addressList.value.find((addr) => addr.isDefault === 1)
     if (defaultAddr) {
       selectedAddressId.value = defaultAddr.id
     } else if (addressList.value.length > 0) {
@@ -307,7 +374,7 @@ async function handleCreateOrder() {
     const orderData = {
       addressId: selectedAddressId.value,
       paymentType: 1,
-      cartIds: cartList.value.map(item => item.id),
+      cartIds: cartList.value.map((item) => item.id),
       remark: orderNote.value
     }
     const res = await createOrder(orderData)

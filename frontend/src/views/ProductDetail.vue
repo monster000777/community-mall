@@ -1,5 +1,5 @@
 <template>
-  <div class="product-detail-page" v-if="product">
+  <div v-if="product" class="product-detail-page">
     <div class="container">
       <div class="product-main-card">
         <div class="product-gallery">
@@ -31,18 +31,21 @@
           <div class="action-area">
             <div class="quantity-selector">
               <span class="label">数量</span>
-              <a-input-number v-model:value="quantity" :min="1" :max="product.stock" size="large"
-                class="custom-number-input" />
+              <AInputNumber
+                v-model:value="quantity"
+                :min="1"
+                :max="product.stock"
+                size="large"
+                class="custom-number-input"
+              />
             </div>
 
             <div class="button-group">
-              <a-button type="primary" size="large" class="add-cart-btn" @click="handleAddToCart">
+              <AButton type="primary" size="large" class="add-cart-btn" @click="handleAddToCart">
                 <AppIcon :size="20" :component="CartOutline" style="margin-right: 8px" />
                 加入购物车
-              </a-button>
-              <a-button size="large" class="back-btn" @click="$router.back()">
-                返回列表
-              </a-button>
+              </AButton>
+              <AButton size="large" class="back-btn" @click="$router.back()"> 返回列表 </AButton>
             </div>
           </div>
 

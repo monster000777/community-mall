@@ -8,10 +8,14 @@
         </h2>
         <p class="page-desc">管理所有商品信息，包括上下架、库存等</p>
       </div>
-      <a-button type="primary" size="large" @click="showAddModal" class="add-button">
-        <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+      <AButton type="primary" size="large" class="add-button" @click="showAddModal">
+        <AppIcon
+          :size="18"
+          :component="AddOutline"
+          style="margin-right: 6px; vertical-align: -3px"
+        />
         添加商品
-      </a-button>
+      </AButton>
     </div>
 
     <div class="stats-cards">
@@ -30,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已上架</p>
-          <h3 class="stat-value">{{products.filter(p => p.isOnSale === 1).length}}</h3>
+          <h3 class="stat-value">{{ products.filter((p) => p.isOnSale === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -39,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已下架</p>
-          <h3 class="stat-value">{{products.filter(p => p.isOnSale === 0).length}}</h3>
+          <h3 class="stat-value">{{ products.filter((p) => p.isOnSale === 0).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -48,14 +52,20 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">库存总数</p>
-          <h3 class="stat-value">{{products.reduce((sum, p) => sum + p.stock, 0)}}</h3>
+          <h3 class="stat-value">{{ products.reduce((sum, p) => sum + p.stock, 0) }}</h3>
         </div>
       </div>
     </div>
 
-    <a-card class="table-card" :bordered="false">
-      <a-table :columns="columns" :data-source="products" :pagination="pagination" row-key="id"
-        @change="handleTableChange" :scroll="{ x: 1200 }">
+    <ACard class="table-card" :bordered="false">
+      <ATable
+        :columns="columns"
+        :data-source="products"
+        :pagination="pagination"
+        row-key="id"
+        :scroll="{ x: 1200 }"
+        @change="handleTableChange"
+      >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'mainImage'">
             <div class="product-image-wrapper">
@@ -69,111 +79,159 @@
             <span class="price-text">¥{{ record.price }}</span>
           </template>
           <template v-else-if="column.key === 'stock'">
-            <a-tag :color="record.stock > 50 ? 'success' : record.stock > 10 ? 'warning' : 'error'">
+            <ATag :color="record.stock > 50 ? 'success' : record.stock > 10 ? 'warning' : 'error'">
               {{ record.stock }}
-            </a-tag>
+            </ATag>
           </template>
           <template v-else-if="column.key === 'isOnSale'">
-            <a-tag :color="record.isOnSale === 1 ? 'success' : 'error'">
+            <ATag :color="record.isOnSale === 1 ? 'success' : 'error'">
               {{ record.isOnSale === 1 ? '已上架' : '已下架' }}
-            </a-tag>
+            </ATag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
+            <ASpace>
+              <AButton type="text" size="small" class="action-btn" @click="handleEdit(record)">
                 <template #icon>
                   <AppIcon :component="CreateOutline" />
                 </template>
                 编辑
-              </a-button>
-              <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn">
+              </AButton>
+              <AButton
+                type="text"
+                size="small"
+                class="action-btn"
+                @click="handleToggleStatus(record)"
+              >
                 <template #icon>
                   <AppIcon :component="record.isOnSale === 1 ? EyeOffOutline : EyeOutline" />
                 </template>
                 {{ record.isOnSale === 1 ? '下架' : '上架' }}
-              </a-button>
-              <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
+              </AButton>
+              <AButton
+                type="text"
+                danger
+                size="small"
+                class="action-btn"
+                @click="handleDelete(record.id)"
+              >
                 <template #icon>
                   <AppIcon :component="TrashOutline" />
                 </template>
                 删除
-              </a-button>
-            </a-space>
+              </AButton>
+            </ASpace>
           </template>
         </template>
-      </a-table>
-    </a-card>
+      </ATable>
+    </ACard>
 
     <!-- 添加/编辑商品弹窗 -->
-    <a-modal v-model:open="modalVisible" :title="editId ? '编辑商品' : '添加商品'" width="700px" @ok="handleSubmit"
-      :ok-button-props="{ class: 'modal-ok-btn' }">
-      <a-form :model="formState" :label-col="{ span: 5 }" class="product-form">
-        <a-form-item label="商品名称" required>
-          <a-input v-model:value="formState.productName" size="large" placeholder="请输入商品名称" />
-        </a-form-item>
-        <a-form-item label="分类ID" required>
-          <a-input-number v-model:value="formState.categoryId" size="large" style="width: 100%" placeholder="请输入分类ID" />
-        </a-form-item>
-        <a-form-item label="价格" required>
-          <a-input-number v-model:value="formState.price" :min="0" :precision="2" size="large" style="width: 100%"
-            placeholder="请输入价格">
+    <AModal
+      v-model:open="modalVisible"
+      :title="editId ? '编辑商品' : '添加商品'"
+      width="700px"
+      :ok-button-props="{ class: 'modal-ok-btn' }"
+      @ok="handleSubmit"
+    >
+      <AForm :model="formState" :label-col="{ span: 5 }" class="product-form">
+        <AFormItem label="商品名称" required>
+          <AInput v-model:value="formState.productName" size="large" placeholder="请输入商品名称" />
+        </AFormItem>
+        <AFormItem label="分类ID" required>
+          <AInputNumber
+            v-model:value="formState.categoryId"
+            size="large"
+            style="width: 100%"
+            placeholder="请输入分类ID"
+          />
+        </AFormItem>
+        <AFormItem label="价格" required>
+          <AInputNumber
+            v-model:value="formState.price"
+            :min="0"
+            :precision="2"
+            size="large"
+            style="width: 100%"
+            placeholder="请输入价格"
+          >
             <template #addonBefore>¥</template>
-          </a-input-number>
-        </a-form-item>
-        <a-form-item label="库存" required>
-          <a-input-number v-model:value="formState.stock" :min="0" size="large" style="width: 100%"
-            placeholder="请输入库存数量" />
-        </a-form-item>
-        <a-form-item label="主图URL">
-          <a-input v-model:value="formState.mainImage" size="large" placeholder="请输入图片URL" />
+          </AInputNumber>
+        </AFormItem>
+        <AFormItem label="库存" required>
+          <AInputNumber
+            v-model:value="formState.stock"
+            :min="0"
+            size="large"
+            style="width: 100%"
+            placeholder="请输入库存数量"
+          />
+        </AFormItem>
+        <AFormItem label="主图URL">
+          <AInput v-model:value="formState.mainImage" size="large" placeholder="请输入图片URL" />
           <div v-if="formState.mainImage" class="image-preview">
             <img :src="formState.mainImage" alt="预览" />
           </div>
-        </a-form-item>
-        <a-form-item label="商品描述">
-          <div style="margin-bottom: 8px; text-align: right;">
-            <a-button type="link" size="small" @click="openAiModal">
+        </AFormItem>
+        <AFormItem label="商品描述">
+          <div style="margin-bottom: 8px; text-align: right">
+            <AButton type="link" size="small" @click="openAiModal">
               <template #icon>
                 <AppIcon :component="FlashOutline" />
               </template>
               AI 一键生成文案
-            </a-button>
+            </AButton>
           </div>
-          <a-textarea v-model:value="formState.description" :rows="4" size="large" placeholder="请输入商品描述" />
-        </a-form-item>
-        <a-form-item label="是否上架">
-          <a-switch v-model:checked="formState.isOnSale" :checked-value="1" :un-checked-value="0" checked-children="上架"
-            un-checked-children="下架" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+          <ATextarea
+            v-model:value="formState.description"
+            :rows="4"
+            size="large"
+            placeholder="请输入商品描述"
+          />
+        </AFormItem>
+        <AFormItem label="是否上架">
+          <ASwitch
+            v-model:checked="formState.isOnSale"
+            :checked-value="1"
+            :un-checked-value="0"
+            checked-children="上架"
+            un-checked-children="下架"
+          />
+        </AFormItem>
+      </AForm>
+    </AModal>
 
     <!-- AI 生成文案弹窗 -->
-    <a-modal v-model:open="aiModalVisible" title="AI 智能文案生成" width="500px" :footer="null">
-      <a-form :model="aiForm" layout="vertical">
-        <a-form-item label="商品名称">
-          <a-input v-model:value="aiForm.name" disabled size="large" />
-        </a-form-item>
-        <a-form-item label="关键词 (用空格分隔)" required>
-          <a-input v-model:value="aiForm.keywords" placeholder="例如：新鲜 多汁 产地直采 限时特惠" size="large"
-            @pressEnter="handleAiGenerate" />
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" block size="large" :loading="aiLoading" @click="handleAiGenerate">
+    <AModal v-model:open="aiModalVisible" title="AI 智能文案生成" width="500px" :footer="null">
+      <AForm :model="aiForm" layout="vertical">
+        <AFormItem label="商品名称">
+          <AInput v-model:value="aiForm.name" disabled size="large" />
+        </AFormItem>
+        <AFormItem label="关键词 (用空格分隔)" required>
+          <AInput
+            v-model:value="aiForm.keywords"
+            placeholder="例如：新鲜 多汁 产地直采 限时特惠"
+            size="large"
+            @press-enter="handleAiGenerate"
+          />
+        </AFormItem>
+        <AFormItem>
+          <AButton type="primary" block size="large" :loading="aiLoading" @click="handleAiGenerate">
             <template #icon>
               <AppIcon :component="FlashOutline" />
             </template>
             开始生成
-          </a-button>
-        </a-form-item>
-      </a-form>
+          </AButton>
+        </AFormItem>
+      </AForm>
 
       <div v-if="aiResult" class="ai-result-box">
         <div class="result-header">生成结果：</div>
         <div class="result-content">{{ aiResult }}</div>
-        <a-button type="dashed" block style="margin-top: 12px" @click="applyAiResult">使用此文案</a-button>
+        <AButton type="dashed" block style="margin-top: 12px" @click="applyAiResult"
+          >使用此文案</AButton
+        >
       </div>
-    </a-modal>
+    </AModal>
   </div>
 </template>
 
@@ -194,7 +252,13 @@ import {
   EyeOffOutline,
   FlashOutline
 } from '@vicons/ionicons5'
-import { getProductList, addProduct, updateProduct, deleteProduct, updateProductStatus } from '@/api/product'
+import {
+  getProductList,
+  addProduct,
+  updateProduct,
+  deleteProduct,
+  updateProductStatus
+} from '@/api/product'
 import { generateCopy } from '@/api/ai'
 
 const products = ref([])
@@ -489,15 +553,15 @@ function applyAiResult() {
 }
 
 .icon-success {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .icon-error {
-  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
 }
 
 .icon-info {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .stat-info {

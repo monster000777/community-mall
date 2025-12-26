@@ -8,10 +8,14 @@
         </h2>
         <p class="page-desc">管理所有团购活动，包括创建、编辑和删除</p>
       </div>
-      <a-button type="primary" size="large" @click="showCreateModal" class="add-button">
-        <AppIcon :size="18" :component="AddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+      <AButton type="primary" size="large" class="add-button" @click="showCreateModal">
+        <AppIcon
+          :size="18"
+          :component="AddOutline"
+          style="margin-right: 6px; vertical-align: -3px"
+        />
         创建活动
-      </a-button>
+      </AButton>
     </div>
 
     <div class="stats-cards">
@@ -30,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">进行中</p>
-          <h3 class="stat-value">{{activities.filter(a => a.status === 1).length}}</h3>
+          <h3 class="stat-value">{{ activities.filter((a) => a.status === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -39,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">未开始</p>
-          <h3 class="stat-value">{{activities.filter(a => a.status === 0).length}}</h3>
+          <h3 class="stat-value">{{ activities.filter((a) => a.status === 0).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -48,32 +52,43 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已结束</p>
-          <h3 class="stat-value">{{activities.filter(a => a.status === 2).length}}</h3>
+          <h3 class="stat-value">{{ activities.filter((a) => a.status === 2).length }}</h3>
         </div>
       </div>
     </div>
 
-    <a-card class="table-card" :bordered="false">
+    <ACard class="table-card" :bordered="false">
       <!-- 筛选栏 -->
       <div class="filter-bar">
-        <a-form layout="inline">
-          <a-form-item label="活动状态">
-            <a-select v-model:value="statusFilter" placeholder="全部状态" style="width: 150px" allow-clear
-              @change="handleSearch">
-              <a-select-option :value="0">未开始</a-select-option>
-              <a-select-option :value="1">进行中</a-select-option>
-              <a-select-option :value="2">已结束</a-select-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item>
-            <a-button @click="handleReset">重置</a-button>
-          </a-form-item>
-        </a-form>
+        <AForm layout="inline">
+          <AFormItem label="活动状态">
+            <ASelect
+              v-model:value="statusFilter"
+              placeholder="全部状态"
+              style="width: 150px"
+              allow-clear
+              @change="handleSearch"
+            >
+              <ASelectOption :value="0">未开始</ASelectOption>
+              <ASelectOption :value="1">进行中</ASelectOption>
+              <ASelectOption :value="2">已结束</ASelectOption>
+            </ASelect>
+          </AFormItem>
+          <AFormItem>
+            <AButton @click="handleReset">重置</AButton>
+          </AFormItem>
+        </AForm>
       </div>
 
       <!-- 活动列表 -->
-      <a-table :columns="columns" :data-source="activities" :loading="loading" :pagination="pagination" row-key="id"
-        @change="handleTableChange">
+      <ATable
+        :columns="columns"
+        :data-source="activities"
+        :loading="loading"
+        :pagination="pagination"
+        row-key="id"
+        @change="handleTableChange"
+      >
         <!-- 商品信息 -->
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'productInfo'">
@@ -93,7 +108,7 @@
             <div class="price-info">
               <div class="group-price">¥{{ record.groupPrice }}</div>
               <div class="original-price">¥{{ record.originalPrice }}</div>
-              <a-tag color="orange" class="discount-tag">{{ record.discount }}折</a-tag>
+              <ATag color="orange" class="discount-tag">{{ record.discount }}折</ATag>
             </div>
           </template>
 
@@ -105,9 +120,9 @@
 
           <!-- 库存 -->
           <template v-else-if="column.key === 'stock'">
-            <a-tag :color="record.stock > 50 ? 'success' : record.stock > 10 ? 'warning' : 'error'">
+            <ATag :color="record.stock > 50 ? 'success' : record.stock > 10 ? 'warning' : 'error'">
               {{ record.stock }}
-            </a-tag>
+            </ATag>
           </template>
 
           <!-- 时间 -->
@@ -121,109 +136,173 @@
 
           <!-- 状态 -->
           <template v-else-if="column.key === 'status'">
-            <a-tag :color="getStatusColor(record.status)" class="status-tag">
+            <ATag :color="getStatusColor(record.status)" class="status-tag">
               <template #icon>
                 <AppIcon :component="getStatusIcon(record.status)" />
               </template>
               {{ getStatusText(record.status) }}
-            </a-tag>
+            </ATag>
           </template>
 
           <!-- 操作 -->
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
+            <ASpace>
+              <AButton type="text" size="small" class="action-btn" @click="handleEdit(record)">
                 <template #icon>
                   <AppIcon :component="CreateOutline" />
                 </template>
                 编辑
-              </a-button>
-              <a-dropdown>
-                <a-button type="text" size="small" class="action-btn">
+              </AButton>
+              <ADropdown>
+                <AButton type="text" size="small" class="action-btn">
                   更多
                   <DownOutlined />
-                </a-button>
+                </AButton>
                 <template #overlay>
-                  <a-menu>
-                    <a-menu-item v-if="record.status !== 1" @click="updateStatus(record.id, 1)">
+                  <AMenu>
+                    <AMenuItem v-if="record.status !== 1" @click="updateStatus(record.id, 1)">
                       设为进行中
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status !== 0" @click="updateStatus(record.id, 0)">
+                    </AMenuItem>
+                    <AMenuItem v-if="record.status !== 0" @click="updateStatus(record.id, 0)">
                       设为未开始
-                    </a-menu-item>
-                    <a-menu-item v-if="record.status !== 2" @click="updateStatus(record.id, 2)">
+                    </AMenuItem>
+                    <AMenuItem v-if="record.status !== 2" @click="updateStatus(record.id, 2)">
                       设为已结束
-                    </a-menu-item>
-                    <a-menu-divider />
-                    <a-menu-item danger @click="handleDelete(record.id)">
-                      删除活动
-                    </a-menu-item>
-                  </a-menu>
+                    </AMenuItem>
+                    <AMenuDivider />
+                    <AMenuItem danger @click="handleDelete(record.id)"> 删除活动 </AMenuItem>
+                  </AMenu>
                 </template>
-              </a-dropdown>
-            </a-space>
+              </ADropdown>
+            </ASpace>
           </template>
         </template>
-      </a-table>
-    </a-card>
+      </ATable>
+    </ACard>
 
     <!-- 创建/编辑活动弹窗 -->
-    <a-modal v-model:open="modalVisible" :title="isEdit ? '编辑活动' : '创建活动'" width="720px" @ok="handleSubmit"
-      @cancel="handleCancel" :confirmLoading="submitting" :ok-button-props="{ class: 'modal-ok-btn' }">
-      <a-form ref="formRef" :model="formData" :rules="rules" :label-col="{ span: 5 }" :wrapper-col="{ span: 18 }"
-        class="activity-form">
-        <a-form-item label="活动名称" name="activityName">
-          <a-input v-model:value="formData.activityName" size="large" placeholder="请输入活动名称" />
-        </a-form-item>
+    <AModal
+      v-model:open="modalVisible"
+      :title="isEdit ? '编辑活动' : '创建活动'"
+      width="720px"
+      :confirm-loading="submitting"
+      :ok-button-props="{ class: 'modal-ok-btn' }"
+      @ok="handleSubmit"
+      @cancel="handleCancel"
+    >
+      <AForm
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        :label-col="{ span: 5 }"
+        :wrapper-col="{ span: 18 }"
+        class="activity-form"
+      >
+        <AFormItem label="活动名称" name="activityName">
+          <AInput v-model:value="formData.activityName" size="large" placeholder="请输入活动名称" />
+        </AFormItem>
 
-        <a-form-item label="选择商品" name="productId">
-          <a-select v-model:value="formData.productId" placeholder="请选择参与活动的商品" size="large" show-search
-            :filter-option="filterProduct" @change="handleProductChange">
-            <a-select-option v-for="product in products" :key="product.id" :value="product.id">
+        <AFormItem label="选择商品" name="productId">
+          <ASelect
+            v-model:value="formData.productId"
+            placeholder="请选择参与活动的商品"
+            size="large"
+            show-search
+            :filter-option="filterProduct"
+            @change="handleProductChange"
+          >
+            <ASelectOption v-for="product in products" :key="product.id" :value="product.id">
               {{ product.productName }} (¥{{ product.price }})
-            </a-select-option>
-          </a-select>
-        </a-form-item>
+            </ASelectOption>
+          </ASelect>
+        </AFormItem>
 
-        <a-row :gutter="16">
-          <a-col :span="12">
-            <a-form-item label="团购价格" name="groupPrice" :label-col="{ span: 10 }" :wrapper-col="{ span: 14 }">
-              <a-input-number v-model:value="formData.groupPrice" :min="0.01" :precision="2" :max="selectedProductPrice"
-                size="large" style="width: 100%" placeholder="¥" />
+        <ARow :gutter="16">
+          <ACol :span="12">
+            <AFormItem
+              label="团购价格"
+              name="groupPrice"
+              :label-col="{ span: 10 }"
+              :wrapper-col="{ span: 14 }"
+            >
+              <AInputNumber
+                v-model:value="formData.groupPrice"
+                :min="0.01"
+                :precision="2"
+                :max="selectedProductPrice"
+                size="large"
+                style="width: 100%"
+                placeholder="¥"
+              />
               <div v-if="selectedProductPrice" class="price-hint">
                 原价: ¥{{ selectedProductPrice }}
               </div>
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="活动库存" name="stock" :label-col="{ span: 10 }" :wrapper-col="{ span: 14 }">
-              <a-input-number v-model:value="formData.stock" :min="1" size="large" style="width: 100%"
-                placeholder="数量" />
-            </a-form-item>
-          </a-col>
-        </a-row>
+            </AFormItem>
+          </ACol>
+          <ACol :span="12">
+            <AFormItem
+              label="活动库存"
+              name="stock"
+              :label-col="{ span: 10 }"
+              :wrapper-col="{ span: 14 }"
+            >
+              <AInputNumber
+                v-model:value="formData.stock"
+                :min="1"
+                size="large"
+                style="width: 100%"
+                placeholder="数量"
+              />
+            </AFormItem>
+          </ACol>
+        </ARow>
 
-        <a-row :gutter="16">
-          <a-col :span="12">
-            <a-form-item label="成团人数" name="minPeople" :label-col="{ span: 10 }" :wrapper-col="{ span: 14 }">
-              <a-input-number v-model:value="formData.minPeople" :min="2" size="large" style="width: 100%"
-                placeholder="人" />
-            </a-form-item>
-          </a-col>
-          <a-col :span="12">
-            <a-form-item label="限购数量" name="limitPerUser" :label-col="{ span: 10 }" :wrapper-col="{ span: 14 }">
-              <a-input-number v-model:value="formData.limitPerUser" :min="1" size="large" style="width: 100%"
-                placeholder="件/人" />
-            </a-form-item>
-          </a-col>
-        </a-row>
+        <ARow :gutter="16">
+          <ACol :span="12">
+            <AFormItem
+              label="成团人数"
+              name="minPeople"
+              :label-col="{ span: 10 }"
+              :wrapper-col="{ span: 14 }"
+            >
+              <AInputNumber
+                v-model:value="formData.minPeople"
+                :min="2"
+                size="large"
+                style="width: 100%"
+                placeholder="人"
+              />
+            </AFormItem>
+          </ACol>
+          <ACol :span="12">
+            <AFormItem
+              label="限购数量"
+              name="limitPerUser"
+              :label-col="{ span: 10 }"
+              :wrapper-col="{ span: 14 }"
+            >
+              <AInputNumber
+                v-model:value="formData.limitPerUser"
+                :min="1"
+                size="large"
+                style="width: 100%"
+                placeholder="件/人"
+              />
+            </AFormItem>
+          </ACol>
+        </ARow>
 
-        <a-form-item label="活动时间" name="timeRange">
-          <a-range-picker v-model:value="formData.timeRange" show-time format="YYYY-MM-DD HH:mm:ss" size="large"
-            style="width: 100%" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+        <AFormItem label="活动时间" name="timeRange">
+          <ARangePicker
+            v-model:value="formData.timeRange"
+            show-time
+            format="YYYY-MM-DD HH:mm:ss"
+            size="large"
+            style="width: 100%"
+          />
+        </AFormItem>
+      </AForm>
+    </AModal>
   </div>
 </template>
 
@@ -362,7 +441,7 @@ const loadActivities = async () => {
     }
 
     const res = await adminGetGroupActivities(params)
-    activities.value = res.data.records.map(item => {
+    activities.value = res.data.records.map((item) => {
       // 如果当前时间晚于结束时间，且状态为进行中，强制显示为已结束
       if (dayjs().isAfter(dayjs(item.endTime)) && item.status === 1) {
         return { ...item, status: 2 }
@@ -523,7 +602,7 @@ const filterProduct = (input, option) => {
 
 // 商品变化
 const handleProductChange = (productId) => {
-  const product = products.value.find(p => p.id === productId)
+  const product = products.value.find((p) => p.id === productId)
   if (product) {
     selectedProductPrice.value = product.price
     if (formData.groupPrice) {
@@ -657,15 +736,15 @@ onMounted(() => {
 }
 
 .icon-success {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .icon-info {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .icon-purple {
-  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%);
 }
 
 .stat-info {

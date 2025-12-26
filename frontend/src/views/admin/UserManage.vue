@@ -8,10 +8,14 @@
         </h2>
         <p class="page-desc">管理所有用户信息和权限</p>
       </div>
-      <a-button type="primary" size="large" @click="showAddModal" class="add-button">
-        <AppIcon :size="18" :component="PersonAddOutline" style="margin-right: 6px; vertical-align: -3px;" />
+      <AButton type="primary" size="large" class="add-button" @click="showAddModal">
+        <AppIcon
+          :size="18"
+          :component="PersonAddOutline"
+          style="margin-right: 6px; vertical-align: -3px"
+        />
         添加用户
-      </a-button>
+      </AButton>
     </div>
 
     <div class="stats-cards">
@@ -30,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">正常用户</p>
-          <h3 class="stat-value">{{users.filter(u => u.status === 1).length}}</h3>
+          <h3 class="stat-value">{{ users.filter((u) => u.status === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -39,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">管理员</p>
-          <h3 class="stat-value">{{users.filter(u => u.role === 'admin').length}}</h3>
+          <h3 class="stat-value">{{ users.filter((u) => u.role === 'admin').length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -48,100 +52,144 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已禁用</p>
-          <h3 class="stat-value">{{users.filter(u => u.status === 0).length}}</h3>
+          <h3 class="stat-value">{{ users.filter((u) => u.status === 0).length }}</h3>
         </div>
       </div>
     </div>
 
-    <a-card class="table-card" :bordered="false">
-      <a-table :columns="columns" :data-source="users" :pagination="pagination" row-key="id"
-        @change="handleTableChange">
+    <ACard class="table-card" :bordered="false">
+      <ATable
+        :columns="columns"
+        :data-source="users"
+        :pagination="pagination"
+        row-key="id"
+        @change="handleTableChange"
+      >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'avatar'">
-            <a-upload :show-upload-list="false" :before-upload="beforeAvatarUpload"
-              :custom-request="options => handleAvatarUpload(options, record)">
-              <a-avatar :size="40" :src="record.avatar" :style="getAvatarStyle(record)" class="user-avatar">
+            <AUpload
+              :show-upload-list="false"
+              :before-upload="beforeAvatarUpload"
+              :custom-request="(options) => handleAvatarUpload(options, record)"
+            >
+              <AAvatar
+                :size="40"
+                :src="record.avatar"
+                :style="getAvatarStyle(record)"
+                class="user-avatar"
+              >
                 <template v-if="!record.avatar" #icon>
                   <AppIcon :size="20" :component="PersonOutline" />
                 </template>
-              </a-avatar>
-            </a-upload>
+              </AAvatar>
+            </AUpload>
           </template>
           <template v-else-if="column.key === 'username'">
             <div class="username">{{ record.username }}</div>
           </template>
           <template v-else-if="column.key === 'role'">
-            <a-tag :color="record.role === 'admin' ? 'blue' : 'default'">
+            <ATag :color="record.role === 'admin' ? 'blue' : 'default'">
               <template #icon>
-                <AppIcon :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline" />
+                <AppIcon
+                  :component="record.role === 'admin' ? ShieldCheckmarkOutline : PersonOutline"
+                />
               </template>
               {{ record.role === 'admin' ? '管理员' : '普通用户' }}
-            </a-tag>
+            </ATag>
           </template>
           <template v-else-if="column.key === 'status'">
-            <a-tag :color="record.status === 1 ? 'success' : 'error'">
+            <ATag :color="record.status === 1 ? 'success' : 'error'">
               {{ record.status === 1 ? '正常' : '禁用' }}
-            </a-tag>
+            </ATag>
           </template>
           <template v-else-if="column.key === 'action'">
-            <a-space>
-              <a-button type="text" size="small" @click="handleEdit(record)" class="action-btn">
+            <ASpace>
+              <AButton type="text" size="small" class="action-btn" @click="handleEdit(record)">
                 <template #icon>
                   <AppIcon :component="CreateOutline" />
                 </template>
                 编辑
-              </a-button>
-              <a-button type="text" size="small" @click="handleToggleStatus(record)" class="action-btn"
-                :danger="record.status === 1">
+              </AButton>
+              <AButton
+                type="text"
+                size="small"
+                class="action-btn"
+                :danger="record.status === 1"
+                @click="handleToggleStatus(record)"
+              >
                 <template #icon>
                   <AppIcon :component="record.status === 1 ? BanOutline : CheckmarkCircleOutline" />
                 </template>
                 {{ record.status === 1 ? '禁用' : '启用' }}
-              </a-button>
-              <a-button type="text" danger size="small" @click="handleDelete(record.id)" class="action-btn">
+              </AButton>
+              <AButton
+                type="text"
+                danger
+                size="small"
+                class="action-btn"
+                @click="handleDelete(record.id)"
+              >
                 <template #icon>
                   <AppIcon :component="TrashOutline" />
                 </template>
                 删除
-              </a-button>
-            </a-space>
+              </AButton>
+            </ASpace>
           </template>
         </template>
-      </a-table>
-    </a-card>
+      </ATable>
+    </ACard>
 
     <!-- 添加/编辑用户弹窗 -->
-    <a-modal v-model:open="modalVisible" :title="editId ? '编辑用户' : '添加用户'" width="600px" @ok="handleSubmit"
-      :ok-button-props="{ class: 'modal-ok-btn' }">
-      <a-form :model="formState" :label-col="{ span: 5 }" class="user-form">
-        <a-form-item label="用户名" required>
-          <a-input v-model:value="formState.username" size="large" placeholder="请输入用户名" :disabled="!!editId" />
-        </a-form-item>
-        <a-form-item label="手机号" required>
-          <a-input v-model:value="formState.phone" size="large" placeholder="请输入手机号" />
-        </a-form-item>
-        <a-form-item label="邮箱">
-          <a-input v-model:value="formState.email" size="large" placeholder="请输入邮箱" />
-        </a-form-item>
-        <a-form-item label="昵称" required>
-          <a-input v-model:value="formState.nickname" size="large" placeholder="请输入昵称" />
-        </a-form-item>
-        <a-form-item label="密码" :required="!editId">
-          <a-input-password v-model:value="formState.password" size="large"
-            :placeholder="editId ? '不修改请留空' : '请输入密码'" />
-        </a-form-item>
-        <a-form-item label="角色" required>
-          <a-select v-model:value="formState.role" size="large" placeholder="请选择角色">
-            <a-select-option value="user">普通用户</a-select-option>
-            <a-select-option value="admin">管理员</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item label="状态">
-          <a-switch v-model:checked="formState.status" :checked-value="1" :un-checked-value="0" checked-children="正常"
-            un-checked-children="禁用" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+    <AModal
+      v-model:open="modalVisible"
+      :title="editId ? '编辑用户' : '添加用户'"
+      width="600px"
+      :ok-button-props="{ class: 'modal-ok-btn' }"
+      @ok="handleSubmit"
+    >
+      <AForm :model="formState" :label-col="{ span: 5 }" class="user-form">
+        <AFormItem label="用户名" required>
+          <AInput
+            v-model:value="formState.username"
+            size="large"
+            placeholder="请输入用户名"
+            :disabled="!!editId"
+          />
+        </AFormItem>
+        <AFormItem label="手机号" required>
+          <AInput v-model:value="formState.phone" size="large" placeholder="请输入手机号" />
+        </AFormItem>
+        <AFormItem label="邮箱">
+          <AInput v-model:value="formState.email" size="large" placeholder="请输入邮箱" />
+        </AFormItem>
+        <AFormItem label="昵称" required>
+          <AInput v-model:value="formState.nickname" size="large" placeholder="请输入昵称" />
+        </AFormItem>
+        <AFormItem label="密码" :required="!editId">
+          <AInputPassword
+            v-model:value="formState.password"
+            size="large"
+            :placeholder="editId ? '不修改请留空' : '请输入密码'"
+          />
+        </AFormItem>
+        <AFormItem label="角色" required>
+          <ASelect v-model:value="formState.role" size="large" placeholder="请选择角色">
+            <ASelectOption value="user">普通用户</ASelectOption>
+            <ASelectOption value="admin">管理员</ASelectOption>
+          </ASelect>
+        </AFormItem>
+        <AFormItem label="状态">
+          <ASwitch
+            v-model:checked="formState.status"
+            :checked-value="1"
+            :un-checked-value="0"
+            checked-children="正常"
+            un-checked-children="禁用"
+          />
+        </AFormItem>
+      </AForm>
+    </AModal>
   </div>
 </template>
 
@@ -159,7 +207,14 @@ import {
   CreateOutline,
   TrashOutline
 } from '@vicons/ionicons5'
-import { getUserList, createUser, updateUser, updateUserStatus, deleteUser, uploadUserAvatar } from '@/api/user'
+import {
+  getUserList,
+  createUser,
+  updateUser,
+  updateUserStatus,
+  deleteUser,
+  uploadUserAvatar
+} from '@/api/user'
 import { useUserStore } from '@/stores/user'
 
 const users = ref([])
@@ -349,7 +404,7 @@ function handleToggleStatus(user) {
           message.success(`${action}成功`)
           loadUsers()
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('更新用户状态失败', error)
         })
     }
@@ -368,7 +423,7 @@ function handleDelete(id) {
           message.success('删除成功')
           loadUsers()
         })
-        .catch(error => {
+        .catch((error) => {
           console.error('删除用户失败', error)
         })
     }
@@ -481,15 +536,15 @@ function resetForm() {
 }
 
 .icon-success {
-  background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
 }
 
 .icon-info {
-  background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
 }
 
 .icon-error {
-  background: linear-gradient(135deg, #EF4444 0%, #F87171 100%);
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
 }
 
 .stat-info {

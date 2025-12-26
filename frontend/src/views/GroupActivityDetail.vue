@@ -1,10 +1,8 @@
 <template>
   <div class="group-activity-detail">
     <div class="container">
-      <a-spin :spinning="loading">
+      <ASpin :spinning="loading">
         <div v-if="activity" class="detail-wrapper">
-
-
           <div class="detail-card">
             <div class="detail-content">
               <!-- 左侧：商品图片 -->
@@ -12,7 +10,9 @@
                 <div class="image-wrapper">
                   <img :src="activity.productImage" :alt="activity.productName" />
                   <div v-if="activity.status === 1" class="status-badge active">进行中</div>
-                  <div v-else-if="activity.status === 0" class="status-badge not-started">即将开始</div>
+                  <div v-else-if="activity.status === 0" class="status-badge not-started">
+                    即将开始
+                  </div>
                   <div v-else class="status-badge ended">已结束</div>
                 </div>
               </div>
@@ -23,7 +23,10 @@
                 <p class="product-name">{{ activity.productName }}</p>
 
                 <!-- 倒计时 -->
-                <div v-if="activity.status === 1 && activity.remainingTime > 0" class="countdown-box active">
+                <div
+                  v-if="activity.status === 1 && activity.remainingTime > 0"
+                  class="countdown-box active"
+                >
                   <ClockCircleOutlined class="icon" />
                   <span class="label">距离结束还剩</span>
                   <div class="time-display">
@@ -65,7 +68,9 @@
                   </div>
                   <div class="original-price-row">
                     <span class="original-price">原价 ¥{{ activity.originalPrice }}</span>
-                    <span class="save-money">立省 ¥{{ (activity.originalPrice - activity.groupPrice).toFixed(2) }}</span>
+                    <span class="save-money"
+                      >立省 ¥{{ (activity.originalPrice - activity.groupPrice).toFixed(2) }}</span
+                    >
                   </div>
                 </div>
 
@@ -103,28 +108,41 @@
                 <!-- 操作按钮 -->
                 <div class="action-buttons">
                   <div class="button-group">
-                    <a-button v-if="activity.status === 1 && activity.stock > 0" type="primary" size="large"
-                      class="join-btn" @click="joinGroup">
+                    <AButton
+                      v-if="activity.status === 1 && activity.stock > 0"
+                      type="primary"
+                      size="large"
+                      class="join-btn"
+                      @click="joinGroup"
+                    >
                       <FireOutlined /> 立即参团
-                    </a-button>
-                    <a-button v-else-if="activity.status === 0" size="large" disabled class="join-btn">
+                    </AButton>
+                    <AButton
+                      v-else-if="activity.status === 0"
+                      size="large"
+                      disabled
+                      class="join-btn"
+                    >
                       <ClockCircleOutlined /> 活动未开始
-                    </a-button>
-                    <a-button v-else-if="activity.stock === 0" size="large" disabled class="join-btn">
+                    </AButton>
+                    <AButton
+                      v-else-if="activity.stock === 0"
+                      size="large"
+                      disabled
+                      class="join-btn"
+                    >
                       <StopOutlined /> 库存已售罄
-                    </a-button>
-                    <a-button v-else size="large" disabled class="join-btn">
+                    </AButton>
+                    <AButton v-else size="large" disabled class="join-btn">
                       <StopOutlined /> 活动已结束
-                    </a-button>
-                    <a-button size="large" class="back-btn" @click="goBack">
-                      返回列表
-                    </a-button>
+                    </AButton>
+                    <AButton size="large" class="back-btn" @click="goBack"> 返回列表 </AButton>
                   </div>
                 </div>
               </div>
             </div>
 
-            <a-divider />
+            <ADivider />
 
             <!-- 活动说明 -->
             <div class="description-section">
@@ -139,45 +157,69 @@
             </div>
           </div>
         </div>
-      </a-spin>
+      </ASpin>
     </div>
 
     <!-- 参团弹窗 -->
-    <a-modal v-model:open="modalVisible" title="确认参团" width="600px" @ok="handleJoinSubmit"
-      :confirm-loading="joinLoading" ok-text="确认参团" cancel-text="取消">
-      <a-form layout="vertical">
-        <a-form-item label="选择收货地址" required>
-          <a-radio-group v-model:value="joinForm.addressId" style="width: 100%">
+    <AModal
+      v-model:open="modalVisible"
+      title="确认参团"
+      width="600px"
+      :confirm-loading="joinLoading"
+      ok-text="确认参团"
+      cancel-text="取消"
+      @ok="handleJoinSubmit"
+    >
+      <AForm layout="vertical">
+        <AFormItem label="选择收货地址" required>
+          <ARadioGroup v-model:value="joinForm.addressId" style="width: 100%">
             <div v-for="addr in addressList" :key="addr.id" style="margin-bottom: 12px">
-              <a-radio :value="addr.id" style="width: 100%">
-                <div style="display: flex; justify-content: space-between; align-items: center; width: 100%">
+              <ARadio :value="addr.id" style="width: 100%">
+                <div
+                  style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 100%;
+                  "
+                >
                   <div>
                     <span style="font-weight: 600">{{ addr.receiverName }}</span>
                     <span style="margin-left: 12px; color: #666">{{ addr.receiverPhone }}</span>
-                    <a-tag v-if="addr.isDefault === 1" color="success" style="margin-left: 8px">默认</a-tag>
+                    <ATag v-if="addr.isDefault === 1" color="success" style="margin-left: 8px"
+                      >默认</ATag
+                    >
                   </div>
                 </div>
                 <div style="color: #999; font-size: 13px; margin-top: 4px">
                   {{ addr.province }} {{ addr.city }} {{ addr.district }} {{ addr.detail }}
                 </div>
-              </a-radio>
+              </ARadio>
             </div>
-          </a-radio-group>
-        </a-form-item>
+          </ARadioGroup>
+        </AFormItem>
 
-        <a-form-item label="购买数量" required>
-          <a-input-number v-model:value="joinForm.quantity" :min="1" :max="activity?.limitPerUser || 1"
-            style="width: 100%" />
+        <AFormItem label="购买数量" required>
+          <AInputNumber
+            v-model:value="joinForm.quantity"
+            :min="1"
+            :max="activity?.limitPerUser || 1"
+            style="width: 100%"
+          />
           <div style="color: #999; font-size: 12px; margin-top: 4px">
             每人限购{{ activity?.limitPerUser }}件
           </div>
-        </a-form-item>
+        </AFormItem>
 
-        <a-form-item label="订单备注">
-          <a-textarea v-model:value="joinForm.remark" placeholder="选填，可以告诉商家您的特殊需求" :rows="3" />
-        </a-form-item>
+        <AFormItem label="订单备注">
+          <ATextarea
+            v-model:value="joinForm.remark"
+            placeholder="选填，可以告诉商家您的特殊需求"
+            :rows="3"
+          />
+        </AFormItem>
 
-        <a-form-item>
+        <AFormItem>
           <div style="background: #f5f5f5; padding: 16px; border-radius: 8px">
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
               <span>商品单价：</span>
@@ -196,27 +238,27 @@
               </div>
             </div>
           </div>
-        </a-form-item>
-      </a-form>
-    </a-modal>
+        </AFormItem>
+      </AForm>
+    </AModal>
 
     <!-- 参团成功弹窗 -->
-    <a-modal v-model:open="successModalVisible" title="参团成功" :footer="null" width="500px">
-      <div style="text-align: center; padding: 20px 0;">
-        <div style="margin-bottom: 16px;">
-          <a-icon type="check-circle" theme="filled" style="color: #52c41a; font-size: 48px;" />
+    <AModal v-model:open="successModalVisible" title="参团成功" :footer="null" width="500px">
+      <div style="text-align: center; padding: 20px 0">
+        <div style="margin-bottom: 16px">
+          <AIcon type="check-circle" theme="filled" style="color: #52c41a; font-size: 48px" />
           <!-- Note: In Vue 3 + Ant Design Vue 2/3, icons are components. Assuming CheckCircleFilled or similar is available or using the existing icon imports -->
-          <CheckCircleFilled style="color: #52c41a; font-size: 48px;" />
+          <CheckCircleFilled style="color: #52c41a; font-size: 48px" />
         </div>
-        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">订单创建成功！</h3>
-        <p style="color: #666;">您可以查看订单详情，或者如果有变动也可以立即取消。</p>
+        <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px">订单创建成功！</h3>
+        <p style="color: #666">您可以查看订单详情，或者如果有变动也可以立即取消。</p>
       </div>
-      <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px;">
-        <a-button @click="successModalVisible = false">关闭</a-button>
-        <a-button danger @click="handleCancelOrder">取消订单</a-button>
-        <a-button type="primary" @click="goToOrders">查看订单</a-button>
+      <div style="display: flex; justify-content: center; gap: 16px; margin-top: 24px">
+        <AButton @click="successModalVisible = false">关闭</AButton>
+        <AButton danger @click="handleCancelOrder">取消订单</AButton>
+        <AButton type="primary" @click="goToOrders">查看订单</AButton>
       </div>
-    </a-modal>
+    </AModal>
   </div>
 </template>
 
@@ -322,7 +364,7 @@ const joinGroup = async () => {
     }
 
     // 自动选择默认地址
-    const defaultAddress = addressList.value.find(addr => addr.isDefault === 1)
+    const defaultAddress = addressList.value.find((addr) => addr.isDefault === 1)
     if (defaultAddress) {
       joinForm.value.addressId = defaultAddress.id
     } else if (addressList.value.length > 0) {
@@ -447,7 +489,10 @@ const updateCountdown = () => {
     activity.value.remainingTime--
 
     // 如果倒计时刚好结束，且当前状态是进行中(1)或即将开始(0)，更新为已结束(2)
-    if (activity.value.remainingTime <= 0 && (activity.value.status === 1 || activity.value.status === 0)) {
+    if (
+      activity.value.remainingTime <= 0 &&
+      (activity.value.status === 1 || activity.value.status === 0)
+    ) {
       activity.value.status = 2 // 已结束
     }
   }
@@ -488,8 +533,6 @@ onUnmounted(() => {
   margin: 0 auto;
   padding: 0 24px;
 }
-
-
 
 .detail-card {
   background: var(--bg-card);

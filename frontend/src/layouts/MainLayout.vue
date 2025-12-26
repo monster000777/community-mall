@@ -1,93 +1,153 @@
 <template>
-  <a-layout class="layout">
-    <a-layout-header class="header">
+  <ALayout class="layout">
+    <ALayoutHeader class="header">
       <div class="logo">
         <AppIcon :size="38" :component="StorefrontOutline" class="logo-icon" />
         <span class="logo-text">社区团购</span>
       </div>
-      <a-menu v-model:selectedKeys="selectedKeys" mode="horizontal" :style="{ lineHeight: '64px', flex: 1 }"
-        class="nav-menu desktop-menu">
-        <a-menu-item key="home" @click="$router.push('/')">
-          <AppIcon :size="18" :component="HomeOutline" style="margin-right: 6px; vertical-align: -3px;" />
+      <AMenu
+        v-model:selected-keys="selectedKeys"
+        mode="horizontal"
+        :style="{ lineHeight: '64px', flex: 1 }"
+        class="nav-menu desktop-menu"
+      >
+        <AMenuItem key="home" @click="$router.push('/')">
+          <AppIcon
+            :size="18"
+            :component="HomeOutline"
+            style="margin-right: 6px; vertical-align: -3px"
+          />
           首页
-        </a-menu-item>
-        <a-menu-item key="products" @click="$router.push('/products')">
-          <AppIcon :size="18" :component="GridOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        </AMenuItem>
+        <AMenuItem key="products" @click="$router.push('/products')">
+          <AppIcon
+            :size="18"
+            :component="GridOutline"
+            style="margin-right: 6px; vertical-align: -3px"
+          />
           商品列表
-        </a-menu-item>
-        <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
-          <AppIcon :size="18" :component="FlameOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        </AMenuItem>
+        <AMenuItem key="group-activities" @click="$router.push('/group-activities')">
+          <AppIcon
+            :size="18"
+            :component="FlameOutline"
+            style="margin-right: 6px; vertical-align: -3px"
+          />
           团购活动
-        </a-menu-item>
-        <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
-          <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
-            <AppIcon :size="18" :component="CartOutline" style="margin-right: 6px; vertical-align: -3px;" />
+        </AMenuItem>
+        <AMenuItem v-if="userStore.token" key="cart" @click="$router.push('/cart')">
+          <ABadge :count="cartStore.cartCount" :offset="[5, -2]">
+            <AppIcon
+              :size="18"
+              :component="CartOutline"
+              style="margin-right: 6px; vertical-align: -3px"
+            />
             购物车
-          </a-badge>
-        </a-menu-item>
-        <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
-          <AppIcon :size="18" :component="ReceiptOutline" style="margin-right: 6px; vertical-align: -3px;" />
+          </ABadge>
+        </AMenuItem>
+        <AMenuItem v-if="userStore.token" key="orders" @click="$router.push('/orders')">
+          <AppIcon
+            :size="18"
+            :component="ReceiptOutline"
+            style="margin-right: 6px; vertical-align: -3px"
+          />
           我的订单
-        </a-menu-item>
-      </a-menu>
+        </AMenuItem>
+      </AMenu>
       <div class="user-info">
-        <a-button type="text" shape="circle" @click="themeStore.toggleTheme" class="theme-toggle">
+        <AButton type="text" shape="circle" class="theme-toggle" @click="themeStore.toggleTheme">
           <template #icon>
-            <AppIcon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+            <AppIcon
+              :size="20"
+              :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline"
+            />
           </template>
-        </a-button>
+        </AButton>
         <template v-if="userStore.token">
-          <a-dropdown overlayClassName="header-user-dropdown" :trigger="['click', 'hover']">
+          <ADropdown overlay-class-name="header-user-dropdown" :trigger="['click', 'hover']">
             <a class="ant-dropdown-link user-dropdown-trigger" @click.prevent>
-              <a-avatar :size="32" :src="userStore.userInfo?.avatar" class="header-avatar" :style="headerAvatarStyle">
+              <AAvatar
+                :size="32"
+                :src="userStore.userInfo?.avatar"
+                class="header-avatar"
+                :style="headerAvatarStyle"
+              >
                 <span v-if="!userStore.userInfo?.avatar">{{ avatarText }}</span>
-              </a-avatar>
+              </AAvatar>
               <span class="header-username">
                 {{ userStore.userInfo?.nickname || userStore.userInfo?.username }}
               </span>
               <AppIcon :size="16" :component="ChevronDownOutline" />
             </a>
             <template #overlay>
-              <a-menu class="user-dropdown-menu">
-                <a-menu-item v-if="userStore.isAdmin()" @click="$router.push('/admin')">
-                  <AppIcon :size="16" :component="ShieldCheckmarkOutline"
-                    style="margin-right: 8px; vertical-align: -2px;" />
+              <AMenu class="user-dropdown-menu">
+                <AMenuItem v-if="userStore.isAdmin()" @click="$router.push('/admin')">
+                  <AppIcon
+                    :size="16"
+                    :component="ShieldCheckmarkOutline"
+                    style="margin-right: 8px; vertical-align: -2px"
+                  />
                   管理后台
-                </a-menu-item>
-                <a-menu-item @click="$router.push('/profile')">
-                  <AppIcon :size="16" :component="PersonOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                </AMenuItem>
+                <AMenuItem @click="$router.push('/profile')">
+                  <AppIcon
+                    :size="16"
+                    :component="PersonOutline"
+                    style="margin-right: 8px; vertical-align: -2px"
+                  />
                   个人中心
-                </a-menu-item>
-                <a-menu-item @click="$router.push('/address')">
-                  <AppIcon :size="16" :component="LocationOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                </AMenuItem>
+                <AMenuItem @click="$router.push('/address')">
+                  <AppIcon
+                    :size="16"
+                    :component="LocationOutline"
+                    style="margin-right: 8px; vertical-align: -2px"
+                  />
                   收货地址
-                </a-menu-item>
-                <a-menu-divider />
-                <a-menu-item @click="handleLogout" class="logout-item">
-                  <AppIcon :size="16" :component="LogOutOutline" style="margin-right: 8px; vertical-align: -2px;" />
+                </AMenuItem>
+                <AMenuDivider />
+                <AMenuItem class="logout-item" @click="handleLogout">
+                  <AppIcon
+                    :size="16"
+                    :component="LogOutOutline"
+                    style="margin-right: 8px; vertical-align: -2px"
+                  />
                   退出登录
-                </a-menu-item>
-              </a-menu>
+                </AMenuItem>
+              </AMenu>
             </template>
-          </a-dropdown>
+          </ADropdown>
         </template>
         <template v-else>
-          <a-button type="link" @click="$router.push('/login')" class="login-btn">
-            <AppIcon :size="18" :component="LogInOutline" style="margin-right: 4px; vertical-align: -3px;" />
+          <AButton type="link" class="login-btn" @click="$router.push('/login')">
+            <AppIcon
+              :size="18"
+              :component="LogInOutline"
+              style="margin-right: 4px; vertical-align: -3px"
+            />
             登录
-          </a-button>
-          <a-button type="primary" @click="$router.push('/register')" class="register-btn">
-            <AppIcon :size="18" :component="PersonAddOutline" style="margin-right: 4px; vertical-align: -3px;" />
+          </AButton>
+          <AButton type="primary" class="register-btn" @click="$router.push('/register')">
+            <AppIcon
+              :size="18"
+              :component="PersonAddOutline"
+              style="margin-right: 4px; vertical-align: -3px"
+            />
             注册
-          </a-button>
+          </AButton>
         </template>
       </div>
       <div class="mobile-menu-trigger">
         <AppIcon :size="24" :component="MenuOutline" @click="mobileMenuOpen = true" />
       </div>
-    </a-layout-header>
+    </ALayoutHeader>
 
-    <a-drawer v-model:open="mobileMenuOpen" placement="right" :closable="false" class="mobile-drawer">
+    <ADrawer
+      v-model:open="mobileMenuOpen"
+      placement="right"
+      :closable="false"
+      class="mobile-drawer"
+    >
       <div class="mobile-menu-header">
         <div class="logo">
           <AppIcon :size="28" :component="StorefrontOutline" class="logo-icon" />
@@ -95,39 +155,44 @@
         </div>
         <AppIcon :size="24" :component="CloseOutline" @click="mobileMenuOpen = false" />
       </div>
-      <a-menu v-model:selectedKeys="selectedKeys" mode="inline" class="mobile-nav-menu" @click="mobileMenuOpen = false">
-        <a-menu-item key="home" @click="$router.push('/')">
-          <AppIcon :size="18" :component="HomeOutline" style="margin-right: 12px;" />
+      <AMenu
+        v-model:selected-keys="selectedKeys"
+        mode="inline"
+        class="mobile-nav-menu"
+        @click="mobileMenuOpen = false"
+      >
+        <AMenuItem key="home" @click="$router.push('/')">
+          <AppIcon :size="18" :component="HomeOutline" style="margin-right: 12px" />
           首页
-        </a-menu-item>
-        <a-menu-item key="products" @click="$router.push('/products')">
-          <AppIcon :size="18" :component="GridOutline" style="margin-right: 12px;" />
+        </AMenuItem>
+        <AMenuItem key="products" @click="$router.push('/products')">
+          <AppIcon :size="18" :component="GridOutline" style="margin-right: 12px" />
           商品列表
-        </a-menu-item>
-        <a-menu-item key="group-activities" @click="$router.push('/group-activities')">
-          <AppIcon :size="18" :component="FlameOutline" style="margin-right: 12px;" />
+        </AMenuItem>
+        <AMenuItem key="group-activities" @click="$router.push('/group-activities')">
+          <AppIcon :size="18" :component="FlameOutline" style="margin-right: 12px" />
           团购活动
-        </a-menu-item>
-        <a-menu-item v-if="userStore.token" key="cart" @click="$router.push('/cart')">
-          <a-badge :count="cartStore.cartCount" :offset="[5, -2]">
-            <AppIcon :size="18" :component="CartOutline" style="margin-right: 12px;" />
+        </AMenuItem>
+        <AMenuItem v-if="userStore.token" key="cart" @click="$router.push('/cart')">
+          <ABadge :count="cartStore.cartCount" :offset="[5, -2]">
+            <AppIcon :size="18" :component="CartOutline" style="margin-right: 12px" />
             购物车
-          </a-badge>
-        </a-menu-item>
-        <a-menu-item v-if="userStore.token" key="orders" @click="$router.push('/orders')">
-          <AppIcon :size="18" :component="ReceiptOutline" style="margin-right: 12px;" />
+          </ABadge>
+        </AMenuItem>
+        <AMenuItem v-if="userStore.token" key="orders" @click="$router.push('/orders')">
+          <AppIcon :size="18" :component="ReceiptOutline" style="margin-right: 12px" />
           我的订单
-        </a-menu-item>
-      </a-menu>
-    </a-drawer>
-    <a-layout-content class="content">
-      <router-view v-slot="{ Component }">
-        <transition name="fade" mode="out-in">
+        </AMenuItem>
+      </AMenu>
+    </ADrawer>
+    <ALayoutContent class="content">
+      <RouterView v-slot="{ Component }">
+        <Transition name="fade" mode="out-in">
           <component :is="Component" />
-        </transition>
-      </router-view>
-    </a-layout-content>
-    <a-layout-footer class="footer">
+        </Transition>
+      </RouterView>
+    </ALayoutContent>
+    <ALayoutFooter class="footer">
       <div class="footer-content">
         <div class="footer-top">
           <div class="footer-col brand-col">
@@ -174,23 +239,15 @@
           <div class="footer-col contact-col">
             <h3>联系我们</h3>
             <div class="contact-info">
-              <p>
-                <AppIcon :component="CallOutline" /> 400-123-4567
-              </p>
-              <p>
-                <AppIcon :component="MailOutline" /> support@community-mall.com
-              </p>
-              <p>
-                <AppIcon :component="LocationOutline" /> 北京市朝阳区科技园88号
-              </p>
+              <p><AppIcon :component="CallOutline" /> 400-123-4567</p>
+              <p><AppIcon :component="MailOutline" /> support@community-mall.com</p>
+              <p><AppIcon :component="LocationOutline" /> 北京市朝阳区科技园88号</p>
             </div>
           </div>
         </div>
 
         <div class="footer-bottom">
-          <div class="copyright">
-            © 2025 社区团购系统. All Rights Reserved.
-          </div>
+          <div class="copyright">© 2025 社区团购系统. All Rights Reserved.</div>
           <div class="footer-bottom-links">
             <a href="#">隐私政策</a>
             <span class="divider">|</span>
@@ -200,10 +257,10 @@
           </div>
         </div>
       </div>
-    </a-layout-footer>
-    <FloatingMenu v-model:isChatOpen="isChatOpen" />
+    </ALayoutFooter>
+    <FloatingMenu v-model:is-chat-open="isChatOpen" />
     <AiCustomerService v-model:visible="isChatOpen" />
-  </a-layout>
+  </ALayout>
 </template>
 
 <script setup>

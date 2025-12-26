@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <!-- 轮播图 -->
-    <a-carousel autoplay class="banner" :autoplay-speed="5000">
+    <ACarousel autoplay class="banner" :autoplay-speed="5000">
       <div class="banner-item banner-1">
         <div class="banner-overlay"></div>
         <div class="banner-content">
@@ -10,10 +10,19 @@
           </div>
           <h1 class="banner-title">欢迎来到社区团购</h1>
           <p class="banner-subtitle">新鲜优质，价格实惠</p>
-          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
-            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+          <AButton
+            type="primary"
+            size="large"
+            class="banner-btn"
+            @click="$router.push('/products')"
+          >
+            <AppIcon
+              :size="20"
+              :component="ArrowForwardOutline"
+              style="margin-right: 8px; vertical-align: -4px"
+            />
             立即选购
-          </a-button>
+          </AButton>
         </div>
       </div>
       <div class="banner-item banner-2">
@@ -24,10 +33,19 @@
           </div>
           <h1 class="banner-title">每日新鲜直达</h1>
           <p class="banner-subtitle">从产地到餐桌，只需一天</p>
-          <a-button type="primary" size="large" @click="$router.push('/products')" class="banner-btn">
-            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+          <AButton
+            type="primary"
+            size="large"
+            class="banner-btn"
+            @click="$router.push('/products')"
+          >
+            <AppIcon
+              :size="20"
+              :component="ArrowForwardOutline"
+              style="margin-right: 8px; vertical-align: -4px"
+            />
             查看商品
-          </a-button>
+          </AButton>
         </div>
       </div>
       <div class="banner-item banner-3">
@@ -38,13 +56,22 @@
           </div>
           <h1 class="banner-title">团购更优惠</h1>
           <p class="banner-subtitle">参与团购，享受超低价格</p>
-          <a-button type="primary" size="large" @click="$router.push('/group-activities')" class="banner-btn">
-            <AppIcon :size="20" :component="ArrowForwardOutline" style="margin-right: 8px; vertical-align: -4px;" />
+          <AButton
+            type="primary"
+            size="large"
+            class="banner-btn"
+            @click="$router.push('/group-activities')"
+          >
+            <AppIcon
+              :size="20"
+              :component="ArrowForwardOutline"
+              style="margin-right: 8px; vertical-align: -4px"
+            />
             开始团购
-          </a-button>
+          </AButton>
         </div>
       </div>
-    </a-carousel>
+    </ACarousel>
 
     <!-- 商品分类 -->
     <div class="category-section">
@@ -53,35 +80,56 @@
         <div class="section-divider"></div>
       </div>
       <div class="container">
-        <a-row :gutter="[24, 24]">
-          <a-col v-for="(category, index) in categories" :key="category.id" :xs="12" :sm="8" :md="6" :lg="4">
+        <ARow :gutter="[24, 24]">
+          <ACol
+            v-for="(category, index) in categories"
+            :key="category.id"
+            :xs="12"
+            :sm="8"
+            :md="6"
+            :lg="4"
+          >
             <div class="category-card" @click="goToProducts(category.id)">
               <div class="category-icon-wrapper">
-                <img :src="categoryIcons[index % categoryIcons.length]" :alt="category.categoryName"
-                  class="category-img">
+                <img
+                  :src="categoryIcons[index % categoryIcons.length]"
+                  :alt="category.categoryName"
+                  class="category-img"
+                />
               </div>
               <div class="category-name">{{ category.categoryName }}</div>
             </div>
-          </a-col>
-        </a-row>
+          </ACol>
+        </ARow>
       </div>
     </div>
 
     <!-- 团购活动 -->
-    <div class="group-section" v-if="groupActivities.length > 0">
+    <div v-if="groupActivities.length > 0" class="group-section">
       <div class="section-header">
         <h2 class="section-title">热门团购</h2>
         <div class="section-divider"></div>
         <p class="section-subtitle">限时拼团，超值优惠</p>
       </div>
       <div class="container">
-        <a-row :gutter="[24, 24]">
-          <a-col v-for="activity in groupActivities" :key="activity.id" :xs="12" :sm="12" :md="8" :lg="6">
+        <ARow :gutter="[24, 24]">
+          <ACol
+            v-for="activity in groupActivities"
+            :key="activity.id"
+            :xs="12"
+            :sm="12"
+            :md="8"
+            :lg="6"
+          >
             <div class="product-card" @click="goToGroupActivityDetail(activity.id)">
               <div class="product-image-wrapper">
-                <img :src="activity.productImage" :alt="activity.activityName" class="product-image" />
+                <img
+                  :src="activity.productImage"
+                  :alt="activity.activityName"
+                  class="product-image"
+                />
                 <div class="product-overlay">
-                  <a-button type="primary" ghost class="view-btn">立即参团</a-button>
+                  <AButton type="primary" ghost class="view-btn">立即参团</AButton>
                 </div>
                 <div class="discount-badge">{{ activity.discount }}折</div>
               </div>
@@ -93,10 +141,10 @@
                 </div>
               </div>
             </div>
-          </a-col>
-        </a-row>
+          </ACol>
+        </ARow>
         <div class="view-more-wrapper">
-          <a-button size="large" @click="$router.push('/group-activities')">查看更多团购</a-button>
+          <AButton size="large" @click="$router.push('/group-activities')">查看更多团购</AButton>
         </div>
       </div>
     </div>
@@ -109,13 +157,13 @@
         <p class="section-subtitle">精选优质商品，品质保证</p>
       </div>
       <div class="container">
-        <a-row :gutter="[24, 24]">
-          <a-col v-for="product in products" :key="product.id" :xs="12" :sm="12" :md="8" :lg="6">
+        <ARow :gutter="[24, 24]">
+          <ACol v-for="product in products" :key="product.id" :xs="12" :sm="12" :md="8" :lg="6">
             <div class="product-card" @click="goToProductDetail(product.id)">
               <div class="product-image-wrapper">
                 <img :src="product.mainImage" :alt="product.productName" class="product-image" />
                 <div class="product-overlay">
-                  <a-button type="primary" ghost class="view-btn">查看详情</a-button>
+                  <AButton type="primary" ghost class="view-btn">查看详情</AButton>
                 </div>
               </div>
               <div class="product-info">
@@ -126,16 +174,16 @@
                 </div>
               </div>
             </div>
-          </a-col>
-        </a-row>
+          </ACol>
+        </ARow>
       </div>
     </div>
 
     <!-- 优势特点 -->
     <div class="features-section">
       <div class="container">
-        <a-row :gutter="[24, 24]">
-          <a-col :xs="24" :sm="12" :md="6">
+        <ARow :gutter="[24, 24]">
+          <ACol :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
                 <AppIcon :size="52" :component="RocketOutline" />
@@ -143,8 +191,8 @@
               <h3>快速配送</h3>
               <p>当日下单，次日送达</p>
             </div>
-          </a-col>
-          <a-col :xs="24" :sm="12" :md="6">
+          </ACol>
+          <ACol :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
                 <AppIcon :size="52" :component="ShieldCheckmarkOutline" />
@@ -152,8 +200,8 @@
               <h3>品质保证</h3>
               <p>严选优质商品</p>
             </div>
-          </a-col>
-          <a-col :xs="24" :sm="12" :md="6">
+          </ACol>
+          <ACol :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
                 <AppIcon :size="52" :component="CashOutline" />
@@ -161,8 +209,8 @@
               <h3>价格实惠</h3>
               <p>团购更优惠</p>
             </div>
-          </a-col>
-          <a-col :xs="24" :sm="12" :md="6">
+          </ACol>
+          <ACol :xs="24" :sm="12" :md="6">
             <div class="feature-item">
               <div class="feature-icon">
                 <AppIcon :size="52" :component="GiftOutline" />
@@ -170,8 +218,8 @@
               <h3>新人福利</h3>
               <p>新用户专享优惠</p>
             </div>
-          </a-col>
-        </a-row>
+          </ACol>
+        </ARow>
       </div>
     </div>
   </div>
@@ -265,20 +313,26 @@ function goToGroupActivityDetail(activityId) {
 }
 
 .banner-1 {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.3) 100%),
-    url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&h=500&fit=crop') center/cover;
+  background:
+    linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(20, 184, 166, 0.3) 100%),
+    url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1920&h=500&fit=crop')
+      center/cover;
   background-blend-mode: overlay;
 }
 
 .banner-2 {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(13, 148, 136, 0.3) 100%),
-    url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1920&h=500&fit=crop') center/cover;
+  background:
+    linear-gradient(135deg, rgba(5, 150, 105, 0.2) 0%, rgba(13, 148, 136, 0.3) 100%),
+    url('https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=1920&h=500&fit=crop')
+      center/cover;
   background-blend-mode: overlay;
 }
 
 .banner-3 {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.3) 100%),
-    url('https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1920&h=500&fit=crop') center/cover;
+  background:
+    linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(52, 211, 153, 0.3) 100%),
+    url('https://images.unsplash.com/photo-1506617420156-8e4536971650?w=1920&h=500&fit=crop')
+      center/cover;
   background-blend-mode: overlay;
 }
 
@@ -622,7 +676,6 @@ function goToGroupActivityDetail(activityId) {
 
 /* 响应式 */
 @media (max-width: 768px) {
-
   .banner,
   .banner-item {
     height: 300px;
