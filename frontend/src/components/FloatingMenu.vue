@@ -1,27 +1,21 @@
 <template>
   <div class="floating-menu">
     <!-- 1. Cart -->
-    <ATooltip title="购物车" placement="left">
-      <div class="menu-btn" @click="handleNavigation('/cart')">
-        <ABadge :count="cartStore.cartCount" :offset="[-2, 2]" size="small">
-          <ShoppingCartOutlined class="menu-icon" />
-        </ABadge>
-      </div>
-    </ATooltip>
+    <div class="menu-btn" @click="handleNavigation('/cart')">
+      <ABadge :count="cartStore.cartCount" :offset="[-2, 2]" size="small">
+        <ShoppingCartOutlined class="menu-icon" />
+      </ABadge>
+    </div>
 
     <!-- 2. Profile -->
-    <ATooltip title="个人中心" placement="left">
-      <div class="menu-btn" @click="handleNavigation('/profile')">
-        <UserOutlined class="menu-icon" />
-      </div>
-    </ATooltip>
+    <div class="menu-btn" @click="handleNavigation('/profile')">
+      <UserOutlined class="menu-icon" />
+    </div>
 
     <!-- 3. Customer Service -->
-    <ATooltip title="联系客服" placement="left">
-      <div class="menu-btn" :class="{ active: isChatOpen }" @click="toggleChat">
-        <CustomerServiceOutlined class="menu-icon" />
-      </div>
-    </ATooltip>
+    <div class="menu-btn" :class="{ active: isChatOpen }" @click="toggleChat">
+      <CustomerServiceOutlined class="menu-icon" />
+    </div>
 
     <!-- 4. Back To Top -->
     <div class="back-to-top-wrapper">
@@ -31,7 +25,6 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps } from 'vue'
 import { useRouter } from 'vue-router'
 import { ShoppingCartOutlined, UserOutlined, CustomerServiceOutlined } from '@ant-design/icons-vue'
 import { useCartStore } from '@/stores/cart'

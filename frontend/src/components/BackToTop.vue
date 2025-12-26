@@ -1,11 +1,9 @@
 <template>
   <Transition name="fade">
     <div v-show="visible" class="back-to-top-container">
-      <ATooltip title="回到顶部" placement="left">
-        <div class="menu-btn" @click="scrollToTop">
-          <ToTopOutlined class="menu-icon" />
-        </div>
-      </ATooltip>
+      <div class="menu-btn" @click="scrollToTop">
+        <ToTopOutlined class="menu-icon" />
+      </div>
     </div>
   </Transition>
 </template>
