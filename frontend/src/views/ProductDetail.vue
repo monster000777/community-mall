@@ -4,7 +4,7 @@
       <div class="product-main-card">
         <div class="product-gallery">
           <div class="main-image-wrapper">
-            <img :src="product.mainImage" :alt="product.productName" class="main-image" />
+            <LazyImage :src="product.mainImage" :alt="product.productName" class="main-image" />
           </div>
         </div>
 

@@ -60,6 +60,7 @@ export default [
                 Blob: 'readonly',
                 File: 'readonly',
                 FileReader: 'readonly',
+                IntersectionObserver: 'readonly',
 
                 // 浏览器环境 - Speech API
                 SpeechSynthesisUtterance: 'readonly',

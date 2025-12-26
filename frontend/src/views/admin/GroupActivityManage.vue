@@ -94,7 +94,11 @@
           <template v-if="column.key === 'productInfo'">
             <div class="product-info">
               <div class="product-image-wrapper">
-                <img :src="record.productImage" :alt="record.productName" class="product-image" />
+                <LazyImage
+                  :src="record.productImage"
+                  :alt="record.productName"
+                  class="product-image"
+                />
               </div>
               <div class="product-details">
                 <div class="product-name">{{ record.productName }}</div>

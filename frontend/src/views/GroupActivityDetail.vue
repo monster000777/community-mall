@@ -8,7 +8,7 @@
               <!-- 左侧：商品图片 -->
               <div class="image-section">
                 <div class="image-wrapper">
-                  <img :src="activity.productImage" :alt="activity.productName" />
+                  <LazyImage :src="activity.productImage" :alt="activity.productName" />
                   <div v-if="activity.status === 1" class="status-badge active">进行中</div>
                   <div v-else-if="activity.status === 0" class="status-badge not-started">
                     即将开始

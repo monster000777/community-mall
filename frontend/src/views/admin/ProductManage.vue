@@ -69,7 +69,7 @@
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'mainImage'">
             <div class="product-image-wrapper">
-              <img :src="record.mainImage" class="product-image" />
+              <LazyImage :src="record.mainImage" class="product-image" />
             </div>
           </template>
           <template v-else-if="column.key === 'productName'">
@@ -169,7 +169,7 @@
         <AFormItem label="主图URL">
           <AInput v-model:value="formState.mainImage" size="large" placeholder="请输入图片URL" />
           <div v-if="formState.mainImage" class="image-preview">
-            <img :src="formState.mainImage" alt="预览" />
+            <LazyImage :src="formState.mainImage" alt="预览" />
           </div>
         </AFormItem>
         <AFormItem label="商品描述">

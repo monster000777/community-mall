@@ -79,7 +79,7 @@
               >
                 <!-- 商品图片 -->
                 <div class="activity-image-wrapper">
-                  <img
+                  <LazyImage
                     :src="activity.productImage"
                     :alt="activity.productName"
                     class="activity-image"

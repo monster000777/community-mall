@@ -24,7 +24,7 @@
                   style="cursor: pointer"
                   @click="$router.push(`/product/${record.productId}`)"
                 >
-                  <img :src="record.mainImage" :alt="record.productName" />
+                  <LazyImage :src="record.mainImage" :alt="record.productName" />
                   <span class="product-name">{{ record.productName }}</span>
                 </div>
               </template>
@@ -81,7 +81,7 @@
           </div>
           <div v-for="item in cartList" v-else :key="item.id" class="cart-item-card">
             <div class="cart-item-image" @click="$router.push(`/product/${item.productId}`)">
-              <img :src="item.mainImage" :alt="item.productName" />
+              <LazyImage :src="item.mainImage" :alt="item.productName" />
             </div>
             <div class="cart-item-content">
               <div class="cart-item-header">

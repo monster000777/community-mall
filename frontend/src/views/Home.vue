@@ -91,7 +91,7 @@
           >
             <div class="category-card" @click="goToProducts(category.id)">
               <div class="category-icon-wrapper">
-                <img
+                <LazyImage
                   :src="categoryIcons[index % categoryIcons.length]"
                   :alt="category.categoryName"
                   class="category-img"
@@ -123,7 +123,7 @@
           >
             <div class="product-card" @click="goToGroupActivityDetail(activity.id)">
               <div class="product-image-wrapper">
-                <img
+                <LazyImage
                   :src="activity.productImage"
                   :alt="activity.activityName"
                   class="product-image"
@@ -161,7 +161,11 @@
           <ACol v-for="product in products" :key="product.id" :xs="12" :sm="12" :md="8" :lg="6">
             <div class="product-card" @click="goToProductDetail(product.id)">
               <div class="product-image-wrapper">
-                <img :src="product.mainImage" :alt="product.productName" class="product-image" />
+                <LazyImage
+                  :src="product.mainImage"
+                  :alt="product.productName"
+                  class="product-image"
+                />
                 <div class="product-overlay">
                   <AButton type="primary" ghost class="view-btn">查看详情</AButton>
                 </div>

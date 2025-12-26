@@ -76,7 +76,11 @@
               @click="goToProductDetail(product.id)"
             >
               <div class="product-image-wrapper">
-                <img :src="product.mainImage" :alt="product.productName" class="product-image" />
+                <LazyImage
+                  :src="product.mainImage"
+                  :alt="product.productName"
+                  class="product-image"
+                />
                 <div class="product-overlay">
                   <AButton type="primary" shape="round">查看详情</AButton>
                 </div>
