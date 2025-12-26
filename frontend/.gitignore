@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+# Auto-generated files (unplugin-auto-import & unplugin-vue-components)
+src/auto-imports.d.ts
+src/components.d.ts
+.eslintrc-auto-import.json
+

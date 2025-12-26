@@ -76,7 +76,41 @@ export default [
                 defineProps: 'readonly',
                 defineEmits: 'readonly',
                 defineExpose: 'readonly',
-                withDefaults: 'readonly'
+                withDefaults: 'readonly',
+
+                // unplugin-auto-import 自动导入的 Vue API
+                ref: 'readonly',
+                reactive: 'readonly',
+                computed: 'readonly',
+                watch: 'readonly',
+                watchEffect: 'readonly',
+                onMounted: 'readonly',
+                onUnmounted: 'readonly',
+                onBeforeMount: 'readonly',
+                onBeforeUnmount: 'readonly',
+                onUpdated: 'readonly',
+                onBeforeUpdate: 'readonly',
+                nextTick: 'readonly',
+                unref: 'readonly',
+                toRef: 'readonly',
+                toRefs: 'readonly',
+                isRef: 'readonly',
+                customRef: 'readonly',
+                shallowRef: 'readonly',
+                triggerRef: 'readonly',
+                shallowReactive: 'readonly',
+                markRaw: 'readonly',
+                toRaw: 'readonly',
+
+                // Vue Router (unplugin-auto-import)
+                useRouter: 'readonly',
+                useRoute: 'readonly',
+
+                // Pinia (unplugin-auto-import)
+                storeToRefs: 'readonly',
+                defineStore: 'readonly',
+                createPinia: 'readonly',
+                acceptHMRUpdate: 'readonly'
             }
         },
 

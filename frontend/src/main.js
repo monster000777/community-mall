@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import Antd from 'ant-design-vue'
+// 保留 Ant Design Vue 全局样式
 import 'ant-design-vue/dist/reset.css'
 import '@/styles/main.css'
 import AppIcon from '@/components/AppIcon.vue'
@@ -12,7 +12,7 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
-app.use(Antd)
+// 移除全局引入 Antd，改为按需引入
 
 app.component('AppIcon', AppIcon)
 
