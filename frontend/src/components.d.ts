@@ -61,6 +61,7 @@ declare module 'vue' {
     AUpload: typeof import('ant-design-vue/es')['Upload']
     BackToTop: typeof import('./components/BackToTop.vue')['default']
     FloatingMenu: typeof import('./components/FloatingMenu.vue')['default']
+    LazyImage: typeof import('./components/LazyImage.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }
