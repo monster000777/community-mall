@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix",
+    "format": "prettier --write \"src/**/*.{js,vue,css,scss,json,md}\"",
+    "fix-all": "npm run format && npm run lint:fix"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
@@ -20,7 +24,14 @@
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@vitejs/plugin-vue": "^4.3.4",
+    "@vue/eslint-config-prettier": "^10.2.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.6.2",
+    "prettier": "^3.7.4",
     "vite": "^4.4.9"
   }
 }

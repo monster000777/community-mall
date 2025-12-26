@@ -1,0 +1,12 @@
+# 依赖和构建产物
+node_modules
+dist
+*.local
+
+# 配置文件（可选）
+pnpm-lock.yaml
+
+# 其他
+.vscode
+.idea
+*.log
