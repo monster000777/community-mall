@@ -606,14 +606,11 @@ function applyAiResult() {
   border: 1px solid var(--border-color);
 }
 
-.product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.product-image-wrapper :deep(.lazy-image) {
   transition: all 0.3s ease;
 }
 
-.product-image:hover {
+.product-image-wrapper:hover :deep(.lazy-image) {
   transform: scale(1.1);
 }
 
@@ -641,12 +638,6 @@ function applyAiResult() {
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--border-color);
-}
-
-.image-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 :deep(.modal-ok-btn) {

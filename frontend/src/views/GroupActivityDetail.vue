@@ -555,11 +555,6 @@ onUnmounted(() => {
   border: 1px solid var(--border-color);
 }
 
-.image-wrapper img {
-  width: 100%;
-  display: block;
-}
-
 .status-badge {
   position: absolute;
   top: 16px;

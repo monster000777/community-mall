@@ -443,12 +443,13 @@ function goToAddressManage() {
   gap: 16px;
 }
 
-.product-info img {
+.product-info :deep(.lazy-image-wrapper) {
   width: 80px;
   height: 80px;
-  object-fit: cover;
+  flex-shrink: 0;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-color);
+  overflow: hidden;
 }
 
 .product-name {
@@ -613,12 +614,6 @@ function goToAddressManage() {
   flex-shrink: 0;
   border-radius: var(--radius-md);
   overflow: hidden;
-}
-
-.cart-item-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 .cart-item-content {

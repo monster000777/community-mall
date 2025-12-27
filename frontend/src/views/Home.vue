@@ -515,11 +515,8 @@ function goToGroupActivityDetail(activityId) {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
-.category-img {
-  width: 100%;
-  height: 100%;
+.category-icon-wrapper :deep(.lazy-image) {
   border-radius: 50%;
-  object-fit: cover;
   border: 3px solid white;
 }
 

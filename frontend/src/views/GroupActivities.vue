@@ -494,14 +494,11 @@ onUnmounted(() => {
   overflow: hidden;
 }
 
-.activity-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.activity-image-wrapper :deep(.lazy-image) {
   transition: transform 0.5s ease;
 }
 
-.activity-card:hover .activity-image {
+.activity-card:hover .activity-image-wrapper :deep(.lazy-image) {
   transform: scale(1.1);
 }
 
