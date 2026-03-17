@@ -16,10 +16,10 @@ public class AiConfig {
     @Value("${openai.api-key}")
     private String openAiApiKey;
 
-    @Value("${openai.base-url:https://dashscope.aliyuncs.com/compatible-mode/v1}")
+    @Value("${openai.base-url:https://api.deepseek.com}")
     private String openAiBaseUrl;
 
-    @Value("${openai.model-name:qwen-max}")
+    @Value("${openai.model-name:deepseek-chat}")
     private String modelName;
 
     @Bean
