@@ -34,7 +34,6 @@
           <AppIcon :size="18" :component="FlameOutline" class="menu-icon" />
           <span v-if="!collapsed">团购活动</span>
         </AMenuItem>
-        <AMenuDivider />
         <AMenuItem key="home" @click="$router.push('/')">
           <AppIcon :size="18" :component="HomeOutline" class="menu-icon" />
           <span v-if="!collapsed">返回前台</span>
@@ -78,7 +77,6 @@
           <AppIcon :size="18" :component="FlameOutline" class="menu-icon" />
           <span>团购活动</span>
         </AMenuItem>
-        <AMenuDivider />
         <AMenuItem key="home" @click="$router.push('/')">
           <AppIcon :size="18" :component="HomeOutline" class="menu-icon" />
           <span>返回前台</span>
@@ -326,7 +324,6 @@ function handleLogout() {
   padding: 16px;
   background: var(--bg-card);
   transition: all 0.3s;
-  border-bottom: 1px solid var(--border-color);
 }
 
 .logo-icon {
@@ -348,7 +345,7 @@ function handleLogout() {
 .admin-menu {
   background: transparent;
   border-right: none;
-  padding: 16px 8px;
+  padding: 0px 8px 16px 8px;
 }
 
 .admin-menu :deep(.ant-menu-item) {
@@ -396,7 +393,6 @@ function handleLogout() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: var(--shadow-sm);
   z-index: 10;
   position: relative;
 }
