@@ -30,7 +30,7 @@
                 <span class="amount-text">¥{{ record.actualAmount }}</span>
               </template>
               <template v-else-if="column.key === 'action'">
-                <ASpace>
+                <ASpace direction="vertical" :size="8">
                   <AButton
                     v-if="record.orderStatus === 1"
                     type="primary"
@@ -168,14 +168,20 @@ const cancelingOrderId = ref(null)
 const deletingOrderId = ref(null)
 
 const columns = [
-  { title: '订单号', key: 'orderNo', dataIndex: 'orderNo' },
-  { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount' },
-  { title: '收货人', key: 'receiverName', dataIndex: 'receiverName' },
-  { title: '收货电话', key: 'receiverPhone', dataIndex: 'receiverPhone' },
-  { title: '订单备注', key: 'remark', dataIndex: 'remark', ellipsis: true },
-  { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus' },
-  { title: '创建时间', key: 'createdAt', dataIndex: 'createdAt' },
-  { title: '操作', key: 'action' }
+  { title: '订单号', key: 'orderNo', dataIndex: 'orderNo', width: 260, align: 'center' },
+  { title: '订单金额', key: 'actualAmount', dataIndex: 'actualAmount', align: 'center' },
+  { title: '收货人', key: 'receiverName', dataIndex: 'receiverName', align: 'center' },
+  {
+    title: '收货电话',
+    key: 'receiverPhone',
+    dataIndex: 'receiverPhone',
+    width: 150,
+    align: 'center'
+  },
+  { title: '订单备注', key: 'remark', dataIndex: 'remark', ellipsis: true, align: 'center' },
+  { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus', align: 'center' },
+  { title: '创建时间', key: 'createdAt', dataIndex: 'createdAt', align: 'center' },
+  { title: '操作', key: 'action', align: 'center' }
 ]
 
 onMounted(() => {
@@ -439,14 +445,30 @@ function handleDelete(orderId) {
 
 .card-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
+.orders-table :deep(.ant-table) {
+  font-size: 16px;
+  background: transparent;
+}
+
+.orders-table :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.orders-table :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
+}
+
 .orders-table :deep(.ant-table-thead > tr > th) {
-  background: var(--bg-body);
+  background: var(--bg-input);
   font-weight: 600;
+  font-size: 18px;
+  padding: 16px;
 }
 
 .order-link {
@@ -468,10 +490,24 @@ function handleDelete(orderId) {
 .amount-text {
   font-weight: 600;
   color: var(--text-primary);
+  font-size: 20px;
+}
+
+.order-no {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
 .action-btn {
   border-radius: 4px;
+  font-size: 13px;
+  width: 60px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
 }
 
 .pay-btn {
@@ -507,7 +543,7 @@ function handleDelete(orderId) {
 }
 
 .order-no {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -520,7 +556,7 @@ function handleDelete(orderId) {
   display: flex;
   justify-content: space-between;
   margin-bottom: 8px;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .info-row:last-child {

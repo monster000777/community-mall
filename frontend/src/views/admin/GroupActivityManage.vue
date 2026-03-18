@@ -34,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">进行中</p>
-          <h3 class="stat-value">{{ activities.filter((a) => a.status === 1).length }}</h3>
+          <h3 class="stat-value">{{ statsActivities.filter((a) => a.status === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -43,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">未开始</p>
-          <h3 class="stat-value">{{ activities.filter((a) => a.status === 0).length }}</h3>
+          <h3 class="stat-value">{{ statsActivities.filter((a) => a.status === 0).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -52,7 +52,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已结束</p>
-          <h3 class="stat-value">{{ activities.filter((a) => a.status === 2).length }}</h3>
+          <h3 class="stat-value">{{ statsActivities.filter((a) => a.status === 2).length }}</h3>
         </div>
       </div>
     </div>
@@ -87,6 +87,7 @@
         :loading="loading"
         :pagination="pagination"
         row-key="id"
+        size="middle"
         @change="handleTableChange"
       >
         <!-- 商品信息 -->
@@ -337,6 +338,7 @@ import dayjs from 'dayjs'
 const loading = ref(false)
 const submitting = ref(false)
 const activities = ref([])
+const statsActivities = ref([])
 const products = ref([])
 const statusFilter = ref(undefined)
 
@@ -642,7 +644,17 @@ const getStatusIcon = (status) => {
 onMounted(() => {
   loadActivities()
   loadProducts()
+  loadStats()
 })
+
+async function loadStats() {
+  try {
+    const res = await adminGetGroupActivities({ page: 1, size: 9999 })
+    statsActivities.value = res.data.records || []
+  } catch (error) {
+    console.error('获取统计数据失败', error)
+  }
+}
 </script>
 
 <style scoped>
@@ -654,8 +666,8 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -664,7 +676,7 @@ onMounted(() => {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 8px 0;
@@ -673,7 +685,7 @@ onMounted(() => {
 }
 
 .title-icon {
-  margin-right: 12px;
+  margin-right: 8px;
   vertical-align: -5px;
   color: var(--primary-color);
 }
@@ -704,15 +716,15 @@ onMounted(() => {
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -756,13 +768,13 @@ onMounted(() => {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -771,16 +783,30 @@ onMounted(() => {
 .table-card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
+}
+
+.table-card :deep(.ant-table) {
+  background: transparent;
+}
+
+.table-card :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-card :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
 }
 
 .filter-bar {
-  margin-bottom: 20px;
-  padding-bottom: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .table-card :deep(.ant-table) {
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {

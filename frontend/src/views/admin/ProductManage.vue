@@ -34,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已上架</p>
-          <h3 class="stat-value">{{ products.filter((p) => p.isOnSale === 1).length }}</h3>
+          <h3 class="stat-value">{{ statsProducts.filter((p) => p.isOnSale === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -43,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已下架</p>
-          <h3 class="stat-value">{{ products.filter((p) => p.isOnSale === 0).length }}</h3>
+          <h3 class="stat-value">{{ statsProducts.filter((p) => p.isOnSale === 0).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -52,7 +52,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">库存总数</p>
-          <h3 class="stat-value">{{ products.reduce((sum, p) => sum + p.stock, 0) }}</h3>
+          <h3 class="stat-value">{{ statsProducts.reduce((sum, p) => sum + p.stock, 0) }}</h3>
         </div>
       </div>
     </div>
@@ -64,6 +64,7 @@
         :pagination="pagination"
         row-key="id"
         :scroll="{ x: 1200 }"
+        size="middle"
         @change="handleTableChange"
       >
         <template #bodyCell="{ column, record }">
@@ -262,6 +263,7 @@ import {
 import { generateCopy } from '@/api/ai'
 
 const products = ref([])
+const statsProducts = ref([])
 const modalVisible = ref(false)
 const editId = ref(null)
 
@@ -292,7 +294,7 @@ const formState = reactive({
 
 const columns = [
   { title: '商品图片', key: 'mainImage', width: 100, align: 'center' },
-  { title: '商品名称', dataIndex: 'productName', key: 'productName', width: 200, align: 'center' },
+  { title: '商品名称', dataIndex: 'productName', key: 'productName', width: 140, align: 'center' },
   { title: '分类ID', dataIndex: 'categoryId', key: 'categoryId', width: 100, align: 'center' },
   { title: '价格', key: 'price', dataIndex: 'price', width: 110, align: 'center' },
   { title: '库存', key: 'stock', dataIndex: 'stock', width: 90, align: 'center' },
@@ -303,7 +305,17 @@ const columns = [
 
 onMounted(() => {
   loadProducts()
+  loadStats()
 })
+
+async function loadStats() {
+  try {
+    const res = await getProductList({ current: 1, size: 9999 })
+    statsProducts.value = res.data.records || []
+  } catch (error) {
+    console.error('获取统计数据失败', error)
+  }
+}
 
 async function loadProducts() {
   try {
@@ -467,8 +479,8 @@ function applyAiResult() {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 24px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -477,7 +489,7 @@ function applyAiResult() {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 8px 0;
@@ -486,7 +498,7 @@ function applyAiResult() {
 }
 
 .title-icon {
-  margin-right: 12px;
+  margin-right: 8px;
   vertical-align: -5px;
   color: var(--primary-color);
 }
@@ -517,15 +529,15 @@ function applyAiResult() {
 .stats-cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 24px;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: 12px;
+  padding: 16px;
   background: var(--bg-card);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
@@ -569,13 +581,13 @@ function applyAiResult() {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -584,10 +596,21 @@ function applyAiResult() {
 .table-card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
 }
 
 .table-card :deep(.ant-table) {
-  font-size: 14px;
+  font-size: 15px;
+  background: transparent;
+}
+
+.table-card :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-card :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {
@@ -600,6 +623,7 @@ function applyAiResult() {
 .product-image-wrapper {
   width: 60px;
   height: 60px;
+  margin: 0 auto;
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);

@@ -132,7 +132,13 @@
 
         <div class="cart-footer">
           <div class="left-actions">
-            <AButton :disabled="cartList.length === 0" type="text" danger @click="handleClearCart">
+            <AButton
+              :disabled="cartList.length === 0"
+              type="text"
+              danger
+              class="clear-btn"
+              @click="handleClearCart"
+            >
               清空购物车
             </AButton>
           </div>
@@ -244,11 +250,11 @@ const creatingOrder = ref(false)
 const orderNote = ref('')
 
 const columns = [
-  { title: '商品', key: 'product', width: '40%' },
-  { title: '单价', key: 'price' },
-  { title: '数量', key: 'quantity' },
-  { title: '小计', key: 'total' },
-  { title: '操作', key: 'action' }
+  { title: '商品', key: 'product', align: 'center', width: 280 },
+  { title: '单价', key: 'price', align: 'center' },
+  { title: '数量', key: 'quantity', align: 'center' },
+  { title: '小计', key: 'total', align: 'center' },
+  { title: '操作', key: 'action', align: 'center' }
 ]
 
 const totalPrice = computed(() => {
@@ -422,24 +428,41 @@ function goToAddressManage() {
 
 .card-header h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
 }
 
 .item-count {
   color: var(--text-secondary);
-  font-size: 14px;
+  font-size: 16px;
+}
+
+.cart-table :deep(.ant-table) {
+  background: transparent;
+  font-size: 16px;
+}
+
+.cart-table :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cart-table :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
 }
 
 .cart-table :deep(.ant-table-thead > tr > th) {
-  background: var(--bg-body);
+  background: var(--bg-input);
   font-weight: 600;
+  font-size: 18px;
+  padding: 16px;
 }
 
 .product-info {
   display: flex;
   align-items: center;
+  justify-content: left;
   gap: 16px;
 }
 
@@ -455,15 +478,27 @@ function goToAddressManage() {
 .product-name {
   font-weight: 500;
   color: var(--text-primary);
+  font-size: 18px;
 }
 
 .price-text {
-  color: var(--text-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 20px;
 }
 
 .total-text {
   color: var(--warning-color);
   font-weight: 600;
+  font-size: 20px;
+}
+
+.delete-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 18px;
 }
 
 .cart-footer {
@@ -475,6 +510,12 @@ function goToAddressManage() {
   border-top: 1px solid var(--border-color);
 }
 
+.clear-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .right-actions {
   display: flex;
   align-items: center;
@@ -482,13 +523,13 @@ function goToAddressManage() {
 }
 
 .total-price {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--text-secondary);
 }
 
 .total-price span {
   color: var(--warning-color);
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
   margin-left: 8px;
 }
@@ -496,9 +537,9 @@ function goToAddressManage() {
 .checkout-btn {
   background: var(--primary-color);
   border-color: var(--primary-color);
-  height: 48px;
-  padding: 0 32px;
-  font-size: 16px;
+  height: 52px;
+  padding: 0 40px;
+  font-size: 18px;
   font-weight: 600;
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
@@ -570,6 +611,7 @@ function goToAddressManage() {
 .quantity-stepper {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -591,6 +633,7 @@ function goToAddressManage() {
   text-align: center;
   font-weight: 500;
   color: var(--text-primary);
+  font-size: 18px;
 }
 
 /* Mobile Cart Styles */
@@ -631,7 +674,7 @@ function goToAddressManage() {
 }
 
 .cart-item-title {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: var(--text-primary);
   margin: 0;
@@ -648,12 +691,12 @@ function goToAddressManage() {
 .delete-icon {
   color: var(--text-tertiary);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .cart-item-price {
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 15px;
   margin-bottom: 8px;
 }
 
@@ -664,14 +707,14 @@ function goToAddressManage() {
 }
 
 .item-subtotal {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .item-subtotal span {
   color: var(--warning-color);
   font-weight: 600;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .empty-cart-mobile {
@@ -719,5 +762,9 @@ function goToAddressManage() {
   .left-actions {
     text-align: center;
   }
+}
+
+.left-actions :deep(.ant-btn) {
+  font-size: 18px;
 }
 </style>

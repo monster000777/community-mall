@@ -26,7 +26,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">待支付</p>
-          <h3 class="stat-value">{{ orders.filter((o) => o.orderStatus === 1).length }}</h3>
+          <h3 class="stat-value">{{ statsOrders.filter((o) => o.orderStatus === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -35,7 +35,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已完成</p>
-          <h3 class="stat-value">{{ orders.filter((o) => o.orderStatus === 4).length }}</h3>
+          <h3 class="stat-value">{{ statsOrders.filter((o) => o.orderStatus === 4).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -193,6 +193,7 @@ import {
 } from '@/api/order'
 
 const orders = ref([])
+const statsOrders = ref([])
 const detailVisible = ref(false)
 const currentOrder = ref(null)
 const loading = ref(false)
@@ -231,14 +232,24 @@ const columns = [
 ]
 
 const totalAmount = computed(() => {
-  return orders.value
+  return statsOrders.value
     .reduce((sum, order) => sum + parseFloat(order.actualAmount || 0), 0)
     .toFixed(2)
 })
 
 onMounted(() => {
   loadOrders()
+  loadStats()
 })
+
+async function loadStats() {
+  try {
+    const res = await getAdminOrderList({ current: 1, size: 9999 })
+    statsOrders.value = res.data.records || []
+  } catch (error) {
+    console.error('获取统计数据失败', error)
+  }
+}
 
 async function loadOrders() {
   loading.value = true
@@ -407,7 +418,7 @@ function viewDetail(order) {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 8px 0;
@@ -482,13 +493,13 @@ function viewDetail(order) {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -497,10 +508,21 @@ function viewDetail(order) {
 .table-card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
 }
 
 .table-card :deep(.ant-table) {
-  font-size: 14px;
+  font-size: 15px;
+  background: transparent;
+}
+
+.table-card :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-card :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {
@@ -512,7 +534,7 @@ function viewDetail(order) {
 
 .order-no {
   font-family: 'Courier New', monospace;
-  font-weight: 500;
+  font-weight: 700;
   color: var(--text-primary);
 }
 

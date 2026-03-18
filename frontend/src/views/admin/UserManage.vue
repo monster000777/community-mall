@@ -34,7 +34,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">正常用户</p>
-          <h3 class="stat-value">{{ users.filter((u) => u.status === 1).length }}</h3>
+          <h3 class="stat-value">{{ statsUsers.filter((u) => u.status === 1).length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -43,7 +43,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">管理员</p>
-          <h3 class="stat-value">{{ users.filter((u) => u.role === 'admin').length }}</h3>
+          <h3 class="stat-value">{{ statsUsers.filter((u) => u.role === 'admin').length }}</h3>
         </div>
       </div>
       <div class="stat-card">
@@ -52,7 +52,7 @@
         </div>
         <div class="stat-info">
           <p class="stat-label">已禁用</p>
-          <h3 class="stat-value">{{ users.filter((u) => u.status === 0).length }}</h3>
+          <h3 class="stat-value">{{ statsUsers.filter((u) => u.status === 0).length }}</h3>
         </div>
       </div>
     </div>
@@ -218,6 +218,7 @@ import {
 import { useUserStore } from '@/stores/user'
 
 const users = ref([])
+const statsUsers = ref([])
 const userStore = useUserStore()
 const modalVisible = ref(false)
 const editId = ref(null)
@@ -253,7 +254,17 @@ const columns = [
 
 onMounted(() => {
   loadUsers()
+  loadStats()
 })
+
+async function loadStats() {
+  try {
+    const res = await getUserList({ current: 1, size: 9999 })
+    statsUsers.value = res.data.records || []
+  } catch (error) {
+    console.error('获取统计数据失败', error)
+  }
+}
 
 async function loadUsers() {
   const res = await getUserList({
@@ -460,7 +471,7 @@ function resetForm() {
 }
 
 .page-title {
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0 0 8px 0;
@@ -552,13 +563,13 @@ function resetForm() {
 }
 
 .stat-label {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-secondary);
   margin: 0 0 4px 0;
 }
 
 .stat-value {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -567,10 +578,21 @@ function resetForm() {
 .table-card {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
 }
 
 .table-card :deep(.ant-table) {
-  font-size: 14px;
+  font-size: 15px;
+  background: transparent;
+}
+
+.table-card :deep(.ant-table-tbody > tr > td) {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.table-card :deep(.ant-table-tbody > tr.ant-table-row:hover > td) {
+  background: var(--bg-input);
 }
 
 .table-card :deep(.ant-table-thead > tr > th) {
