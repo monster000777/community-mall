@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.community.mall.dto.GroupActivityRequest;
 import com.community.mall.entity.GroupActivity;
+import com.community.mall.entity.GroupOrder;
 import com.community.mall.entity.Product;
 import com.community.mall.mapper.GroupActivityMapper;
+import com.community.mall.mapper.GroupOrderMapper;
 import com.community.mall.mapper.ProductMapper;
 import com.community.mall.vo.GroupActivityVO;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class GroupActivityService {
 
     private final GroupActivityMapper groupActivityMapper;
     private final ProductMapper productMapper;
+    private final GroupOrderMapper groupOrderMapper;
 
     /**
      * 获取团购活动列表（分页）
@@ -219,17 +222,11 @@ public class GroupActivityService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void decreaseStock(Long activityId, Integer quantity) {
-        GroupActivity activity = groupActivityMapper.selectById(activityId);
-        if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+        // Bug3修复：改用条件更新（stock >= quantity）防止并发超卖
+        int rows = groupActivityMapper.decreaseStock(activityId, quantity);
+        if (rows == 0) {
+            throw new RuntimeException("活动库存不足（并发保护）");
         }
-
-        if (activity.getStock() < quantity) {
-            throw new RuntimeException("活动库存不足");
-        }
-
-        activity.setStock(activity.getStock() - quantity);
-        groupActivityMapper.updateById(activity);
     }
 
     /**
@@ -296,8 +293,11 @@ public class GroupActivityService {
             vo.setDiscount(discount);
         }
 
-        // 计算已售数量（这里简化处理，实际应该从订单表统计）
-        vo.setSoldCount(0);
+        // Bug9修复：从 group_order 表动态统计已售数量（排除已取消状态 4）
+        LambdaQueryWrapper<GroupOrder> soldWrapper = new LambdaQueryWrapper<>();
+        soldWrapper.eq(GroupOrder::getActivityId, activity.getId())
+                   .ne(GroupOrder::getStatus, 4); // 排除已取消
+        vo.setSoldCount(groupOrderMapper.selectCount(soldWrapper).intValue());
 
         // 计算剩余时间
         LocalDateTime now = LocalDateTime.now();

@@ -65,7 +65,7 @@ public class GroupOrderService {
         LambdaQueryWrapper<GroupOrder> orderWrapper = new LambdaQueryWrapper<>();
         orderWrapper.eq(GroupOrder::getActivityId, request.getActivityId())
                 .eq(GroupOrder::getUserId, userId)
-                .ne(GroupOrder::getStatus, 5); // 排除已取消的订单（状态5）
+                .ne(GroupOrder::getStatus, 4); // Bug2修复：排除已取消的订单（状态4，与 schema 一致）
         List<GroupOrder> existingOrders = groupOrderMapper.selectList(orderWrapper);
 
         int currentTotal = existingOrders.stream()

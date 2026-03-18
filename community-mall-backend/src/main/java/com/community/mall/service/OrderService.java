@@ -1,6 +1,7 @@
 package com.community.mall.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.community.mall.dto.CreateOrderRequest;
@@ -104,10 +105,16 @@ public class OrderService {
 
             orderItemMapper.insert(orderItem);
 
-            // 扣减库存
-            product.setStock(product.getStock() - cart.getQuantity());
-            product.setSales(product.getSales() + cart.getQuantity());
-            productMapper.updateById(product);
+            // 扣减库存（Bug3修复：使用条件更新防止并发超卖）
+            int updatedRows = productMapper.decreaseStock(product.getId(), cart.getQuantity());
+            if (updatedRows == 0) {
+                throw new RuntimeException("商品库存不足（并发保护）：" + product.getProductName());
+            }
+            // 仅更新销量字段，不用 updateById 以免覆盖原子扣减的 stock
+            LambdaUpdateWrapper<Product> salesUpdate = new LambdaUpdateWrapper<>();
+            salesUpdate.eq(Product::getId, product.getId())
+                       .set(Product::getSales, product.getSales() + cart.getQuantity());
+            productMapper.update(null, salesUpdate);
         }
 
         // 清空购物车
@@ -187,24 +194,25 @@ public class OrderService {
         GroupOrder groupOrder = groupOrderMapper.selectOne(groupOrderWrapper);
 
         if (groupOrder != null) {
-            // 更新团购订单状态为已取消
-            groupOrder.setStatus(5);
+            // Bug2修复：统一取消状态为 4（与 schema 一致）
+            groupOrder.setStatus(4);
             groupOrderMapper.updateById(groupOrder);
 
             // 恢复团购活动库存
             groupActivityService.increaseStock(groupOrder.getActivityId(), groupOrder.getQuantity());
-        }
-
-        // 恢复普通商品库存
-        LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(OrderItem::getOrderId, orderId);
-        List<OrderItem> items = orderItemMapper.selectList(wrapper);
-        for (OrderItem item : items) {
-            Product product = productMapper.selectById(item.getProductId());
-            if (product != null) {
-                product.setStock(product.getStock() + item.getQuantity());
-                product.setSales(product.getSales() - item.getQuantity());
-                productMapper.updateById(product);
+            // Bug1修复：团购订单下单时未扣减 product.stock，取消时不恢复
+        } else {
+            // Bug1修复：仅普通订单才恢复商品库存
+            LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(OrderItem::getOrderId, orderId);
+            List<OrderItem> items = orderItemMapper.selectList(wrapper);
+            for (OrderItem item : items) {
+                Product product = productMapper.selectById(item.getProductId());
+                if (product != null) {
+                    product.setStock(product.getStock() + item.getQuantity());
+                    product.setSales(product.getSales() - item.getQuantity());
+                    productMapper.updateById(product);
+                }
             }
         }
     }
@@ -291,16 +299,30 @@ public class OrderService {
         order.setOrderStatus(5); // 已取消
         orderMasterMapper.updateById(order);
 
-        // 恢复库存
-        LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(OrderItem::getOrderId, orderId);
-        List<OrderItem> items = orderItemMapper.selectList(wrapper);
-        for (OrderItem item : items) {
-            Product product = productMapper.selectById(item.getProductId());
-            if (product != null) {
-                product.setStock(product.getStock() + item.getQuantity());
-                product.setSales(product.getSales() - item.getQuantity());
-                productMapper.updateById(product);
+        // Bug5修复：检查是否为团购订单，分别处理库存恢复
+        LambdaQueryWrapper<GroupOrder> groupOrderWrapper = new LambdaQueryWrapper<>();
+        groupOrderWrapper.eq(GroupOrder::getOrderId, orderId);
+        GroupOrder groupOrder = groupOrderMapper.selectOne(groupOrderWrapper);
+
+        if (groupOrder != null) {
+            // 团购订单：更新 GroupOrder 状态并恢复团购活动库存
+            groupOrder.setStatus(4); // 已取消（与 schema 一致）
+            groupOrderMapper.updateById(groupOrder);
+            // 恢复团购活动库存
+            groupActivityService.increaseStock(groupOrder.getActivityId(), groupOrder.getQuantity());
+            // 团购下单未扣减 product.stock，取消时不恢复
+        } else {
+            // 普通订单：恢复商品库存
+            LambdaQueryWrapper<OrderItem> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(OrderItem::getOrderId, orderId);
+            List<OrderItem> items = orderItemMapper.selectList(wrapper);
+            for (OrderItem item : items) {
+                Product product = productMapper.selectById(item.getProductId());
+                if (product != null) {
+                    product.setStock(product.getStock() + item.getQuantity());
+                    product.setSales(product.getSales() - item.getQuantity());
+                    productMapper.updateById(product);
+                }
             }
         }
     }
