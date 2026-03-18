@@ -1,7 +1,7 @@
 <template>
   <ALayout class="layout">
     <ALayoutHeader class="header">
-      <div class="logo">
+      <div class="logo" @click="$router.push('/')">
         <AppIcon :size="38" :component="StorefrontOutline" class="logo-icon" />
         <span class="logo-text">社区团购</span>
       </div>
@@ -149,7 +149,15 @@
       class="mobile-drawer"
     >
       <div class="mobile-menu-header">
-        <div class="logo">
+        <div
+          class="logo"
+          @click="
+            () => {
+              $router.push('/')
+              mobileMenuOpen = false
+            }
+          "
+        >
           <AppIcon :size="28" :component="StorefrontOutline" class="logo-icon" />
           <span class="logo-text">社区团购</span>
         </div>

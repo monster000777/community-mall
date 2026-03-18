@@ -3,7 +3,7 @@
     <div class="register-left">
       <div class="left-overlay"></div>
       <div class="left-content">
-        <h1 class="brand-title">
+        <h1 class="brand-title" style="cursor: pointer" @click="$router.push('/')">
           <AppIcon
             :size="48"
             :component="StorefrontOutline"
