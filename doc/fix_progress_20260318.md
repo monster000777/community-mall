@@ -75,7 +75,7 @@
   - `application.yml` API Key 改为 `${OPENAI_API_KEY:}`（环境变量占位符）
   - 新建 `application-local.yml` 供本地开发填写真实 Key（不提交）
   - `.gitignore` 追加 `**/application-local.yml` 等规则，防止误提交
-  - `pom.xml` 新增 `maven-resources-plugin` 排除规则，防止 `application-local.yml` 被打包进 JAR
+  - `pom.xml` 新增打包排除规则，防止 `application-local.yml` 被打包进 JAR（已将 `maven-resources-plugin` 改为 `maven-jar-plugin`，修复本地 `mvn spring-boot:run` 无法读取该配置导致的启动报错问题）
   - `application.yml` 追加 `profiles.include: local`，自动加载本地配置
 
 ---
