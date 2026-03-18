@@ -7,11 +7,11 @@
 
 ## 本次修复范围
 
-本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **7 个**（含全部 3 个严重Bug）的修复。
+本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **8 个**的修复。
 
 ---
 
-## ✅ 已修复（7 个）
+## ✅ 已修复（8 个）
 
 ### 🔴 Bug 1：取消团购订单时 `product.stock` 被双重恢复（严重）
 
@@ -75,16 +75,28 @@
   - `application.yml` API Key 改为 `${OPENAI_API_KEY:}`（环境变量占位符）
   - 新建 `application-local.yml` 供本地开发填写真实 Key（不提交）
   - `.gitignore` 追加 `**/application-local.yml` 等规则，防止误提交
+  - `pom.xml` 新增 `maven-resources-plugin` 排除规则，防止 `application-local.yml` 被打包进 JAR
+  - `application.yml` 追加 `profiles.include: local`，自动加载本地配置
 
 ---
 
-## ⏸ 暂缓修复（3 个）
+### 🟢 Bug 10：参团未登录时无友好跳转提示（前端）
+
+- **文件**：`frontend/src/views/GroupActivityDetail.vue`
+- **方法**：`joinGroup()`
+- **修复内容**：跳转登录页时携带 `redirect` 参数，登录成功后自动返回当前活动详情页：
+  ```js
+  router.push({ path: '/login', query: { redirect: route.fullPath } })
+  ```
+
+---
+
+## ⏸ 暂缓修复（2 个）
 
 | Bug | 原因 |
 |-----|------|
 | **Bug 4**（订单号重复） | 需引入 Snowflake 等全局 ID 方案，涉及架构改动，建议单独迭代 |
 | **Bug 7**（Controller 双重异常） | 代码规范问题，不影响功能，可单独重构 |
-| **Bug 10**（前端未登录提示） | 前端交互体验问题，可单独迭代修复 |
 
 ---
 
@@ -100,4 +112,7 @@
 | `config/StpInterfaceImpl.java` | MODIFY | Bug6 |
 | `resources/application.yml` | MODIFY | Bug8 |
 | `resources/application-local.yml` | NEW | Bug8 |
+| `resources/application.yml`（profiles） | MODIFY | Bug8 |
+| `pom.xml` | MODIFY | Bug8（排除打包） |
 | `.gitignore` | MODIFY | Bug8 |
+| `views/GroupActivityDetail.vue` | MODIFY | Bug10 |

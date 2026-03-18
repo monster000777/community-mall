@@ -340,8 +340,8 @@ const goBack = () => {
 const joinGroup = async () => {
   // 检查登录状态
   if (!userStore.token) {
-    message.warning('请先登录')
-    router.push('/login')
+    message.warning('请先登录后再参团')
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
     return
   }
 
