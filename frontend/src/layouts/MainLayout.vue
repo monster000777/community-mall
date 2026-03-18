@@ -330,11 +330,23 @@ const headerAvatarStyle = computed(() => {
   }
 })
 
+const checkOpenChat = () => {
+  if (route.query.openChat === 'true') {
+    isChatOpen.value = true
+    const newQuery = { ...route.query }
+    delete newQuery.openChat
+    router.replace({ path: route.path, query: newQuery, hash: route.hash })
+  }
+}
+
 onMounted(() => {
   if (userStore.token) {
     cartStore.loadCart()
   }
+  checkOpenChat()
 })
+
+watch(() => route.query, checkOpenChat)
 
 watch(
   () => route.name,

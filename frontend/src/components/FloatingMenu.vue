@@ -25,9 +25,11 @@
 </template>
 
 <script setup>
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { message } from 'ant-design-vue'
 import { ShoppingCartOutlined, UserOutlined, CustomerServiceOutlined } from '@ant-design/icons-vue'
 import { useCartStore } from '@/stores/cart'
+import { useUserStore } from '@/stores/user'
 import BackToTop from './BackToTop.vue'
 
 const props = defineProps({
@@ -40,7 +42,9 @@ const props = defineProps({
 const emit = defineEmits(['update:isChatOpen'])
 
 const router = useRouter()
+const route = useRoute()
 const cartStore = useCartStore()
+const userStore = useUserStore()
 
 const handleNavigation = (path) => {
   router.push(path)
@@ -51,6 +55,22 @@ const handleNavigation = (path) => {
 }
 
 const toggleChat = () => {
+  if (!userStore.token) {
+    message.warning('请先登录系统')
+    const targetQuery = { ...route.query, openChat: 'true' }
+    const targetRoute = router.resolve({
+      path: route.path,
+      query: targetQuery,
+      hash: route.hash
+    })
+    router.push({
+      path: '/login',
+      query: {
+        redirect: targetRoute.fullPath
+      }
+    })
+    return
+  }
   emit('update:isChatOpen', !props.isChatOpen)
 }
 </script>

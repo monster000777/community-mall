@@ -7,11 +7,11 @@
 
 ## 本次修复范围
 
-本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **8 个**的修复。
+本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **9 个**的修复（含新增前端交互优化）。
 
 ---
 
-## ✅ 已修复（8 个）
+## ✅ 已修复（9 个）
 
 ### 🔴 Bug 1：取消团购订单时 `product.stock` 被双重恢复（严重）
 
@@ -91,6 +91,15 @@
 
 ---
 
+### 🟢 Bug 11：客服悬浮按钮未拦截未登录用户（前端）
+
+- **文件**：`frontend/src/components/FloatingMenu.vue`、`frontend/src/layouts/MainLayout.vue`
+- **修复内容**：
+  - 点击客服按钮时校验登录状态，未登录则携带 `redirect=${route.fullPath}&openChat=true` 跳转到登录页。
+  - 登录成功返回后，前台页面监听 URL 参数自动展开客服聊天窗口并清理参数。
+
+---
+
 ## ⏸ 暂缓修复（2 个）
 
 | Bug | 原因 |
@@ -116,3 +125,5 @@
 | `pom.xml` | MODIFY | Bug8（排除打包） |
 | `.gitignore` | MODIFY | Bug8 |
 | `views/GroupActivityDetail.vue` | MODIFY | Bug10 |
+| `components/FloatingMenu.vue` | MODIFY | Bug11 |
+| `layouts/MainLayout.vue` | MODIFY | Bug11 |
