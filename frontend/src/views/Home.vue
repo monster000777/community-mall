@@ -144,7 +144,7 @@
           </ACol>
         </ARow>
         <div class="view-more-wrapper">
-          <AButton size="large" @click="$router.push('/group-activities')">查看更多团购</AButton>
+          <AButton size="large" class="view-more-btn" @click="$router.push('/group-activities')">查看更多团购</AButton>
         </div>
       </div>
     </div>
@@ -180,6 +180,9 @@
             </div>
           </ACol>
         </ARow>
+        <div class="view-more-wrapper">
+          <AButton size="large" class="view-more-btn" @click="$router.push('/products')">查看更多商品</AButton>
+        </div>
       </div>
     </div>
 
@@ -751,5 +754,13 @@ function goToGroupActivityDetail(activityId) {
 .view-more-wrapper {
   text-align: center;
   margin-top: 30px;
+}
+
+.view-more-btn:hover,
+.view-more-btn:focus,
+.view-more-btn:active {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  background: var(--primary-light) !important;
 }
 </style>
