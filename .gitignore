@@ -41,3 +41,8 @@ uploads/
 
 # Lombok
 .apt_generated/
+
+# ===== 敏感配置（Bug8修复：禁止提交含 API Key 的本地配置）=====
+**/application-local.yml
+**/.env
+**/.env.local

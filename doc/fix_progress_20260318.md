@@ -7,11 +7,11 @@
 
 ## 本次修复范围
 
-本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **6 个**（含全部 3 个严重Bug）的修复。
+本次针对 `doc/bug_report.md` 中报告的 10 个 Bug，完成了其中 **7 个**（含全部 3 个严重Bug）的修复。
 
 ---
 
-## ✅ 已修复（6 个）
+## ✅ 已修复（7 个）
 
 ### 🔴 Bug 1：取消团购订单时 `product.stock` 被双重恢复（严重）
 
@@ -68,13 +68,22 @@
 
 ---
 
-## ⏸ 暂缓修复（4 个）
+### 🟢 Bug 8：`application.yml` 中 API Key 明文硬编码（安全风险）
+
+- **文件**：`resources/application.yml`（MODIFY）、`resources/application-local.yml`（NEW）、`.gitignore`（MODIFY）
+- **修复内容**：
+  - `application.yml` API Key 改为 `${OPENAI_API_KEY:}`（环境变量占位符）
+  - 新建 `application-local.yml` 供本地开发填写真实 Key（不提交）
+  - `.gitignore` 追加 `**/application-local.yml` 等规则，防止误提交
+
+---
+
+## ⏸ 暂缓修复（3 个）
 
 | Bug | 原因 |
 |-----|------|
 | **Bug 4**（订单号重复） | 需引入 Snowflake 等全局 ID 方案，涉及架构改动，建议单独迭代 |
 | **Bug 7**（Controller 双重异常） | 代码规范问题，不影响功能，可单独重构 |
-| **Bug 8**（API Key 明文） | 运维配置问题，需结合部署环境处理 |
 | **Bug 10**（前端未登录提示） | 前端交互体验问题，可单独迭代修复 |
 
 ---
@@ -89,3 +98,6 @@
 | `mapper/ProductMapper.java` | MODIFY | Bug3 |
 | `mapper/GroupActivityMapper.java` | MODIFY | Bug3 |
 | `config/StpInterfaceImpl.java` | MODIFY | Bug6 |
+| `resources/application.yml` | MODIFY | Bug8 |
+| `resources/application-local.yml` | NEW | Bug8 |
+| `.gitignore` | MODIFY | Bug8 |

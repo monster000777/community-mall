@@ -6,6 +6,8 @@ server:
 spring:
   application:
     name: community-mall-backend
+  profiles:
+    include: local   # 自动加载 application-local.yml（含敏感配置，已加入 .gitignore）
   
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -68,7 +70,10 @@ logging:
     com.baomidou.mybatisplus: debug
 
 # OpenAI Configuration
+# Bug8修复：API Key 通过环境变量注入，禁止明文写入此文件并提交 Git
+# 本地开发：在 application-local.yml 中配置真实 Key（已加入 .gitignore）
+# 生产环境：设置服务器环境变量 OPENAI_API_KEY
 openai:
-  api-key: sk-79dfe1754a694735862a0c8a995a7be4
+  api-key: ${OPENAI_API_KEY:}
   base-url: https://api.deepseek.com
   model-name: deepseek-chat

@@ -149,6 +149,22 @@
 
     <build>
         <plugins>
+            <!-- Bug8修复：排除本地敏感配置文件，防止 application-local.yml 被打包进 JAR -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <resources>
+                        <resource>
+                            <directory>src/main/resources</directory>
+                            <excludes>
+                                <exclude>application-local.yml</exclude>
+                            </excludes>
+                            <filtering>false</filtering>
+                        </resource>
+                    </resources>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -180,5 +196,6 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
 
