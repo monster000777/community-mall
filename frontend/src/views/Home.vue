@@ -144,7 +144,9 @@
           </ACol>
         </ARow>
         <div class="view-more-wrapper">
-          <AButton size="large" class="view-more-btn" @click="$router.push('/group-activities')">查看更多团购</AButton>
+          <AButton size="large" class="view-more-btn" @click="$router.push('/group-activities')"
+            >查看更多团购</AButton
+          >
         </div>
       </div>
     </div>
@@ -181,7 +183,9 @@
           </ACol>
         </ARow>
         <div class="view-more-wrapper">
-          <AButton size="large" class="view-more-btn" @click="$router.push('/products')">查看更多商品</AButton>
+          <AButton size="large" class="view-more-btn" @click="$router.push('/products')"
+            >查看更多商品</AButton
+          >
         </div>
       </div>
     </div>
@@ -536,7 +540,7 @@ function goToGroupActivityDetail(activityId) {
 
 /* 商品卡片 */
 .product-section {
-  padding: 20px 0;
+  padding: 20px 0 60px;
 }
 
 .product-card {
@@ -637,7 +641,8 @@ function goToGroupActivityDetail(activityId) {
 
 /* 特点区域 */
 .features-section {
-  padding: 50px 0;
+  padding: 40px 0 10px 0;
+  background: var(--bg-card);
 }
 
 .feature-item {

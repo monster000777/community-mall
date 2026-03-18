@@ -585,9 +585,8 @@ async function handleLogout() {
 .footer {
   background: var(--bg-card);
   color: var(--text-secondary);
-  padding: 60px 0 30px;
+  padding: 0 0 30px;
   margin-top: auto;
-  border-top: 1px solid var(--border-color);
 }
 
 .footer-content {
@@ -600,8 +599,9 @@ async function handleLogout() {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.5fr;
   gap: 40px;
+  padding-top: 40px;
   padding-bottom: 40px;
-  padding-bottom: 40px;
+  border-top: 1px dashed var(--border-color);
   border-bottom: 1px solid var(--border-color);
 }
 
