@@ -127,3 +127,6 @@
 | `views/GroupActivityDetail.vue` | MODIFY | Bug10 |
 | `components/FloatingMenu.vue` | MODIFY | Bug11 |
 | `layouts/MainLayout.vue` | MODIFY | Bug11 |
+| `frontend/src/api/ai.js` | MODIFY | 为 AI 请求（askAi / generateCopy）单独配置 60s 超时时长 |
+| `doc/ai_model_switch_guide.md` | NEW | 新增 AI 基座模型快速切换配置指南 |
+| `.gitignore` | MODIFY | 修正了错误的后端编译屏蔽路径 (backend -> community-mall-backend) |

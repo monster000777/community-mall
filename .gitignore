@@ -1,8 +1,8 @@
 # Maven
-backend/target/
-backend/.mvn/
-backend/mvnw
-backend/mvnw.cmd
+community-mall-backend/target/
+community-mall-backend/.mvn/
+community-mall-backend/mvnw
+community-mall-backend/mvnw.cmd
 
 # IDE
 .idea/
