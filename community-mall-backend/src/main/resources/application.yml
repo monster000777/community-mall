@@ -33,6 +33,10 @@ spring:
         max-idle: 8
         min-idle: 0
 
+# 上传文件路径配置
+upload:
+  path: ${UPLOAD_PATH:./uploads}
+
 # MyBatis-Plus 配置
 mybatis-plus:
   configuration:
