@@ -185,7 +185,9 @@
                 >
                   <div>
                     <span style="font-weight: 600">{{ addr.receiverName }}</span>
-                    <span style="margin-left: 12px; color: var(--text-secondary)">{{ addr.receiverPhone }}</span>
+                    <span style="margin-left: 12px; color: var(--text-secondary)">{{
+                      addr.receiverPhone
+                    }}</span>
                     <ATag v-if="addr.isDefault === 1" color="success" style="margin-left: 8px"
                       >默认</ATag
                     >
@@ -220,18 +222,31 @@
         </AFormItem>
 
         <AFormItem>
-          <div style="background: var(--bg-body); border: 1px solid var(--border-color); padding: 16px; border-radius: 8px">
+          <div
+            style="
+              background: var(--bg-body);
+              border: 1px solid var(--border-color);
+              padding: 16px;
+              border-radius: 8px;
+            "
+          >
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
               <span style="color: var(--text-primary)">商品单价：</span>
               <span style="color: #ff6b00; font-weight: 600">¥{{ activity?.groupPrice }}</span>
             </div>
             <div style="display: flex; justify-content: space-between; margin-bottom: 8px">
               <span style="color: var(--text-primary)">购买数量：</span>
-              <span style="color: var(--text-primary); font-weight: 600">{{ joinForm.quantity }}件</span>
+              <span style="color: var(--text-primary); font-weight: 600"
+                >{{ joinForm.quantity }}件</span
+              >
             </div>
-            <div style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 8px">
+            <div
+              style="border-top: 1px dashed var(--border-color); padding-top: 8px; margin-top: 8px"
+            >
               <div style="display: flex; justify-content: space-between">
-                <span style="color: var(--text-primary); font-size: 16px; font-weight: 600">应付总额：</span>
+                <span style="color: var(--text-primary); font-size: 16px; font-weight: 600"
+                  >应付总额：</span
+                >
                 <span style="color: #ff6b00; font-size: 20px; font-weight: 700">
                   ¥{{ activity ? (activity.groupPrice * joinForm.quantity).toFixed(2) : '0.00' }}
                 </span>
