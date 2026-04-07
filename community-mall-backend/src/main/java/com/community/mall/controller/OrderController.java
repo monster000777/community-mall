@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 订单控制器
  */
@@ -27,13 +29,13 @@ public class OrderController {
     /**
      * 创建订单
      */
-    @Operation(summary = "创建订单", description = "根据购物车或商品信息创建订单")
+    @Operation(summary = "创建订单", description = "根据购物车或商品信息创建订单（多商品将被拆分为多个独立订单）")
     @PostMapping("/create")
-    public Result<Long> createOrder(@Validated @RequestBody CreateOrderRequest request) {
+    public Result<List<Long>> createOrder(@Validated @RequestBody CreateOrderRequest request) {
         try {
             Long userId = StpUtil.getLoginIdAsLong();
-            Long orderId = orderService.createOrder(userId, request);
-            return Result.success("订单创建成功", orderId);
+            List<Long> orderIds = orderService.createOrder(userId, request);
+            return Result.success("订单创建成功", orderIds);
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }

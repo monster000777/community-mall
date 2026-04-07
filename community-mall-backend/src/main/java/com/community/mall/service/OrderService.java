@@ -47,7 +47,7 @@ public class OrderService {
      * 创建订单
      */
     @Transactional(rollbackFor = Exception.class)
-    public Long createOrder(Long userId, CreateOrderRequest request) {
+    public List<Long> createOrder(Long userId, CreateOrderRequest request) {
         // 获取收货地址
         Address address = addressMapper.selectById(request.getAddressId());
         if (address == null || !address.getUserId().equals(userId)) {
@@ -60,8 +60,9 @@ public class OrderService {
             throw new RuntimeException("购物车为空");
         }
 
-        // 计算订单总金额
-        BigDecimal totalAmount = BigDecimal.ZERO;
+        List<Long> orderIds = new java.util.ArrayList<>();
+
+        // 拆分订单：每个购物车项生成一个独立订单
         for (Cart cart : cartList) {
             Product product = productMapper.selectById(cart.getProductId());
             if (product == null || product.getIsOnSale() == 0) {
@@ -70,30 +71,28 @@ public class OrderService {
             if (product.getStock() < cart.getQuantity()) {
                 throw new RuntimeException("商品库存不足：" + product.getProductName());
             }
-            totalAmount = totalAmount.add(product.getPrice().multiply(new BigDecimal(cart.getQuantity())));
-        }
+            
+            BigDecimal itemTotalAmount = product.getPrice().multiply(new BigDecimal(cart.getQuantity()));
 
-        // 创建订单主表
-        OrderMaster orderMaster = new OrderMaster();
-        orderMaster.setOrderNo(generateOrderNo());
-        orderMaster.setUserId(userId);
-        orderMaster.setTotalAmount(totalAmount);
-        orderMaster.setActualAmount(totalAmount);
-        orderMaster.setPaymentType(request.getPaymentType() != null ? request.getPaymentType() : 1);
-        orderMaster.setOrderStatus(1); // 待支付
-        orderMaster.setReceiverName(address.getReceiverName());
-        orderMaster.setReceiverPhone(address.getReceiverPhone());
-        orderMaster.setReceiverAddress(address.getProvince() + address.getCity() +
-                address.getDistrict() + address.getDetail());
-        orderMaster.setRemark(request.getRemark());
-        orderMaster.setStatus(1);
+            // 创建订单主表
+            OrderMaster orderMaster = new OrderMaster();
+            orderMaster.setOrderNo(generateOrderNo());
+            orderMaster.setUserId(userId);
+            orderMaster.setTotalAmount(itemTotalAmount);
+            orderMaster.setActualAmount(itemTotalAmount);
+            orderMaster.setPaymentType(request.getPaymentType() != null ? request.getPaymentType() : 1);
+            orderMaster.setOrderStatus(1); // 待支付
+            orderMaster.setReceiverName(address.getReceiverName());
+            orderMaster.setReceiverPhone(address.getReceiverPhone());
+            orderMaster.setReceiverAddress(address.getProvince() + address.getCity() +
+                    address.getDistrict() + address.getDetail());
+            orderMaster.setRemark(request.getRemark());
+            orderMaster.setStatus(1);
 
-        orderMasterMapper.insert(orderMaster);
+            orderMasterMapper.insert(orderMaster);
+            orderIds.add(orderMaster.getId());
 
-        // 创建订单明细
-        for (Cart cart : cartList) {
-            Product product = productMapper.selectById(cart.getProductId());
-
+            // 创建订单明细
             OrderItem orderItem = new OrderItem();
             orderItem.setOrderId(orderMaster.getId());
             orderItem.setProductId(product.getId());
@@ -101,11 +100,11 @@ public class OrderService {
             orderItem.setProductImage(product.getMainImage());
             orderItem.setPrice(product.getPrice());
             orderItem.setQuantity(cart.getQuantity());
-            orderItem.setTotalPrice(product.getPrice().multiply(new BigDecimal(cart.getQuantity())));
+            orderItem.setTotalPrice(itemTotalAmount);
 
             orderItemMapper.insert(orderItem);
 
-            // 扣减库存（Bug3修复：使用条件更新防止并发超卖）
+            // 扣减库存（使用条件更新防止并发超卖）
             int updatedRows = productMapper.decreaseStock(product.getId(), cart.getQuantity());
             if (updatedRows == 0) {
                 throw new RuntimeException("商品库存不足（并发保护）：" + product.getProductName());
@@ -120,19 +119,21 @@ public class OrderService {
         // 清空购物车
         cartMapper.deleteBatchIds(request.getCartIds());
 
-        return orderMaster.getId();
+        return orderIds;
     }
+
+    private static final java.util.concurrent.atomic.AtomicInteger ORDER_SEQ = new java.util.concurrent.atomic.AtomicInteger(0);
 
     /**
      * 生成订单号
      */
     private String generateOrderNo() {
         String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        // 使用线程ID和随机数增加唯一性，降低重复概率
+        // 使用线程ID和自增序列增加唯一性，确保同微秒循环中绝对不重复
         String threadId = String.valueOf(Thread.currentThread().getId() % 10000);
-        String random = String.valueOf((int) (Math.random() * 10000));
+        String seq = String.valueOf(ORDER_SEQ.incrementAndGet() % 10000);
         return timestamp + String.format("%04d", Integer.parseInt(threadId))
-                + String.format("%04d", Integer.parseInt(random));
+                + String.format("%04d", Integer.parseInt(seq));
     }
 
     /**
