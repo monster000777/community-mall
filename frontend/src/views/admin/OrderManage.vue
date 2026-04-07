@@ -212,7 +212,7 @@ const pagination = ref({
 })
 
 const columns = [
-  { title: '订单号', dataIndex: 'orderNo', key: 'orderNo', width: 185, align: 'center' },
+  { title: '订单号', dataIndex: 'orderNo', key: 'orderNo', width: 180, align: 'center' },
   { title: '用户ID', dataIndex: 'userId', key: 'userId', width: 80, align: 'center' },
   {
     title: '订单金额',
@@ -229,17 +229,9 @@ const columns = [
     width: 140,
     align: 'center'
   },
-  {
-    title: '订单备注',
-    key: 'remark',
-    dataIndex: 'remark',
-    width: 120,
-    ellipsis: true,
-    align: 'center'
-  },
   { title: '订单状态', key: 'orderStatus', dataIndex: 'orderStatus', width: 120, align: 'center' },
   { title: '创建时间', dataIndex: 'createdAt', key: 'createdAt', width: 160, align: 'center' },
-  { title: '操作', key: 'action', width: 200, align: 'center' }
+  { title: '操作', key: 'action', width: 140, align: 'center' }
 ]
 
 const totalAmount = computed(() => {
