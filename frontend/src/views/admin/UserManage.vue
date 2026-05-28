@@ -173,6 +173,13 @@
             :placeholder="editId ? '不修改请留空' : '请输入密码'"
           />
         </AFormItem>
+        <AFormItem v-if="formState.password" label="确认密码" required>
+          <AInputPassword
+            v-model:value="formState.confirmPassword"
+            size="large"
+            placeholder="请再次输入密码"
+          />
+        </AFormItem>
         <AFormItem label="角色" required>
           <ASelect v-model:value="formState.role" size="large" placeholder="请选择角色">
             <ASelectOption value="user">普通用户</ASelectOption>
@@ -237,6 +244,7 @@ const formState = reactive({
   email: '',
   nickname: '',
   password: '',
+  confirmPassword: '',
   role: 'user',
   status: 1
 })
@@ -350,6 +358,7 @@ function handleEdit(user) {
   formState.role = user.role
   formState.status = user.status
   formState.password = ''
+  formState.confirmPassword = ''
   modalVisible.value = true
 }
 
@@ -368,6 +377,10 @@ async function handleSubmit() {
   }
   if (!editId.value && !formState.password) {
     message.warning('请输入密码')
+    return
+  }
+  if (formState.password && formState.password !== formState.confirmPassword) {
+    message.warning('两次输入的密码不一致')
     return
   }
 
@@ -400,6 +413,7 @@ async function handleSubmit() {
     loadUsers()
   } catch (error) {
     console.error('保存用户失败', error)
+    message.error(error.response?.data?.message || error.message || '保存失败')
   }
 }
 
@@ -447,6 +461,7 @@ function resetForm() {
   formState.email = ''
   formState.nickname = ''
   formState.password = ''
+  formState.confirmPassword = ''
   formState.role = 'user'
   formState.status = 1
 }

@@ -1,5 +1,17 @@
 <template>
-  <AConfigProvider :theme="{ algorithm: themeAlgorithm }">
+  <AConfigProvider
+    :theme="{
+      algorithm: themeAlgorithm,
+      token: {
+        colorPrimary: '#10b981',
+        colorSuccess: '#10b981',
+        colorWarning: '#f59e0b',
+        colorError: '#ef4444',
+        colorInfo: '#3b82f6',
+        borderRadius: 6
+      }
+    }"
+  >
     <RouterView />
     <!-- 全局隐藏音频播放器 -->
     <audio id="globalVoiceAudio" hidden></audio>

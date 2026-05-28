@@ -1,6 +1,6 @@
 <template>
-  <div class="register-container">
-    <div class="register-left">
+  <div class="forgot-container">
+    <div class="forgot-left">
       <div class="left-overlay"></div>
       <div class="left-content">
         <h1 class="brand-title" style="cursor: pointer" @click="$router.push('/')">
@@ -9,48 +9,40 @@
             :component="StorefrontOutline"
             style="vertical-align: -8px; margin-right: 12px"
           />
-          开启团购之旅
+          社区团购商城
         </h1>
-        <p class="brand-subtitle">注册即享新人专属优惠</p>
+        <p class="brand-subtitle">找回您的密码，继续开启新鲜生活</p>
 
-        <div class="benefits">
-          <div v-for="(benefit, index) in benefits" :key="index" class="benefit-item">
-            <div class="benefit-icon-wrapper">
-              <AppIcon :size="32" :component="benefit.icon" />
-            </div>
-            <h3>{{ benefit.title }}</h3>
-            <p>{{ benefit.desc }}</p>
+        <div class="steps-info">
+          <div class="step-info-item">
+            <div class="step-num">1</div>
+            <div class="step-text">验证手机号</div>
+          </div>
+          <div class="step-info-item">
+            <div class="step-num">2</div>
+            <div class="step-text">设置新密码</div>
+          </div>
+          <div class="step-info-item">
+            <div class="step-num">3</div>
+            <div class="step-text">重新登录</div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="register-right">
-      <div class="register-form-wrapper">
+    <div class="forgot-right">
+      <div class="forgot-form-wrapper">
         <div class="form-header">
-          <h2>创建账户</h2>
-          <p>填写以下信息完成注册</p>
+          <h2>找回密码</h2>
+          <p>请通过注册手机号验证身份</p>
         </div>
 
-        <AForm :model="registerForm" class="register-form" @finish="handleRegister">
-          <AFormItem name="username">
-            <AInput
-              v-model:value="registerForm.username"
-              size="large"
-              placeholder="用户名（4-20个字符）"
-              class="custom-input"
-            >
-              <template #prefix>
-                <AppIcon :size="18" :component="PersonOutline" class="input-icon" />
-              </template>
-            </AInput>
-          </AFormItem>
-
+        <AForm :model="forgotForm" class="forgot-form" @finish="handleReset">
           <AFormItem name="phone">
             <AInput
-              v-model:value="registerForm.phone"
+              v-model:value="forgotForm.phone"
               size="large"
-              placeholder="手机号"
+              placeholder="请输入手机号"
               maxlength="11"
               class="custom-input"
             >
@@ -63,7 +55,7 @@
           <AFormItem name="code">
             <div class="code-wrapper">
               <AInput
-                v-model:value="registerForm.code"
+                v-model:value="forgotForm.code"
                 size="large"
                 placeholder="验证码"
                 maxlength="6"
@@ -77,7 +69,7 @@
                 type="primary"
                 size="large"
                 class="send-code-btn"
-                :disabled="countdown > 0 || !registerForm.phone"
+                :disabled="countdown > 0 || !forgotForm.phone"
                 :loading="sending"
                 @click="handleSendCode"
               >
@@ -86,24 +78,11 @@
             </div>
           </AFormItem>
 
-          <AFormItem name="nickname">
-            <AInput
-              v-model:value="registerForm.nickname"
-              size="large"
-              placeholder="昵称（可选）"
-              class="custom-input"
-            >
-              <template #prefix>
-                <AppIcon :size="18" :component="HappyOutline" class="input-icon" />
-              </template>
-            </AInput>
-          </AFormItem>
-
-          <AFormItem name="password">
+          <AFormItem name="newPassword">
             <AInputPassword
-              v-model:value="registerForm.password"
+              v-model:value="forgotForm.newPassword"
               size="large"
-              placeholder="密码（至少6位）"
+              placeholder="请输入新密码"
               class="custom-input"
             >
               <template #prefix>
@@ -114,9 +93,9 @@
 
           <AFormItem name="confirmPassword">
             <AInputPassword
-              v-model:value="registerForm.confirmPassword"
+              v-model:value="forgotForm.confirmPassword"
               size="large"
-              placeholder="确认密码"
+              placeholder="请确认新密码"
               class="custom-input"
             >
               <template #prefix>
@@ -132,25 +111,25 @@
               size="large"
               :loading="loading"
               block
-              class="register-button"
+              class="reset-button"
             >
               <AppIcon
                 :size="20"
-                :component="PersonAddOutline"
+                :component="RefreshOutline"
                 style="margin-right: 8px; vertical-align: -4px"
               />
-              立即注册
+              确认修改密码
             </AButton>
           </AFormItem>
         </AForm>
 
         <div class="form-footer">
-          <span>已有账户？</span>
+          <span>想起密码了？</span>
           <a class="login-link" @click="$router.push('/login')">
-            立即登录
+            返回登录
             <AppIcon
               :size="16"
-              :component="ArrowForwardOutline"
+              :component="ArrowBackOutline"
               style="vertical-align: -2px; margin-left: 4px"
             />
           </a>
@@ -167,28 +146,21 @@ import { message } from 'ant-design-vue'
 
 import {
   StorefrontOutline,
-  PersonOutline,
-  HappyOutline,
+  CallOutline,
+  ShieldCheckmarkOutline,
   LockClosedOutline,
   CheckmarkCircleOutline,
-  PersonAddOutline,
-  ArrowForwardOutline,
-  GiftOutline,
-  PricetagOutline,
-  TrophyOutline,
-  CallOutline,
-  ShieldCheckmarkOutline
+  RefreshOutline,
+  ArrowBackOutline
 } from '@vicons/ionicons5'
-import { register, sendRegisterCode } from '@/api/auth'
+import { sendVerificationCode, resetPassword } from '@/api/auth'
 
 const router = useRouter()
 
-const registerForm = reactive({
-  username: '',
+const forgotForm = reactive({
   phone: '',
   code: '',
-  nickname: '',
-  password: '',
+  newPassword: '',
   confirmPassword: ''
 })
 
@@ -212,14 +184,14 @@ onUnmounted(() => {
 })
 
 async function handleSendCode() {
-  if (!/^1[3-9]\d{9}$/.test(registerForm.phone)) {
+  if (!/^1[3-9]\d{9}$/.test(forgotForm.phone)) {
     message.warning('请输入正确的手机号')
     return
   }
 
   sending.value = true
   try {
-    await sendRegisterCode({ phone: registerForm.phone })
+    await sendVerificationCode({ phone: forgotForm.phone })
     message.success('验证码已发送，请查收日志')
     startCountdown()
   } catch (error) {
@@ -230,73 +202,37 @@ async function handleSendCode() {
   }
 }
 
-const benefits = [
-  {
-    icon: GiftOutline,
-    title: '新人礼包',
-    desc: '注册即送优惠券大礼包'
-  },
-  {
-    icon: PricetagOutline,
-    title: '专属折扣',
-    desc: '首单立享8折优惠'
-  },
-  {
-    icon: TrophyOutline,
-    title: '积分奖励',
-    desc: '购物返积分，积分可抵现'
-  }
-]
-
-async function handleRegister() {
+async function handleReset() {
   // 表单验证
-  if (!registerForm.username) {
-    message.warning('请输入用户名')
-    return
-  }
-  if (registerForm.username.length < 4 || registerForm.username.length > 20) {
-    message.warning('用户名长度应在4-20个字符之间')
-    return
-  }
-  if (!registerForm.phone) {
-    message.warning('请输入手机号')
-    return
-  }
-  if (!/^1[3-9]\d{9}$/.test(registerForm.phone)) {
+  if (!/^1[3-9]\d{9}$/.test(forgotForm.phone)) {
     message.warning('手机号格式不正确')
     return
   }
-  if (!registerForm.code || registerForm.code.length !== 6) {
+  if (!forgotForm.code || forgotForm.code.length !== 6) {
     message.warning('请输入6位数字验证码')
     return
   }
-  if (!registerForm.password) {
-    message.warning('请输入密码')
+  if (!forgotForm.newPassword || forgotForm.newPassword.length < 6) {
+    message.warning('新密码至少为6位')
     return
   }
-  if (registerForm.password.length < 6) {
-    message.warning('密码长度至少为6位')
-    return
-  }
-  if (registerForm.password !== registerForm.confirmPassword) {
+  if (forgotForm.newPassword !== forgotForm.confirmPassword) {
     message.warning('两次输入的密码不一致')
     return
   }
 
   loading.value = true
   try {
-    await register({
-      username: registerForm.username,
-      phone: registerForm.phone,
-      code: registerForm.code,
-      nickname: registerForm.nickname,
-      password: registerForm.password
+    await resetPassword({
+      phone: forgotForm.phone,
+      code: forgotForm.code,
+      newPassword: forgotForm.newPassword
     })
-    message.success('注册成功，请登录')
+    message.success('密码重置成功，请重新登录')
     router.push('/login')
   } catch (error) {
-    console.error('注册失败', error)
-    message.error(error.response?.data?.message || error.message || '注册失败')
+    console.error('重置密码失败', error)
+    message.error(error.response?.data?.message || error.message || '重置失败')
   } finally {
     loading.value = false
   }
@@ -304,16 +240,16 @@ async function handleRegister() {
 </script>
 
 <style scoped>
-.register-container {
+.forgot-container {
   display: flex;
   min-height: 100vh;
   background: var(--bg-body);
 }
 
-.register-left {
+.forgot-left {
   flex: 1;
   position: relative;
-  background: url('https://images.unsplash.com/photo-1601599561213-832382fd07ba?w=1200&q=80')
+  background: url('https://images.unsplash.com/photo-1542838132-92c53300491e?w=1200&q=80')
     center/cover;
   display: flex;
   align-items: center;
@@ -321,15 +257,15 @@ async function handleRegister() {
   overflow: hidden;
 }
 
-.register-left::before {
+.forgot-left::before {
   content: '';
   position: absolute;
   width: 200%;
   height: 200%;
   background-image:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
-    radial-gradient(circle at 70% 80%, rgba(255, 255, 255, 0.18) 0%, transparent 50%);
-  animation: float 25s ease-in-out infinite;
+    radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
   z-index: 1;
   pointer-events: none;
 }
@@ -341,7 +277,7 @@ async function handleRegister() {
   }
 
   50% {
-    transform: translate(-30px, -30px) rotate(-5deg);
+    transform: translate(-20px, -20px) rotate(5deg);
   }
 }
 
@@ -352,7 +288,7 @@ async function handleRegister() {
   right: 0;
   bottom: 0;
   background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-  opacity: 0.25;
+  opacity: 0.18;
   z-index: 0;
 }
 
@@ -362,7 +298,7 @@ async function handleRegister() {
   text-align: center;
   color: white;
   padding: 60px;
-  max-width: 700px;
+  max-width: 600px;
 }
 
 .brand-title {
@@ -383,72 +319,46 @@ async function handleRegister() {
   animation: fadeInUp 0.8s ease 0.2s both;
 }
 
-.benefits {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+.steps-info {
+  display: flex;
+  justify-content: space-between;
   margin-top: 4rem;
 }
 
-.benefit-item {
-  padding: 2rem 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: var(--radius-lg);
-  transition: all 0.3s ease;
+.step-info-item {
+  text-align: center;
+  flex: 1;
   animation: fadeIn 0.8s ease;
 }
 
-.benefit-item:nth-child(1) {
-  animation-delay: 0.3s;
+.step-info-item:nth-child(2) {
+  animation-delay: 0.2s;
 }
 
-.benefit-item:nth-child(2) {
+.step-info-item:nth-child(3) {
   animation-delay: 0.4s;
 }
 
-.benefit-item:nth-child(3) {
-  animation-delay: 0.5s;
-}
-
-.benefit-item:hover {
+.step-num {
+  width: 40px;
+  height: 40px;
   background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-8px);
-}
-
-.benefit-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 1.5rem;
-  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  margin: 0 auto 10px;
+  font-weight: 700;
+  font-size: 1.2rem;
 }
 
-.benefit-item:hover .benefit-icon-wrapper {
-  transform: scale(1.1) rotate(5deg);
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.benefit-item h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: white;
-}
-
-.benefit-item p {
-  font-size: 0.9rem;
+.step-text {
+  font-size: 0.95rem;
   opacity: 0.9;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
 }
 
-.register-right {
+.forgot-right {
   flex: 0 0 550px;
   display: flex;
   align-items: center;
@@ -458,9 +368,9 @@ async function handleRegister() {
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.02);
 }
 
-.register-form-wrapper {
+.forgot-form-wrapper {
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   animation: fadeInRight 0.8s ease;
 }
 
@@ -481,7 +391,7 @@ async function handleRegister() {
   color: var(--text-secondary);
 }
 
-.register-form {
+.forgot-form {
   margin-bottom: 1.5rem;
 }
 
@@ -534,7 +444,7 @@ async function handleRegister() {
   color: var(--text-tertiary);
 }
 
-.register-button {
+.reset-button {
   height: 50px;
   border-radius: var(--radius-md);
   font-size: 1rem;
@@ -545,7 +455,7 @@ async function handleRegister() {
   transition: all 0.3s ease;
 }
 
-.register-button:hover {
+.reset-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(16, 185, 129, 0.3);
   background: var(--primary-hover);
@@ -619,27 +529,21 @@ async function handleRegister() {
 
 /* 响应式设计 */
 @media (max-width: 1024px) {
-  .register-left {
+  .forgot-left {
     display: none;
   }
 
-  .register-right {
+  .forgot-right {
     flex: 1;
   }
 }
 
-@media (max-width: 768px) {
-  .benefits {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 576px) {
-  .register-right {
+  .forgot-right {
     padding: 20px;
   }
 
-  .register-form-wrapper {
+  .forgot-form-wrapper {
     max-width: 100%;
   }
 

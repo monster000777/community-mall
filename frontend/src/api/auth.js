@@ -31,3 +31,36 @@ export function logout() {
     method: 'post'
   })
 }
+
+/**
+ * 发送找回密码验证码
+ */
+export function sendVerificationCode(data) {
+  return request({
+    url: '/auth/send-code',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 发送注册验证码
+ */
+export function sendRegisterCode(data) {
+  return request({
+    url: '/auth/send-register-code',
+    method: 'post',
+    data
+  })
+}
+
+/**
+ * 重置密码
+ */
+export function resetPassword(data) {
+  return request({
+    url: '/auth/reset-password',
+    method: 'post',
+    data
+  })
+}

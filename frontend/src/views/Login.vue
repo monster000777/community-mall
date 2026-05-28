@@ -55,6 +55,10 @@
             </AInputPassword>
           </AFormItem>
 
+          <div class="form-options">
+            <a class="forgot-link" @click="$router.push('/forgot-password')">忘记密码？</a>
+          </div>
+
           <AFormItem>
             <AButton
               type="primary"
@@ -356,6 +360,24 @@ function handleQuickLogin(type) {
   margin-bottom: 1.5rem;
 }
 
+.form-options {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -12px;
+  margin-bottom: 20px;
+}
+
+.forgot-link {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.forgot-link:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
 .custom-input :deep(.ant-input-affix-wrapper),
 .custom-input :deep(.ant-input-password) {
   border-radius: var(--radius-md);
@@ -368,12 +390,6 @@ function handleQuickLogin(type) {
 .custom-input :deep(.ant-input-affix-wrapper:hover),
 .custom-input :deep(.ant-input-password:hover) {
   border-color: var(--primary-color);
-}
-
-.custom-input :deep(.ant-input-affix-wrapper-focused),
-.custom-input :deep(.ant-input-password-focused) {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px var(--primary-light);
 }
 
 .input-icon {
