@@ -22,6 +22,9 @@
     </div>
 
     <div class="login-right">
+      <button class="theme-toggle-btn" title="切换主题" @click="themeStore.toggleTheme">
+        <AppIcon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+      </button>
       <div class="login-form-wrapper">
         <div class="form-header">
           <h2>欢迎回来</h2>
@@ -133,13 +136,17 @@ import {
   CheckmarkCircleOutline,
   SpeedometerOutline,
   ShieldOutline,
-  GiftOutline
+  GiftOutline,
+  SunnyOutline,
+  MoonOutline
 } from '@vicons/ionicons5'
 import { useUserStore } from '@/stores/user'
+import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
 const route = useRoute()
 const userStore = useUserStore()
+const themeStore = useThemeStore()
 
 const loginForm = reactive({
   username: '',
@@ -331,6 +338,7 @@ function handleQuickLogin(type) {
   padding: 40px;
   background: var(--bg-card);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.02);
+  position: relative;
 }
 
 .login-form-wrapper {
@@ -542,5 +550,30 @@ function handleQuickLogin(type) {
   .form-header h2 {
     font-size: 1.5rem;
   }
+}
+
+.theme-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: rotate(15deg) scale(1.1);
 }
 </style>

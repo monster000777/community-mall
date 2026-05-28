@@ -26,6 +26,9 @@
     </div>
 
     <div class="register-right">
+      <button class="theme-toggle-btn" title="切换主题" @click="themeStore.toggleTheme">
+        <AppIcon :size="20" :component="themeStore.theme === 'dark' ? SunnyOutline : MoonOutline" />
+      </button>
       <div class="register-form-wrapper">
         <div class="form-header">
           <h2>创建账户</h2>
@@ -177,11 +180,15 @@ import {
   PricetagOutline,
   TrophyOutline,
   CallOutline,
-  ShieldCheckmarkOutline
+  ShieldCheckmarkOutline,
+  SunnyOutline,
+  MoonOutline
 } from '@vicons/ionicons5'
 import { register, sendRegisterCode } from '@/api/auth'
+import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
+const themeStore = useThemeStore()
 
 const registerForm = reactive({
   username: '',
@@ -456,6 +463,7 @@ async function handleRegister() {
   padding: 40px;
   background: var(--bg-card);
   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.02);
+  position: relative;
 }
 
 .register-form-wrapper {
@@ -488,16 +496,20 @@ async function handleRegister() {
 .code-wrapper {
   display: flex;
   gap: 12px;
+  align-items: center;
 }
 
 .code-input {
   flex: 1;
 }
 
+.code-input :deep(.ant-input-affix-wrapper) {
+  padding: 8px 16px;
+}
+
 .send-code-btn {
   height: 40px;
-  margin-top: 5px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   min-width: 100px;
   font-size: var(--font-size-sm);
   background: var(--primary-color);
@@ -646,5 +658,30 @@ async function handleRegister() {
   .form-header h2 {
     font-size: 1.5rem;
   }
+}
+
+.theme-toggle-btn {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 10;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: rotate(15deg) scale(1.1);
 }
 </style>
