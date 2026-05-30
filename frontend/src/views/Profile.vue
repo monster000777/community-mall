@@ -64,19 +64,19 @@
               <h3>快捷入口</h3>
               <div class="links-grid">
                 <div class="link-item" @click="$router.push('/orders')">
-                  <div class="link-icon" style="background: #e0f2fe; color: #0284c7">
+                  <div class="link-icon icon-orders">
                     <AppIcon :size="24" :component="ReceiptOutline" />
                   </div>
                   <span>我的订单</span>
                 </div>
                 <div class="link-item" @click="$router.push('/address')">
-                  <div class="link-icon" style="background: #fef3c7; color: #d97706">
+                  <div class="link-icon icon-address">
                     <AppIcon :size="24" :component="LocationOutline" />
                   </div>
                   <span>收货地址</span>
                 </div>
                 <div v-if="userStore.isAdmin()" class="link-item" @click="$router.push('/admin')">
-                  <div class="link-icon" style="background: #f3e8ff; color: #9333ea">
+                  <div class="link-icon icon-admin">
                     <AppIcon :size="24" :component="ShieldCheckmarkOutline" />
                   </div>
                   <span>管理后台</span>
@@ -329,10 +329,18 @@ async function handleSave() {
   transition: all 0.3s ease;
 }
 
+[data-theme='dark'] .link-item {
+  background: #2a3342;
+}
+
 .link-item:hover {
   transform: translateY(-4px);
   background: var(--bg-card);
   box-shadow: var(--shadow-md);
+}
+
+[data-theme='dark'] .link-item:hover {
+  background: #374151;
 }
 
 .link-icon {
@@ -342,6 +350,36 @@ async function handleSave() {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.icon-orders {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+[data-theme='dark'] .icon-orders {
+  background: rgba(2, 132, 199, 0.15);
+  color: #38bdf8;
+}
+
+.icon-address {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+[data-theme='dark'] .icon-address {
+  background: rgba(217, 119, 6, 0.15);
+  color: #fbbf24;
+}
+
+.icon-admin {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+[data-theme='dark'] .icon-admin {
+  background: rgba(147, 51, 234, 0.15);
+  color: #c084fc;
 }
 
 .link-item span {
