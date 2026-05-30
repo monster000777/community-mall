@@ -39,6 +39,9 @@
 2. **AI 配置项防空兜底**（[AiConfig.java](file:///e:/community-mall/community-mall-master/community-mall-backend/src/main/java/com/community/mall/config/AiConfig.java)）：
    - *缺陷*：当主配置文件 `application.yml` 彻底作为无默认值的环境变量占位符后，若在未配置系统环境变量且没有 local 激活环境的微服务环境下，`openAiBaseUrl` 与 `modelName` 会被注入为空字符串 `""`。这会导致 LangChain4j 客户端构造失败，或者后续请求相对路径地址而报错。
    - *修复*：在 Java 实例化客户端 Bean 时加入了防空校验，若检测到注入的值为空或纯空白字符，自动降级为标准的 OpenAI 官方协议默认配置（`https://api.openai.com/v1` 与 `gpt-4o`）进行安全兜底，极大地增强了不同部署环境下的健壮性。
+3. **AI 文案助手 Prompt 输出格式约束调优**（[AiAssistant.java](file:///e:/community-mall/community-mall-master/community-mall-backend/src/main/java/com/community/mall/service/AiAssistant.java)）：
+   - *问题*：部分大模型（如某些特定的商用或精调大模型）在生成商品文案时容易夹带客套的前缀（如“好的，为您生成的文案如下：”）或后缀，从而给前端展示带来多余的废话。
+   - *修复*：在 SystemMessage 提示词中追加了极其强硬的输出限制指令，严禁大模型附加任何前言、后语和多余的解释，强迫模型仅返回最纯净的文案文本本身。
 
 ## 3. 配置项环境变量读取说明
 在配置文件中：
