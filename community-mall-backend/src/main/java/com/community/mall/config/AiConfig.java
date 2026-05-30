@@ -5,10 +5,10 @@ import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
+import org.springframework.data.redis.core.StringRedisTemplate;
 import java.time.Duration;
-
-import com.community.mall.service.KeywordExtractionService;
+import com.community.mall.service.ProductTool;
+import com.community.mall.service.CustomerAiService;
 
 @Configuration
 public class AiConfig {
@@ -39,21 +39,23 @@ public class AiConfig {
     }
 
     @Bean
-    public dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider() {
-        return memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.withMaxMessages(10);
-    }
-
-    @Bean
-    public com.community.mall.service.CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel,
-            dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider) {
-        return dev.langchain4j.service.AiServices.builder(com.community.mall.service.CustomerAiService.class)
-                .chatLanguageModel(chatLanguageModel)
-                .chatMemoryProvider(chatMemoryProvider)
+    public dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider(StringRedisTemplate redisTemplate) {
+        RedisChatMemoryStore memoryStore = new RedisChatMemoryStore(redisTemplate);
+        return memoryId -> dev.langchain4j.memory.chat.MessageWindowChatMemory.builder()
+                .id(memoryId)
+                .maxMessages(10)
+                .chatMemoryStore(memoryStore)
                 .build();
     }
 
     @Bean
-    public KeywordExtractionService keywordExtractionService(ChatLanguageModel chatLanguageModel) {
-        return dev.langchain4j.service.AiServices.create(KeywordExtractionService.class, chatLanguageModel);
+    public CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel,
+            dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider,
+            ProductTool productTool) {
+        return dev.langchain4j.service.AiServices.builder(CustomerAiService.class)
+                .chatLanguageModel(chatLanguageModel)
+                .chatMemoryProvider(chatMemoryProvider)
+                .tools(productTool)
+                .build();
     }
 }
