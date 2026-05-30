@@ -60,7 +60,8 @@
           </div>
           <div class="content-wrapper">
             <div class="content">
-              {{ msg.content }}
+              <div v-if="msg.type === 'ai'" v-html="renderMarkdown(msg.content)"></div>
+              <span v-else>{{ msg.content }}</span>
             </div>
             <!-- 消息操作按钮 (仅限 AI 消息) -->
             <div v-if="msg.type === 'ai'" class="message-actions">
@@ -122,8 +123,20 @@ import {
 } from '@ant-design/icons-vue'
 import { askAi } from '@/api/ai'
 import { ttsPlayer, playTTS, stopTTS } from '@/utils/ttsPlayer'
+import { marked } from 'marked'
 import { useUserStore } from '@/stores/user'
 import { message } from 'ant-design-vue'
+
+// 配置 marked 换行解析
+marked.setOptions({
+  breaks: true,
+  gfm: true
+})
+
+const renderMarkdown = (text) => {
+  if (!text) return ''
+  return marked.parse(text)
+}
 
 const props = defineProps({
   visible: {
@@ -503,5 +516,25 @@ const sendMessage = async () => {
 :deep(.ant-input-affix-wrapper-focused) {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+/* Markdown 内部排版与样式微调 */
+.content :deep(p) {
+  margin: 0;
+}
+.content :deep(p:not(:last-child)) {
+  margin-bottom: 8px;
+}
+.content :deep(strong) {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+.content :deep(ul),
+.content :deep(ol) {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+.content :deep(li) {
+  margin-bottom: 4px;
 }
 </style>

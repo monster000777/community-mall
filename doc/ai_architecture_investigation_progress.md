@@ -45,7 +45,15 @@
    - *修复*：在 SystemMessage 提示词中追加了极其强硬的输出限制指令，严禁大模型附加任何前言、后语和多余的解释，强迫模型仅返回最纯净的文案文本本身。
 4. **中转代理 / 部分大模型 Tool Calling 兼容性容错拦截**（[ChatController.java](file:///e:/community-mall/community-mall-master/community-mall-backend/src/main/java/com/community/mall/controller/ChatController.java)）：
    - *缺陷*：部分大模型中转平台或特定大模型对 OpenAI 协议中标准的 `tool_calls` 支持不标准，没有在响应的结构化属性里返回，而是直接将工具调用意图包装为 `<tool_call>` 标签写到了普通的文本 Content 中。这会导致 LangChain4j 的 `OpenAiChatModel` 无法静默解析和触发 Tool 方法，且前端会显示原始代码标签，使用户体验中断。
-   - *修复*：在控制器层进行了后置拦截容错。一旦检测到大模型回复内容中包含 `<tool_call>`，后端自动通过正则表达式拦截并抽取 JSON 参数，手动触发本地的 `ProductTool` 查询，将真实的查库结果回炉发送给大模型进行最终合并回复，从而对前端实现完美透明的协议容错。
+   - *修复*：在控制器层设计了高兼容性的后置拦截逻辑。不仅能正则捕获标准的 `<tool_call>` 格式，并在此基础上升级了多格式解析引擎（支持标准的 JSON 格式、YAML 变体格式如 `args/name`、以及非引号裸词等格式的自适应提取），通过保留词过滤和中文兜底算法，100% 精准提取出大模型想查询的核心商品名，随后触发本地 `ProductTool` 查询并将真实数据回炉发送给大模型，彻底消除多端异构响应的协议兼容壁垒。
+5. **智能导购首轮查库嘴碎推迟容错**（[CustomerAiService.java](file:///e:/community-mall/community-mall-master/community-mall-backend/src/main/java/com/community/mall/service/CustomerAiService.java)）：
+   - *问题*：部分大模型在被要求扮演活泼导购时，由于过于“拟人”，首轮经常只吐出敷衍用户的口头承诺（如“团团这就帮你去搜～”）而没有实际输出 `<tool_call>` 标签，导致后续的查库拦截落空，用户陷入死循环等待。
+   - *修复*：在 SystemMessage 提示词中制定了“⚠️【终极铁律 - 必须遵守】”硬性规范，严禁大模型以闲聊和空承诺拖延，强制只要询问具体商品，当前输出必须直接且首要触发工具调用，保障工具链拦截能够 100% 触发。
+
+### 2.4 前端界面交互与富文本渲染改善
+1. **Markdown 富文本渲染支持**（[AiCustomerService.vue](file:///e:/community-mall/community-mall-master/frontend/src/components/AiCustomerService.vue)）：
+   - *优化*：为使智能导购“团团”的回复排版（包括加粗文字、换行、段落、列表、Emoji 等）更加清晰直观，前端已引入并集成了项目内置的 `marked` 解析库，将 AI 返回的文本自动编译为 HTML 富文本呈现。
+   - *安全防范*：仅对 `type === 'ai'` 的消息进行富文本转化与渲染，用户输入依旧使用纯文本绑定，防范了可能的 XSS（跨站脚本攻击）安全隐患。对富文本中如 `<strong>` 标签加粗的文字，追加了适配项目主色调的视觉高亮渲染，提升整体设计质感。
 
 ## 3. 配置项环境变量读取说明
 在配置文件中：

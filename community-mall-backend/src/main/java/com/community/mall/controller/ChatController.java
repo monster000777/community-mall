@@ -48,17 +48,49 @@ public class ChatController {
             // 容错处理：部分大模型/中转代理对标准 Function Calling 兼容性不佳，直接在 text 中返回了 <tool_call> 标签
             if (answer != null && answer.contains("<tool_call>")) {
                 System.out.println("[ChatController] Detected literal <tool_call> tag. Executing manual fallback...");
-                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("<tool_call>\\s*(\\{.+?\\})\\s*</tool_call>", java.util.regex.Pattern.DOTALL);
+                // 宽口径匹配所有在 <tool_call> 与 </tool_call> 之间的字符（不仅限 JSON 格式）
+                java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("<tool_call>\\s*(.+?)\\s*</tool_call>", java.util.regex.Pattern.DOTALL);
                 java.util.regex.Matcher matcher = pattern.matcher(answer);
                 if (matcher.find()) {
-                    String jsonStr = matcher.group(1);
+                    String tagContent = matcher.group(1).trim();
                     try {
-                        com.alibaba.fastjson2.JSONObject json = com.alibaba.fastjson2.JSON.parseObject(jsonStr);
-                        String toolName = json.getString("tool_name");
-                        com.alibaba.fastjson2.JSONObject toolInput = json.getJSONObject("tool_input");
+                        String keyword = null;
 
-                        if ("searchProducts".equals(toolName) && toolInput != null) {
-                            String keyword = toolInput.getString("keyword");
+                        // 1. 尝试用键值对正则提取包含 keyword、name 或 input 等关键字的值
+                        java.util.regex.Pattern pCompat = java.util.regex.Pattern.compile("(?i)\\b(keyword|name|input)\\b\\s*[\":]*\\s*\\\"?([^\\n\\\"\\}]+)\\\"?");
+                        java.util.regex.Matcher mCompat = pCompat.matcher(tagContent);
+                        if (mCompat.find()) {
+                            keyword = mCompat.group(2).trim();
+                        }
+
+                        // 2. 兜底：若提取失败，抓取除工具保留词外，所有被双引号包裹的非空单词
+                        if (keyword == null || keyword.isEmpty()) {
+                            java.util.regex.Pattern pQuote = java.util.regex.Pattern.compile("\"([^\"]+?)\"");
+                            java.util.regex.Matcher mQuote = pQuote.matcher(tagContent);
+                            java.util.Set<String> excludeWords = new java.util.HashSet<>(java.util.Arrays.asList(
+                                "searchProducts", "tool_name", "tool_input", "keyword", "tool", "args", "name", "tool_call"
+                            ));
+                            while (mQuote.find()) {
+                                String val = mQuote.group(1).trim();
+                                if (!excludeWords.contains(val) && !val.isEmpty()) {
+                                    keyword = val;
+                                    break;
+                                }
+                            }
+                        }
+
+                        // 3. 终极兜底：直接匹配提取标签内容中的第一个中文字符串
+                        if (keyword == null || keyword.isEmpty()) {
+                            java.util.regex.Pattern pChinese = java.util.regex.Pattern.compile("([\\u4e00-\\u9fa5]+)");
+                            java.util.regex.Matcher mChinese = pChinese.matcher(tagContent);
+                            if (mChinese.find()) {
+                                keyword = mChinese.group(1).trim();
+                            }
+                        }
+
+                        System.out.println("[ChatController] Compat parsed keyword: " + keyword);
+
+                        if (keyword != null && !keyword.isEmpty()) {
                             // 调用本地商品检索工具
                             String toolResult = productTool.searchProducts(keyword);
                             System.out.println("[ChatController] Manual Tool Result: " + toolResult);
