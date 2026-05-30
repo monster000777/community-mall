@@ -78,5 +78,5 @@ logging:
 # 生产环境：设置服务器环境变量 OPENAI_API_KEY
 openai:
   api-key: ${OPENAI_API_KEY:}
-  base-url: https://api.deepseek.com
-  model-name: deepseek-chat
+  base-url: ${OPENAI_BASE_URL:}
+  model-name: ${OPENAI_MODEL_NAME:}

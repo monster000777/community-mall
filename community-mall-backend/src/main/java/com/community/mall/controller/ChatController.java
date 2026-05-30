@@ -47,13 +47,17 @@ public class ChatController {
             // 0. 提取关键词 (Keyword Extraction AI)
             System.out.println("Extracting keyword...");
             String keyword = keywordExtractionService.extract(question);
+            if (keyword != null) {
+                // 清洗可能存在的首尾空白、换行符以及被大模型误加的单双引号
+                keyword = keyword.trim().replaceAll("^[\"']|[\"']$", "").trim();
+            }
             System.out.println("Extracted Keyword: " + keyword);
 
             // 如果提取失败或无需搜索，则跳过
             List<Product> products = null;
             boolean searchPerformed = false;
 
-            if (!"ALL".equalsIgnoreCase(keyword)) {
+            if (keyword != null && !keyword.isEmpty() && !"ALL".equalsIgnoreCase(keyword)) {
                 // 1. 搜索商品 (Manual RAG)
                 products = productService.searchForAi(keyword);
                 searchPerformed = true;
