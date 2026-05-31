@@ -100,6 +100,45 @@ community-mall/
 
 ## 🚀 部署全流程与快速开始
 
+### 🐳 方案一：使用 Docker 一键容器化部署（强烈推荐）
+
+本项目已完全支持 Docker 容器化一键部署，免去您手动配置 JDK、Node.js、MySQL 和 Redis 等繁琐环境的痛苦。容器首次启动时会自动导入数据库表结构与测试商品数据。
+
+#### 1. 准备大模型与语音 API Key 配置文件
+复制项目根目录下的 `.env.example` 并重命名为 `.env`（该文件已加入 `.gitignore`），在其中填入您的大模型及 AI 语音大模型参数配置：
+```env
+# 智能导购客服大模型配置
+OPENAI_API_KEY="你的真实大模型API-KEY"
+OPENAI_BASE_URL="https://api.deepseek.com"  # 或者是其它服务商的接口地址
+OPENAI_MODEL_NAME="deepseek-chat"
+
+# MiMo 语音大模型配置（可选）
+MIMO_API_KEY="你的真实MiMo-API-KEY"
+MIMO_BASE_URL="https://token-plan-cn.xiaomimimo.com/v1"
+MIMO_MODEL="mimo-v2.5-tts"
+MIMO_VOICE="冰糖"
+```
+
+#### 2. 一键编译与拉起服务
+确保本地已安装并运行 **Docker** / **Docker Desktop**。在项目根目录下打开终端，执行以下命令：
+```bash
+docker-compose up -d --build
+```
+系统将自动执行：
+- 编译并构建 Java 后端容器镜像（基于 JDK 17，自动排除本地 local 配置文件，安全打包）；
+- 使用 `npm` 自适应下载依赖并编译前端，将其托管于搭载了反向代理配置的 Nginx 容器中；
+- 自动拉起 MySQL 8.0 和 Redis 6.2 容器，并**在首次启动时自动导入建表和测试商品数据**。
+
+#### 3. 访问系统
+* **前端商城主页**：[http://localhost](http://localhost) (内置 Nginx，直接访问默认 80 端口)
+* **后端 API 接口**：[http://localhost:8080/api](http://localhost:8080/api)
+* **Swagger 接口文档**：[http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
+* **宿主机暴露端口**：MySQL 为 `3307` 端口（密码 `root`），Redis 为 `6380` 端口（为了防宿主机物理端口冲突已做安全映射，容器内部网络互连依然使用的是 `3306`/`6379`，开发无需修改任何后端配置）。
+
+---
+
+### 💻 方案二：手动分步部署（不使用 Docker）
+
 ### 1. 环境准备
 
 在开始之前，请确保本地已安装并成功启动了以下基础设施：

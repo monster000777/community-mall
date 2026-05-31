@@ -29,7 +29,7 @@ export default defineConfig({
     }),
     // 构建分析工具
     visualizer({
-      open: true, // 构建完成后自动打开分析报告
+      open: false, // 构建完成后不自动打开分析报告 (防止 Docker 编译报错)
       gzipSize: true, // 显示 gzip 压缩后的大小
       brotliSize: true, // 显示 brotli 压缩后的大小
       filename: 'dist/stats.html' // 分析报告文件名

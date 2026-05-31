@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # MySQL 数据库服务
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: community-mall-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: community_mall
+      MYSQL_ROOT_PASSWORD: root  # 默认与原有项目配置对齐
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # 核心点：将初始化 SQL 文件挂载进初始化路径，容器首次启动时会自动导入
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # ==========================================
+  # Redis 会话缓存与 AI 历史记忆服务
+  # ==========================================
+  redis:
+    image: redis:6.2-alpine
+    container_name: community-mall-redis
+    restart: always
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  # ==========================================
+  # Java 后端 API 服务
+  # ==========================================
+  backend:
+    build: ./community-mall-backend
+    container_name: community-mall-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - MYSQL_HOST=mysql
+      - REDIS_HOST=redis
+      - LANG=C.UTF-8
+      # 透传宿主机的 AI 大模型参数
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL:-}
+      - OPENAI_MODEL_NAME=${OPENAI_MODEL_NAME:-}
+      # 透传宿主机的 MiMo TTS 语音大模型参数
+      - MIMO_API_KEY=${MIMO_API_KEY:-}
+      - MIMO_BASE_URL=${MIMO_BASE_URL:-}
+      - MIMO_MODEL=${MIMO_MODEL:-}
+      - MIMO_VOICE=${MIMO_VOICE:-}
+    volumes:
+      # 将宿主机的 uploads 目录挂载到容器内，实现图片上传和访问持久化
+      - ./uploads:/app/uploads
+
+  # ==========================================
+  # Vue 前端 Web 服务 (内置 Nginx)
+  # ==========================================
+  frontend:
+    build: ./frontend
+    container_name: community-mall-frontend
+    restart: always
+    ports:
+      - "80:80"  # 前端对外暴露端口，可直接通过 http://localhost 访问
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:
+  redis_data:

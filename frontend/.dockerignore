@@ -1,0 +1,4 @@
+# 忽略前端依赖与本地缓存
+node_modules/
+dist/
+.vite/

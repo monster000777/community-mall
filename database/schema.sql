@@ -2,6 +2,9 @@
 -- 社区团购系统数据库设计
 -- ====================================
 
+SET NAMES utf8mb4;
+
+
 DROP DATABASE IF EXISTS community_mall;
 CREATE DATABASE community_mall CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE community_mall;

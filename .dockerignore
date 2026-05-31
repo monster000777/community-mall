@@ -1,0 +1,18 @@
+# 忽略 Git 与本地开发敏感文件
+.git/
+.env
+.env.local
+
+# 忽略前端依赖与构建目录
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# 忽略后端编译产物
+community-mall-backend/target/
+community-mall-backend/.mvn/
+community-mall-backend/mvnw
+community-mall-backend/mvnw.cmd
+
+# 忽略本地上传图片缓存
+uploads/
