@@ -80,3 +80,18 @@ openai:
   api-key: ${OPENAI_API_KEY:}
   base-url: ${OPENAI_BASE_URL:}
   model-name: ${OPENAI_MODEL_NAME:}
+
+mimo:
+  # MiMo 开放平台 API Key（可在官方平台 https://platform.xiaomimimo.com 申请）
+  # 若未配置或无效，前端会自动降级回浏览器原生 SpeechSynthesis 播报
+  api-key: ${MIMO_API_KEY:}
+  # MiMo API 基地址。支持国内云端集群基地址 https://token-plan-cn.xiaomimimo.com/v1
+  base-url: ${MIMO_BASE_URL:}
+  # 语音合成模型。指定为官方最新旗舰级 Agent 语音合成大模型 mimo-v2.5-tts
+  model: ${MIMO_MODEL:mimo-v2.5-tts}
+  # 合成声音音色。官方内置中文精品音色包括：
+  # - 冰糖 (默认)：活泼可爱、充满年轻活力的中文女声
+  # - 茉莉：甜美温婉的中文女声
+  # - 苏打：阳光朝气的中文男声
+  # - 白桦：温暖儒雅的中文男声
+  voice: ${MIMO_VOICE:冰糖}

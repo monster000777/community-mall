@@ -11,8 +11,15 @@ import com.community.mall.service.ProductTool;
 import com.community.mall.service.CustomerAiService;
 import com.community.mall.service.AiAssistant;
 
+import org.springframework.web.client.RestTemplate;
+
 @Configuration
 public class AiConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Value("${openai.api-key}")
     private String openAiApiKey;

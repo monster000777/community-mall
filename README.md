@@ -16,8 +16,8 @@
 - MySQL 8.0
 - Sa-Token 1.37.0 (权限认证)
 - SpringDoc OpenAPI (Swagger UI)（接口文档）
-- Redis 5.0+ (分布式会话与 AI 历史会话持久化)
-- **LangChain4j 1.15.1** (LLM 开发框架，兼容 OpenAI 协议，支持全新 Tool Call 与自主 Agent)
+- Redis 5.0+ (分布式会话、AI 历史会话持久化与 **TTS 音频高速物理缓存**)
+- **LangChain4j 1.15.1** (LLM 开发框架，兼容 OpenAI 协议，支持**全新 Tool Call 与自主 Agent**)
 - BCrypt (密码加密)
 - Maven 3.6+
 
@@ -51,6 +51,7 @@ community-mall/
 │   │   │   ├── AuthController.java   # 认证控制器
 │   │   │   ├── CartController.java   # 购物车控制器
 │   │   │   ├── ChatController.java   # 智能导购客服控制器
+│   │   │   ├── TtsController.java    # AI 语音合成服务控制器 (支持 Redis 缓存及配置校验)
 │   │   │   ├── OrderController.java  # 订单控制器
 │   │   │   ├── ProductController.java # 商品控制器
 │   │   │   └── admin/                # 管理员控制器
@@ -81,6 +82,8 @@ community-mall/
 │   │   ├── components/               # 公共组件
 │   │   │   ├── AppIcon.vue           # 图标组件
 │   │   │   └── AiCustomerService.vue # 智能导购客服悬浮气泡组件（支持 markdown）
+│   │   ├── utils/                    # 前端公共工具
+│   │   │   └── ttsPlayer.js          # 高可用语音播放器工具 (并发防重/内存回收/原生降级)
 │   │   ├── layouts/                  # 布局组件
 │   │   ├── router/                   # 路由配置
 │   │   ├── stores/                   # Pinia状态管理
@@ -160,6 +163,19 @@ openai:
 - `OPENAI_API_KEY`：填入你的 API Key。
 - `OPENAI_BASE_URL`：填入兼容接口的 Base URL（默认为 `https://api.openai.com/v1`）。
 - `OPENAI_MODEL_NAME`：填入对应的模型标识符（默认为 `gpt-4o`）。
+
+#### 3.3 MIMO-TTS 语音播报配置（高可用可选配置）
+系统默认在**未配置**云端语音服务时，会**自动且无缝地优雅降级**到浏览器原生的中文语音（`Web Speech API`）进行朗读播报，提供开箱即用的体验。
+
+若想获得表现力更自然、更有感情色彩的云端大模型人声，您可以在环境变量或本地 `application-local.yml` 中补充配置：
+```yaml
+mimo:
+  api-key: "你的MIMO-API-KEY"                # 官方开放平台获取的密钥
+  base-url: "https://token-plan-cn.xiaomimimo.com/v1"  # 接口基地址
+  model: "mimo-v2.5-tts"                    # 合成模型（默认）
+  voice: "冰糖"                             # 默认音色，可选音色：冰糖（活泼女声）、茉莉（甜美女声）、苏打（朝气男声）、白桦（儒雅男声）
+```
+后端集成了以音色+文本组合作为 MD5 的 **Redis 极速缓存机制**。同一段文本在第二次朗读时的时延将直接从云端大模型的数秒降低至 **1ms 级**，极大地提升了用户体验。
 
 ---
 
