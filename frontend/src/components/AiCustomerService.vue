@@ -110,7 +110,6 @@
 <script setup>
 import { ref, nextTick, watch, onUnmounted, onMounted, computed } from 'vue'
 import {
-  CustomerServiceOutlined,
   CloseOutlined,
   SendOutlined,
   UserOutlined,

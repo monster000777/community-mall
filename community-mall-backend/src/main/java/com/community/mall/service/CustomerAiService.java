@@ -2,9 +2,13 @@ package com.community.mall.service;
 
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
+import dev.langchain4j.service.MemoryId;
 
 /**
  * 智能导购 AI 服务接口
+ * 
+ * 通过 LangChain4j AiServices 绑定 ProductTool，
+ * 大模型自动通过 Function Calling 调用商品查询工具。
  */
 public interface CustomerAiService {
 
@@ -23,6 +27,6 @@ public interface CustomerAiService {
             "5. 【价格】提到价格时，要显得很划算！\n" +
             "\n" +
             "记住：你的目标是让用户开心购物！")
-    String chat(@dev.langchain4j.service.MemoryId String sessionId,
+    String chat(@MemoryId String sessionId,
             @UserMessage String userQuestion);
 }

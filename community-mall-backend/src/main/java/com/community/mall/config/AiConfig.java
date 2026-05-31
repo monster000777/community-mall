@@ -1,6 +1,6 @@
 package com.community.mall.config;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import java.time.Duration;
 import com.community.mall.service.ProductTool;
 import com.community.mall.service.CustomerAiService;
+import com.community.mall.service.AiAssistant;
 
 @Configuration
 public class AiConfig {
@@ -23,8 +24,7 @@ public class AiConfig {
     private String modelName;
 
     @Bean
-    public ChatLanguageModel chatLanguageModel() {
-        // 对注入的 BaseUrl 和 ModelName 进行防空与默认兜底，确保在没有配置环境变量的极端情况下依然健壮
+    public ChatModel chatLanguageModel() {
         String finalBaseUrl = (openAiBaseUrl == null || openAiBaseUrl.trim().isEmpty()) 
                 ? "https://api.openai.com/v1" : openAiBaseUrl.trim();
         String finalModelName = (modelName == null || modelName.trim().isEmpty()) 
@@ -48,14 +48,25 @@ public class AiConfig {
                 .build();
     }
 
+    /**
+     * 智能导购 AI 服务（绑定 ProductTool + 会话记忆）
+     */
     @Bean
-    public CustomerAiService customerAiService(ChatLanguageModel chatLanguageModel,
+    public CustomerAiService customerAiService(ChatModel chatLanguageModel,
             dev.langchain4j.memory.chat.ChatMemoryProvider chatMemoryProvider,
             ProductTool productTool) {
         return dev.langchain4j.service.AiServices.builder(CustomerAiService.class)
-                .chatLanguageModel(chatLanguageModel)
+                .chatModel(chatLanguageModel)
                 .chatMemoryProvider(chatMemoryProvider)
                 .tools(productTool)
                 .build();
+    }
+
+    /**
+     * 商品文案 AI 助手（无 Tool，无会话记忆）
+     */
+    @Bean
+    public AiAssistant aiAssistant(ChatModel chatLanguageModel) {
+        return dev.langchain4j.service.AiServices.create(AiAssistant.class, chatLanguageModel);
     }
 }

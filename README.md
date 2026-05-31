@@ -17,7 +17,7 @@
 - Sa-Token 1.37.0 (权限认证)
 - SpringDoc OpenAPI (Swagger UI)（接口文档）
 - Redis 5.0+ (分布式会话与 AI 历史会话持久化)
-- **LangChain4j 0.24.0** (大模型应用开发框架，完全兼容 OpenAI 协议)
+- **LangChain4j 1.15.1** (LLM 开发框架，兼容 OpenAI 协议，支持全新 Tool Call 与自主 Agent)
 - BCrypt (密码加密)
 - Maven 3.6+
 
@@ -100,7 +100,7 @@ community-mall/
 ### 1. 环境准备
 
 在开始之前，请确保本地已安装并成功启动了以下基础设施：
-- **JDK 1.8+**
+- **JDK 17+**
 - **Maven 3.6+**
 - **MySQL 8.0+**
 - **Redis 5.0+**

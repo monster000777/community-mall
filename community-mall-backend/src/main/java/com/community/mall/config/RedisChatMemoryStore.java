@@ -31,9 +31,16 @@ public class RedisChatMemoryStore implements ChatMemoryStore {
         if (list == null || list.isEmpty()) {
             return new ArrayList<>();
         }
-        return list.stream()
-                .map(ChatMessageDeserializer::messageFromJson)
-                .collect(Collectors.toList());
+        try {
+            return list.stream()
+                    .map(ChatMessageDeserializer::messageFromJson)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // 版本升级后旧格式数据无法反序列化，清除旧数据并返回空列表
+            System.err.println("[RedisChatMemoryStore] Clearing stale session '" + memoryId + "': " + e.getMessage());
+            redisTemplate.delete(key);
+            return new ArrayList<>();
+        }
     }
 
     @Override

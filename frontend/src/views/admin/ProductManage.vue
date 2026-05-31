@@ -446,7 +446,7 @@ async function handleAiGenerate() {
   try {
     const res = await generateCopy(aiForm)
     console.log('AI Response:', res)
-    // alert('AI Response: ' + JSON.stringify(res)) // Debug
+
     if (res.code === 200) {
       aiResult.value = res.data
       // 总是自动填充到商品描述（覆盖原有内容）
