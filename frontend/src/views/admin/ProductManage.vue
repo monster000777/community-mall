@@ -449,9 +449,7 @@ async function handleAiGenerate() {
 
     if (res.code === 200) {
       aiResult.value = res.data
-      // 总是自动填充到商品描述（覆盖原有内容）
-      formState.description = res.data
-      message.success('已自动填充到商品描述')
+      message.success('生成成功')
     } else {
       message.error(res.message || '生成失败')
     }
