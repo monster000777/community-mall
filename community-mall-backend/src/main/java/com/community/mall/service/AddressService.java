@@ -2,6 +2,7 @@ package com.community.mall.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.community.mall.entity.Address;
+import com.community.mall.exception.BusinessException;
 import com.community.mall.mapper.AddressMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,7 +36,7 @@ public class AddressService {
     public Address getAddressById(Long id, Long userId) {
         Address address = addressMapper.selectById(id);
         if (address != null && !address.getUserId().equals(userId)) {
-            throw new RuntimeException("无权访问此地址");
+            throw new BusinessException("无权访问此地址");
         }
         return address;
     }
@@ -65,7 +66,7 @@ public class AddressService {
     public void updateAddress(Address address, Long userId) {
         Address existAddress = addressMapper.selectById(address.getId());
         if (existAddress == null || !existAddress.getUserId().equals(userId)) {
-            throw new RuntimeException("地址不存在或无权修改");
+            throw new BusinessException("地址不存在或无权修改");
         }
         
         // 如果设置为默认地址，先取消其他默认地址
@@ -82,7 +83,7 @@ public class AddressService {
     public void deleteAddress(Long id, Long userId) {
         Address address = addressMapper.selectById(id);
         if (address == null || !address.getUserId().equals(userId)) {
-            throw new RuntimeException("地址不存在或无权删除");
+            throw new BusinessException("地址不存在或无权删除");
         }
         addressMapper.deleteById(id);
     }
@@ -94,7 +95,7 @@ public class AddressService {
     public void setDefaultAddress(Long id, Long userId) {
         Address address = addressMapper.selectById(id);
         if (address == null || !address.getUserId().equals(userId)) {
-            throw new RuntimeException("地址不存在或无权修改");
+            throw new BusinessException("地址不存在或无权修改");
         }
         
         // 取消其他默认地址

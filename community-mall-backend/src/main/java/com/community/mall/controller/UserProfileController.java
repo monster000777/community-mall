@@ -1,6 +1,8 @@
 package com.community.mall.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.community.mall.common.ExceptionSupport;
+import com.community.mall.common.ImageUploader;
 import com.community.mall.common.Result;
 import com.community.mall.dto.UpdateProfileRequest;
 import com.community.mall.entity.User;
@@ -13,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 /**
  * 用户个人中心相关接口
  */
@@ -25,6 +25,7 @@ import java.io.File;
 public class UserProfileController {
 
     private final UserService userService;
+    private final ImageUploader imageUploader;
 
     /**
      * 获取当前登录用户的个人信息
@@ -51,7 +52,8 @@ public class UserProfileController {
             User user = userService.updateUserProfile(userId, request.getNickname(), request.getAvatar());
             return Result.success("个人信息更新成功", toUserProfileVO(user));
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -61,37 +63,12 @@ public class UserProfileController {
     @Operation(summary = "上传用户头像", description = "上传用户头像文件，返回图片URL")
     @PostMapping("/avatar")
     public Result<String> uploadAvatar(@Parameter(description = "头像文件") @RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return Result.error("上传文件不能为空");
-        }
-        try {
-            Long userId = StpUtil.getLoginIdAsLong();
-            String uploadRoot = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
-            String avatarDirPath = uploadRoot + "avatar" + File.separator;
-            File avatarDir = new File(avatarDirPath);
-            if (!avatarDir.exists()) {
-                avatarDir.mkdirs();
-            }
-
-            String originalFilename = file.getOriginalFilename();
-            String ext = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String filename = "avatar_" + userId + "_" + System.currentTimeMillis() + ext;
-            File dest = new File(avatarDir, filename);
-            file.transferTo(dest);
-
-            // 前端可直接使用该 URL 访问头像
-            String url = "/api/uploads/avatar/" + filename;
-
-            // 上传成功后立即更新当前用户的头像字段，保证数据库 user.avatar 同步
-            userService.updateUserProfile(userId, null, url);
-
-            return Result.success("上传成功", url);
-        } catch (Exception e) {
-            return Result.error("上传失败: " + e.getMessage());
-        }
+        Long userId = StpUtil.getLoginIdAsLong();
+        // 安全校验（白名单+魔数）与目录管理统一收敛在 ImageUploader
+        String url = imageUploader.saveAvatar(file, userId);
+        // 上传成功后立即更新当前用户的头像字段，保证数据库 user.avatar 同步
+        userService.updateUserProfile(userId, null, url);
+        return Result.success("上传成功", url);
     }
 
     private UserProfileVO toUserProfileVO(User user) {

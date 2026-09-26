@@ -2,6 +2,7 @@ package com.community.mall.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.dto.JoinGroupRequest;
 import com.community.mall.service.GroupActivityService;
@@ -76,7 +77,8 @@ public class GroupActivityController {
             Long orderId = groupOrderService.joinGroupActivity(userId, request);
             return Result.success("参团成功", orderId);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 

@@ -261,8 +261,6 @@
     <AModal v-model:open="successModalVisible" title="参团成功" :footer="null" width="500px">
       <div style="text-align: center; padding: 20px 0">
         <div style="margin-bottom: 16px">
-          <AIcon type="check-circle" theme="filled" style="color: #52c41a; font-size: 48px" />
-          <!-- Note: In Vue 3 + Ant Design Vue 2/3, icons are components. Assuming CheckCircleFilled or similar is available or using the existing icon imports -->
           <CheckCircleFilled style="color: #52c41a; font-size: 48px" />
         </div>
         <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 8px">订单创建成功！</h3>
@@ -278,7 +276,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message, Modal } from 'ant-design-vue'
 import {
@@ -530,6 +528,24 @@ onMounted(() => {
   loadActivityDetail()
   startCountdown()
 })
+
+// 路由参数变化时（同组件复用）重新加载活动详情
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      // 重置上一活动残留的参团表单与弹窗状态，避免带旧数量/地址参团
+      joinForm.value = { quantity: 1, addressId: null, remark: '' }
+      modalVisible.value = false
+      successModalVisible.value = false
+      createdOrderId.value = null
+      // 立即清空旧活动数据：若新活动详情加载失败，
+      // 页面不应继续展示旧活动的价格/库存（用户可能拿旧数据参团）
+      activity.value = null
+      loadActivityDetail()
+    }
+  }
+)
 
 onUnmounted(() => {
   stopCountdown()

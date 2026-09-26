@@ -9,9 +9,10 @@ RUN npm config set registry https://registry.npmmirror.com
 WORKDIR /build
 
 # 复制依赖定义文件
+# 注：本项目包管理以 pnpm-lock.yaml 为准（无 package-lock.json），
+# 容器内用 npm 按当前 package.json 解析安装，避免 pnpm v10 跨平台 built-dependencies 运行限制
 COPY package.json ./
 
-# 使用 npm 安装依赖，避免 pnpm v10 跨平台 built-dependencies 运行限制
 RUN npm install
 
 # 复制项目代码进行构建

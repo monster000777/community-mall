@@ -4,6 +4,8 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import cn.dev33.satoken.exception.NotRoleException;
 import com.community.mall.common.Result;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * 全局异常处理器
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     
@@ -81,19 +84,44 @@ public class GlobalExceptionHandler {
     }
     
     /**
+     * 处理请求体解析异常
+     *
+     * JSON 格式错误或编码非法（如非 UTF-8）时给出友好提示，
+     * 而非落入通用 500（冒烟测试发现的前端体验改进点）
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Result<Void> handleNotReadableException(HttpMessageNotReadableException e) {
+        log.warn("请求体解析失败: {}", e.getMessage());
+        return Result.error(400, "请求体格式错误，请检查 JSON 格式与编码");
+    }
+
+    /**
+     * 处理业务异常
+     *
+     * BusinessException 的 message 由业务代码显式抛出，可安全返回给前端展示
+     */
+    @ExceptionHandler(BusinessException.class)
+    public Result<Void> handleBusinessException(BusinessException e) {
+        return Result.error(e.getMessage());
+    }
+
+    /**
      * 处理运行时异常
+     *
+     * 记录完整堆栈供排查；message 可能包含 SQL/空指针等内部细节，不直接返回给客户端
      */
     @ExceptionHandler(RuntimeException.class)
     public Result<Void> handleRuntimeException(RuntimeException e) {
-        return Result.error(e.getMessage());
+        log.error("未捕获的运行时异常", e);
+        return Result.error(500, "系统异常，请稍后重试");
     }
-    
+
     /**
      * 处理通用异常
      */
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception e) {
-        e.printStackTrace();
-        return Result.error("系统异常，请稍后重试");
+        log.error("未捕获的系统异常", e);
+        return Result.error(500, "系统异常，请稍后重试");
     }
 }

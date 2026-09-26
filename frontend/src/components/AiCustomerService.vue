@@ -122,20 +122,9 @@ import {
 } from '@ant-design/icons-vue'
 import { askAi } from '@/api/ai'
 import { ttsPlayer, playTTS, stopTTS } from '@/utils/ttsPlayer'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { useUserStore } from '@/stores/user'
 import { message } from 'ant-design-vue'
-
-// 配置 marked 换行解析
-marked.setOptions({
-  breaks: true,
-  gfm: true
-})
-
-const renderMarkdown = (text) => {
-  if (!text) return ''
-  return marked.parse(text)
-}
 
 const props = defineProps({
   visible: {
@@ -180,7 +169,6 @@ onMounted(() => {
     localStorage.setItem('chat_session_id', sid)
   }
   sessionId.value = sid
-  console.log('Chat Session ID:', sessionId.value)
 
   ttsPlayer.listen((status) => {
     isTalking.value = status
@@ -197,9 +185,10 @@ watch(
   }
 )
 
-// 组件卸载时停止播放
+// 组件卸载时停止播放并解除语音状态监听
 onUnmounted(() => {
   stopTTS()
+  ttsPlayer.listen(null)
 })
 
 const scrollToBottom = async () => {
@@ -223,31 +212,26 @@ const sendMessage = async () => {
   stopTTS()
 
   try {
+    // 拦截器已保证成功时 code === 200，失败会直接 reject
     const res = await askAi({
       question: content,
       sessionId: sessionId.value
     })
-    const responseData = res && res.data && res.data.code ? res.data : res
 
-    if (responseData && responseData.code === 200) {
-      const answer = responseData.data
-      if (answer) {
-        messages.value.push({ type: 'ai', content: answer })
-        // 根据开关决定是否自动播放
-        if (isAutoPlay.value) {
-          playTTS(answer)
-        }
-      } else {
-        messages.value.push({ type: 'ai', content: '（AI回复为空）' })
+    const answer = res.data
+    if (answer) {
+      messages.value.push({ type: 'ai', content: answer })
+      // 根据开关决定是否自动播放
+      if (isAutoPlay.value) {
+        playTTS(answer)
       }
     } else {
-      const subMsg = responseData?.message || responseData?.msg || '未知错误'
-      message.error(subMsg)
-      messages.value.push({ type: 'ai', content: '抱歉，团团开小差了。' })
+      messages.value.push({ type: 'ai', content: '（AI回复为空）' })
     }
   } catch (error) {
-    message.error('网络请求失败')
-    messages.value.push({ type: 'ai', content: '网络连接失败，请检查网络。' })
+    // 具体错误（网络/超时/服务不可用/未登录）已由请求拦截器统一弹出，
+    // 此处不再重复 toast，仅在对话流中给出兜底回复，避免对话"只有我问没有它答"
+    messages.value.push({ type: 'ai', content: '哎呀，团团开小差了，请稍后再试~' })
   } finally {
     loading.value = false
     await scrollToBottom()

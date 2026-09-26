@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.community.mall.dto.AdminUserRequest;
 import com.community.mall.entity.User;
+import com.community.mall.exception.BusinessException;
 import com.community.mall.mapper.UserMapper;
 import com.community.mall.vo.AdminUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,17 +89,17 @@ public class UserService {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getUsername, request.getUsername());
         if (userMapper.selectCount(wrapper) > 0) {
-            throw new RuntimeException("用户名已存在");
+            throw new BusinessException("用户名已存在");
         }
 
         if (!StringUtils.hasText(request.getPhone())) {
-            throw new RuntimeException("手机号不能为空");
+            throw new BusinessException("手机号不能为空");
         }
 
         LambdaQueryWrapper<User> phoneWrapper = new LambdaQueryWrapper<>();
         phoneWrapper.eq(User::getPhone, request.getPhone());
         if (userMapper.selectCount(phoneWrapper) > 0) {
-            throw new RuntimeException("手机号已存在");
+            throw new BusinessException("手机号已存在");
         }
 
         User user = new User();
@@ -107,7 +108,7 @@ public class UserService {
         user.setEmail(request.getEmail());
         user.setNickname(request.getNickname());
         if (!StringUtils.hasText(request.getPassword())) {
-            throw new RuntimeException("密码不能为空");
+            throw new BusinessException("密码不能为空");
         }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRoleId("admin".equals(request.getRole()) ? 1L : 2L);
@@ -121,7 +122,7 @@ public class UserService {
     public void updateUser(Long id, AdminUserRequest request) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BusinessException("用户不存在");
         }
 
         if (StringUtils.hasText(request.getPhone())) {
@@ -129,7 +130,7 @@ public class UserService {
             phoneWrapper.eq(User::getPhone, request.getPhone());
             phoneWrapper.ne(User::getId, id);
             if (userMapper.selectCount(phoneWrapper) > 0) {
-                throw new RuntimeException("手机号已存在");
+                throw new BusinessException("手机号已存在");
             }
             user.setPhone(request.getPhone());
         }
@@ -160,7 +161,7 @@ public class UserService {
     public void updateUserStatus(Long id, Integer status) {
         User user = userMapper.selectById(id);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BusinessException("用户不存在");
         }
         user.setStatus(status);
         userMapper.updateById(user);
@@ -179,7 +180,7 @@ public class UserService {
     public User updateUserProfile(Long userId, String nickname, String avatar) {
         User user = userMapper.selectById(userId);
         if (user == null) {
-            throw new RuntimeException("用户不存在");
+            throw new BusinessException("用户不存在");
         }
 
         if (StringUtils.hasText(nickname)) {

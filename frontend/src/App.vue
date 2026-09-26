@@ -13,8 +13,6 @@
     }"
   >
     <RouterView />
-    <!-- 全局隐藏音频播放器 -->
-    <audio id="globalVoiceAudio" hidden></audio>
   </AConfigProvider>
 </template>
 

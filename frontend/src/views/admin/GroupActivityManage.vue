@@ -465,7 +465,7 @@ const loadActivities = async () => {
 // 加载商品列表
 const loadProducts = async () => {
   try {
-    const res = await getProductList({ page: 1, size: 1000 })
+    const res = await getProductList({ current: 1, size: 1000 })
     products.value = res.data.records
   } catch (error) {
     message.error('加载商品列表失败')

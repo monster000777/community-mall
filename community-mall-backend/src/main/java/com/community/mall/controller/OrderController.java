@@ -2,6 +2,7 @@ package com.community.mall.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.dto.CreateOrderRequest;
 import com.community.mall.entity.OrderMaster;
@@ -37,7 +38,8 @@ public class OrderController {
             List<Long> orderIds = orderService.createOrder(userId, request);
             return Result.success("订单创建成功", orderIds);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -54,7 +56,8 @@ public class OrderController {
             IPage<OrderMaster> page = orderService.getOrderList(userId, current, size);
             return Result.success(page);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -69,7 +72,8 @@ public class OrderController {
             OrderMaster order = orderService.getOrderDetail(orderId, userId);
             return Result.success(order);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -84,7 +88,7 @@ public class OrderController {
             orderService.cancelOrder(orderId, userId);
             return Result.success("订单已取消");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -99,7 +103,7 @@ public class OrderController {
             orderService.payOrder(orderId, userId);
             return Result.success("支付成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -114,7 +118,7 @@ public class OrderController {
             orderService.deleteOrder(orderId, userId);
             return Result.success("订单已删除");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

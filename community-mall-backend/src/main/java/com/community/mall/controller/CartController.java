@@ -1,6 +1,7 @@
 package com.community.mall.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.service.CartService;
 import com.community.mall.vo.CartVo;
@@ -36,7 +37,7 @@ public class CartController {
             cartService.addToCart(userId, productId, quantity);
             return Result.success("添加成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -51,7 +52,8 @@ public class CartController {
             List<CartVo> cartList = cartService.getCartList(userId);
             return Result.success(cartList);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -68,7 +70,7 @@ public class CartController {
             cartService.updateCartQuantity(userId, cartId, quantity);
             return Result.success("更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -83,7 +85,7 @@ public class CartController {
             cartService.deleteCart(userId, cartId);
             return Result.success("删除成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -98,7 +100,7 @@ public class CartController {
             cartService.clearCart(userId);
             return Result.success("清空成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

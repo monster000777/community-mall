@@ -386,15 +386,19 @@ async function handleSubmit() {
 
   try {
     if (editId.value) {
-      await updateUser(editId.value, {
+      // 构建更新数据：密码留空时不提交该字段，表示不修改原密码
+      const updateData = {
         username: formState.username,
         phone: formState.phone,
         email: formState.email,
         nickname: formState.nickname,
-        password: formState.password,
         role: formState.role,
         status: formState.status
-      })
+      }
+      if (formState.password) {
+        updateData.password = formState.password
+      }
+      await updateUser(editId.value, updateData)
       message.success('更新成功')
     } else {
       await createUser({

@@ -1,6 +1,8 @@
 package com.community.mall.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
+import com.community.mall.common.ImageUploader;
 import com.community.mall.common.Result;
 import com.community.mall.dto.AdminUserRequest;
 import com.community.mall.service.UserService;
@@ -12,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-
 /**
  * 管理员-用户管理控制器
  */
@@ -24,6 +24,7 @@ import java.io.File;
 public class AdminUserController {
 
     private final UserService userService;
+    private final ImageUploader imageUploader;
 
     /**
      * 分页查询用户列表
@@ -50,7 +51,7 @@ public class AdminUserController {
             userService.createUser(request);
             return Result.success("用户添加成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -66,7 +67,7 @@ public class AdminUserController {
             userService.updateUser(id, request);
             return Result.success("用户更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -82,7 +83,7 @@ public class AdminUserController {
             userService.updateUserStatus(id, status);
             return Result.success("用户状态更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -94,34 +95,11 @@ public class AdminUserController {
     public Result<String> uploadUserAvatar(
             @Parameter(description = "用户ID") @PathVariable Long id,
             @Parameter(description = "头像文件") @RequestParam("file") MultipartFile file) {
-        if (file == null || file.isEmpty()) {
-            return Result.error("上传文件不能为空");
-        }
-        try {
-            String uploadRoot = System.getProperty("user.dir") + File.separator + "uploads" + File.separator;
-            String avatarDirPath = uploadRoot + "avatar" + File.separator;
-            File avatarDir = new File(avatarDirPath);
-            if (!avatarDir.exists()) {
-                avatarDir.mkdirs();
-            }
-
-            String originalFilename = file.getOriginalFilename();
-            String ext = "";
-            if (originalFilename != null && originalFilename.contains(".")) {
-                ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-            }
-            String filename = "avatar_" + id + "_" + System.currentTimeMillis() + ext;
-            File dest = new File(avatarDir, filename);
-            file.transferTo(dest);
-
-            String url = "/api/uploads/avatar/" + filename;
-            // 复用用户资料更新逻辑，只更新 avatar
-            userService.updateUserProfile(id, null, url);
-
-            return Result.success("头像更新成功", url);
-        } catch (Exception e) {
-            return Result.error("上传失败: " + e.getMessage());
-        }
+        // 安全校验（白名单+魔数）与目录管理统一收敛在 ImageUploader
+        String url = imageUploader.saveAvatar(file, id);
+        // 复用用户资料更新逻辑，只更新 avatar
+        userService.updateUserProfile(id, null, url);
+        return Result.success("头像更新成功", url);
     }
 
     /**
@@ -134,7 +112,7 @@ public class AdminUserController {
             userService.deleteUser(id);
             return Result.success("用户删除成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

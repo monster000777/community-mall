@@ -1,5 +1,6 @@
 package com.community.mall.controller;
 
+import cn.dev33.satoken.stp.StpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -16,6 +17,12 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/tts")
 public class TtsController {
+
+    /** 单次合成文本长度上限（防止刷爆 Redis 缓存与云端 API 费用） */
+    private static final int MAX_TEXT_LENGTH = 500;
+
+    /** 单用户每分钟最多调用次数 */
+    private static final int MAX_CALLS_PER_MINUTE = 20;
 
     @Value("${mimo.api-key}")
     private String apiKey;
@@ -41,6 +48,36 @@ public class TtsController {
         if (text == null || text.trim().isEmpty()) {
             log.warn("[TTS] 收到空文本播放请求");
             return ResponseEntity.badRequest().build();
+        }
+
+        // 文本长度限制
+        if (text.length() > MAX_TEXT_LENGTH) {
+            log.warn("[TTS] 文本长度 {} 超过上限 {}，拒绝合成", text.length(), MAX_TEXT_LENGTH);
+            return ResponseEntity.badRequest().build();
+        }
+
+        // 用户级限流：登录用户每分钟最多 MAX_CALLS_PER_MINUTE 次（缓存命中也计数，防刷）
+        String rateKey;
+        try {
+            rateKey = "tts:rate:" + StpUtil.getLoginIdAsLong();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        try {
+            Long calls = redisTemplate.opsForValue().increment(rateKey);
+            if (calls != null && calls == 1L) {
+                redisTemplate.expire(rateKey, 1, TimeUnit.MINUTES);
+            } else if (calls != null && calls > 1L && calls <= MAX_CALLS_PER_MINUTE) {
+                // 兜底续期：首次 expire 失败时补上，避免限流 key 永不过期导致用户被永久限流
+                redisTemplate.expire(rateKey, 1, TimeUnit.MINUTES);
+            }
+            if (calls != null && calls > MAX_CALLS_PER_MINUTE) {
+                log.warn("[TTS] 用户 {} 触发限流（{} 次/分钟）", rateKey, calls);
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
+            }
+        } catch (Exception re) {
+            // Redis 异常时放行，避免基础设施抖动导致功能不可用
+            log.warn("[TTS] 限流计数异常: {}", re.getMessage());
         }
 
         // 强校验：在没有配置 mimo 秘钥或基地址不合法时，拒绝云端请求并立即返回 400
@@ -105,6 +142,11 @@ public class TtsController {
                 }
 
                 List<?> choices = (List<?>) result.get("choices");
+                if (choices == null || choices.isEmpty()) {
+                    // 防御：云端返回空 choices 时给出明确日志，避免下面的 get(0) 抛 NPE
+                    log.error("[TTS] 外部 API 返回的 choices 为空: {}", result);
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                }
                 Map<?, ?> choice = (Map<?, ?>) choices.get(0);
                 Map<?, ?> message = (Map<?, ?>) choice.get("message");
                 Map<?, ?> audio = (Map<?, ?>) message.get("audio");

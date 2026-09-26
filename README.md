@@ -20,6 +20,7 @@
 - **LangChain4j 1.15.1** (LLM 开发框架，兼容 OpenAI 协议，支持**全新 Tool Call 与自主 Agent**)
 - BCrypt (密码加密)
 - Maven 3.6+
+- **JUnit 5 + Mockito**（单元测试，`mvn test`）
 
 **前端**
 - Vue 3.3.4 (Composition API)
@@ -29,6 +30,8 @@
 - Pinia 2.1.6
 - Vue Router 4.2.4
 - **marked 18.0.4** (Markdown 富文本解析)
+- **DOMPurify 3.4** (Markdown 渲染前 XSS 清洗)
+- **Vitest**（单元测试，`pnpm test`）
 
 ---
 
@@ -125,15 +128,17 @@ MIMO_VOICE="冰糖"
 docker-compose up -d --build
 ```
 系统将自动执行：
-- 编译并构建 Java 后端容器镜像（基于 JDK 17，自动排除本地 local 配置文件，安全打包）；
+- 编译并构建 Java 后端容器镜像（基于 JDK 17，通过 `.dockerignore` 自动排除本地 `application-local.yml` 等敏感配置，安全打包）；
 - 使用 `npm` 自适应下载依赖并编译前端，将其托管于搭载了反向代理配置的 Nginx 容器中；
-- 自动拉起 MySQL 8.0 和 Redis 6.2 容器，并**在首次启动时自动导入建表和测试商品数据**。
+- 自动拉起 MySQL 8.0 和 Redis 6.2 容器，并**在首次启动时自动导入建表和测试商品数据**；
+- **等待 MySQL / Redis 通过健康检查就绪后**再启动后端（`service_healthy` 依赖），避免冷启动时后端抢跑导致的反复重启。
 
 #### 3. 访问系统
 * **前端商城主页**：[http://localhost](http://localhost) (内置 Nginx，直接访问默认 80 端口)
 * **后端 API 接口**：[http://localhost:8080/api](http://localhost:8080/api)
 * **Swagger 接口文档**：[http://localhost:8080/api/swagger-ui/index.html](http://localhost:8080/api/swagger-ui/index.html)
-* **宿主机暴露端口**：MySQL 为 `3307` 端口（密码 `root`），Redis 为 `6380` 端口（为了防宿主机物理端口冲突已做安全映射，容器内部网络互连依然使用的是 `3306`/`6379`，开发无需修改任何后端配置）。
+* **宿主机暴露端口**：MySQL 为 `3307` 端口（默认密码 `root`），Redis 为 `6380` 端口。两者均**仅绑定 127.0.0.1**，即只有本机可连，不对局域网/公网暴露；容器内部网络互连依然使用标准端口 `3306`/`6379`，开发无需修改任何后端配置。
+* **数据库密码可配置**：如需修改 root 密码，在 `.env` 中设置 `MYSQL_ROOT_PASSWORD`（注意：MySQL 数据卷已有数据时密码不会自动更新，需删除 `mysql_data` 卷后重建）。
 
 ---
 
@@ -255,6 +260,22 @@ mimo:
 
 ---
 
+### 6. 运行单元测试（推荐提交前执行）
+
+* **后端测试**（验证码防爆破、上传安全校验、异常统一封装等，16 个用例）：
+  ```bash
+  cd community-mall-backend
+  mvn test
+  ```
+* **前端测试**（AI 聊天 XSS 防线、401 处理链路、TTS 播放器内存管理、用户状态管理等，37 个用例）：
+  ```bash
+  cd frontend
+  pnpm test        # 单次执行
+  pnpm test:watch  # 监听模式，改代码自动重跑
+  ```
+
+---
+
 ## 📝 功能模块
 
 ### 用户端功能
@@ -279,6 +300,7 @@ mimo:
 - **管理员账号**：
   - 用户名：`admin`
   - 密码：`123456`
+  - （登录页的"管理员一键登录"快捷按钮仅在**开发环境**显示，生产构建不会包含）
 - **测试用户**：可在用户端自行注册。
 
 ---

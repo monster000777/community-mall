@@ -7,6 +7,7 @@ import com.community.mall.dto.GroupActivityRequest;
 import com.community.mall.entity.GroupActivity;
 import com.community.mall.entity.GroupOrder;
 import com.community.mall.entity.Product;
+import com.community.mall.exception.BusinessException;
 import com.community.mall.mapper.GroupActivityMapper;
 import com.community.mall.mapper.GroupOrderMapper;
 import com.community.mall.mapper.ProductMapper;
@@ -88,7 +89,7 @@ public class GroupActivityService {
     public GroupActivityVO getActivityById(Long id) {
         GroupActivity activity = groupActivityMapper.selectById(id);
         if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+            throw new BusinessException("团购活动不存在");
         }
 
         return convertToVO(activity);
@@ -102,17 +103,17 @@ public class GroupActivityService {
         // 验证商品是否存在
         Product product = productMapper.selectById(request.getProductId());
         if (product == null) {
-            throw new RuntimeException("商品不存在");
+            throw new BusinessException("商品不存在");
         }
 
         // 验证时间
         if (request.getEndTime().isBefore(request.getStartTime())) {
-            throw new RuntimeException("结束时间不能早于开始时间");
+            throw new BusinessException("结束时间不能早于开始时间");
         }
 
         // 验证团购价格
         if (request.getGroupPrice().compareTo(product.getPrice()) >= 0) {
-            throw new RuntimeException("团购价格必须低于原价");
+            throw new BusinessException("团购价格必须低于原价");
         }
 
         // 创建活动
@@ -141,23 +142,23 @@ public class GroupActivityService {
     public GroupActivityVO updateActivity(Long id, GroupActivityRequest request) {
         GroupActivity activity = groupActivityMapper.selectById(id);
         if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+            throw new BusinessException("团购活动不存在");
         }
 
         // 验证商品是否存在
         Product product = productMapper.selectById(request.getProductId());
         if (product == null) {
-            throw new RuntimeException("商品不存在");
+            throw new BusinessException("商品不存在");
         }
 
         // 验证时间
         if (request.getEndTime().isBefore(request.getStartTime())) {
-            throw new RuntimeException("结束时间不能早于开始时间");
+            throw new BusinessException("结束时间不能早于开始时间");
         }
 
         // 验证团购价格
         if (request.getGroupPrice().compareTo(product.getPrice()) >= 0) {
-            throw new RuntimeException("团购价格必须低于原价");
+            throw new BusinessException("团购价格必须低于原价");
         }
 
         // 更新活动
@@ -186,7 +187,7 @@ public class GroupActivityService {
     public void deleteActivity(Long id) {
         GroupActivity activity = groupActivityMapper.selectById(id);
         if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+            throw new BusinessException("团购活动不存在");
         }
 
         groupActivityMapper.deleteById(id);
@@ -199,17 +200,22 @@ public class GroupActivityService {
     public void updateActivityStatus(Long id, Integer status) {
         GroupActivity activity = groupActivityMapper.selectById(id);
         if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+            throw new BusinessException("团购活动不存在");
+        }
+
+        // 只允许 schema 定义范围内的合法状态值，防止任意整数直接落库
+        if (status == null || status < 0 || status > 2) {
+            throw new BusinessException("非法的活动状态值（仅支持 0-未开始 / 1-进行中 / 2-已结束）");
         }
 
         // 如果要设置为进行中，检查时间是否有效
         if (status == 1) {
             LocalDateTime now = LocalDateTime.now();
             if (now.isBefore(activity.getStartTime())) {
-                throw new RuntimeException("活动尚未开始，无法设为进行中");
+                throw new BusinessException("活动尚未开始，无法设为进行中");
             }
             if (now.isAfter(activity.getEndTime())) {
-                throw new RuntimeException("活动已结束，如需重启请先修改活动时间");
+                throw new BusinessException("活动已结束，如需重启请先修改活动时间");
             }
         }
 
@@ -225,22 +231,21 @@ public class GroupActivityService {
         // Bug3修复：改用条件更新（stock >= quantity）防止并发超卖
         int rows = groupActivityMapper.decreaseStock(activityId, quantity);
         if (rows == 0) {
-            throw new RuntimeException("活动库存不足（并发保护）");
+            throw new BusinessException("活动库存不足（并发保护）");
         }
     }
 
     /**
-     * 增加活动库存（取消订单时调用）
+     * 恢复活动库存（取消/退款团购订单时调用）
+     *
+     * 与 decreaseStock 对称使用原子 SQL 累加，避免读-改-写在并发取消场景丢失更新。
+     * 返回 false 表示活动已被物理删除：此时其库存已无意义，调用方应跳过恢复并继续
+     * 取消/退款流程，而非抛错回滚——否则孤儿团购订单会取消失败，
+     * 被超时自动取消定时任务每分钟无限重试。
      */
     @Transactional(rollbackFor = Exception.class)
-    public void increaseStock(Long activityId, Integer quantity) {
-        GroupActivity activity = groupActivityMapper.selectById(activityId);
-        if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
-        }
-
-        activity.setStock(activity.getStock() + quantity);
-        groupActivityMapper.updateById(activity);
+    public boolean restoreStock(Long activityId, Integer quantity) {
+        return groupActivityMapper.increaseStock(activityId, quantity) > 0;
     }
 
     /**
@@ -293,10 +298,11 @@ public class GroupActivityService {
             vo.setDiscount(discount);
         }
 
-        // Bug9修复：从 group_order 表动态统计已售数量（排除已取消状态 4）
+        // Bug9修复：从 group_order 表动态统计已售数量
+        // 仅统计已支付（2）与已完成（3）的团购订单：未支付订单不算销量（防止不付款刷高已售），已取消（4）不计入
         LambdaQueryWrapper<GroupOrder> soldWrapper = new LambdaQueryWrapper<>();
         soldWrapper.eq(GroupOrder::getActivityId, activity.getId())
-                   .ne(GroupOrder::getStatus, 4); // 排除已取消
+                   .in(GroupOrder::getStatus, 2, 3);
         vo.setSoldCount(groupOrderMapper.selectCount(soldWrapper).intValue());
 
         // 计算剩余时间

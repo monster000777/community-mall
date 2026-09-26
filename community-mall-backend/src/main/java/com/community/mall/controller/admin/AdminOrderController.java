@@ -1,6 +1,7 @@
 package com.community.mall.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.entity.OrderMaster;
 import com.community.mall.service.OrderService;
@@ -45,7 +46,7 @@ public class AdminOrderController {
             orderService.adminShipOrder(orderId);
             return Result.success("订单已发货");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -59,7 +60,7 @@ public class AdminOrderController {
             orderService.adminCompleteOrder(orderId);
             return Result.success("订单已完成");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -73,7 +74,7 @@ public class AdminOrderController {
             orderService.adminCancelOrder(orderId);
             return Result.success("订单已取消");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -87,7 +88,7 @@ public class AdminOrderController {
             orderService.adminRefundOrder(orderId);
             return Result.success("订单已退款");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

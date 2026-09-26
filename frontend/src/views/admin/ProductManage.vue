@@ -344,7 +344,16 @@ function showAddModal() {
 
 function handleEdit(product) {
   editId.value = product.id
-  Object.assign(formState, product)
+  // 白名单字段回填，避免把 id/createdAt/sales 等脏字段带入表单
+  Object.assign(formState, {
+    productName: product.productName,
+    categoryId: product.categoryId,
+    price: product.price,
+    stock: product.stock,
+    mainImage: product.mainImage,
+    description: product.description,
+    isOnSale: product.isOnSale
+  })
   modalVisible.value = true
 }
 
@@ -417,13 +426,22 @@ function handleDelete(id) {
 }
 
 function resetForm() {
-  formState.productName = ''
-  formState.categoryId = null
-  formState.price = null
-  formState.stock = null
-  formState.mainImage = ''
-  formState.description = ''
-  formState.isOnSale = 1
+  // 用初始字段模板重建表单对象，确保不残留编辑时可能带入的脏字段
+  const initialForm = {
+    productName: '',
+    categoryId: null,
+    price: null,
+    stock: null,
+    mainImage: '',
+    description: '',
+    isOnSale: 1
+  }
+  Object.keys(formState).forEach((key) => {
+    if (!(key in initialForm)) {
+      delete formState[key]
+    }
+  })
+  Object.assign(formState, initialForm)
 }
 
 function openAiModal() {
@@ -445,7 +463,6 @@ async function handleAiGenerate() {
   aiLoading.value = true
   try {
     const res = await generateCopy(aiForm)
-    console.log('AI Response:', res)
 
     if (res.code === 200) {
       aiResult.value = res.data

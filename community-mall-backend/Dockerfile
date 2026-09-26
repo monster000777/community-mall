@@ -8,8 +8,8 @@ WORKDIR /build
 # 复制 pom.xml
 COPY pom.xml .
 
-# 预先下载依赖以缓存 (可选步骤，可加快后续构建速度)
-# RUN mvn dependency:go-offline -B
+# 预先下载依赖以缓存（源码变动时无需重新下载全部依赖）
+RUN mvn dependency:go-offline -B
 
 # 复制源码并打包
 COPY src ./src
@@ -22,8 +22,8 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# 从构建阶段拷贝 JAR 包
-COPY --from=builder /build/target/community-mall-backend-1.0.0.jar app.jar
+# 从构建阶段拷贝 JAR 包（通配符写法，pom 版本号变更后无需同步修改）
+COPY --from=builder /build/target/*.jar app.jar
 
 # 创建上传文件存放目录
 RUN mkdir -p /app/uploads

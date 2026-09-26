@@ -1,5 +1,6 @@
 package com.community.mall.controller;
 
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.dto.LoginRequest;
 import com.community.mall.dto.LoginResponse;
@@ -34,7 +35,7 @@ public class AuthController {
             authService.sendResetCode(request.getPhone());
             return Result.success("验证码已发送");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -48,7 +49,7 @@ public class AuthController {
             authService.sendRegisterCode(request.getPhone());
             return Result.success("验证码已发送");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -62,7 +63,7 @@ public class AuthController {
             authService.resetPassword(request);
             return Result.success("密码重置成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -86,7 +87,7 @@ public class AuthController {
             authService.register(request);
             return Result.success("注册成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -100,7 +101,7 @@ public class AuthController {
             authService.logout();
             return Result.success("退出成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

@@ -23,14 +23,15 @@ public class ProductTool {
         if (keyword == null || keyword.trim().isEmpty() || "ALL".equalsIgnoreCase(keyword.trim())) {
             return "未指定具体的商品搜索关键词。";
         }
-        
+
         List<Product> products = productService.searchForAi(keyword.trim());
         if (products == null || products.isEmpty()) {
             return "抱歉，店内目前没有找到与 '" + keyword + "' 相关的商品。";
         }
 
+        // 返回库存信息：提示词要求模型提供真实库存，若此处不含库存，模型只能编造
         return products.stream()
-                .map(p -> p.getProductName() + "（价格：" + p.getPrice() + "元）")
+                .map(p -> p.getProductName() + "（价格：" + p.getPrice() + "元，库存：" + p.getStock() + "件）")
                 .collect(Collectors.joining("，"));
     }
 }

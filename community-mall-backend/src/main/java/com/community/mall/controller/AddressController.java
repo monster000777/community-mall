@@ -1,6 +1,7 @@
 package com.community.mall.controller;
 
 import cn.dev33.satoken.stp.StpUtil;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.entity.Address;
 import com.community.mall.service.AddressService;
@@ -37,7 +38,8 @@ public class AddressController {
             List<Address> addressList = addressService.getUserAddressList(userId);
             return Result.success(addressList);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -55,7 +57,8 @@ public class AddressController {
             }
             return Result.success(address);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -79,7 +82,7 @@ public class AddressController {
             addressService.addAddress(address, userId);
             return Result.success("添加成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -105,7 +108,7 @@ public class AddressController {
             addressService.updateAddress(address, userId);
             return Result.success("更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -120,7 +123,7 @@ public class AddressController {
             addressService.deleteAddress(id, userId);
             return Result.success("删除成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -135,7 +138,7 @@ public class AddressController {
             addressService.setDefaultAddress(id, userId);
             return Result.success("设置成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -150,7 +153,8 @@ public class AddressController {
             Address address = addressService.getDefaultAddress(userId);
             return Result.success(address);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 

@@ -3,6 +3,7 @@ package com.community.mall.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.community.mall.dto.JoinGroupRequest;
 import com.community.mall.entity.*;
+import com.community.mall.exception.BusinessException;
 import com.community.mall.mapper.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,26 +39,26 @@ public class GroupOrderService {
         // 1. 验证团购活动
         GroupActivity activity = groupActivityMapper.selectById(request.getActivityId());
         if (activity == null) {
-            throw new RuntimeException("团购活动不存在");
+            throw new BusinessException("团购活动不存在");
         }
 
         // 检查活动状态
         if (activity.getStatus() != 1) {
-            throw new RuntimeException("团购活动未开始或已结束");
+            throw new BusinessException("团购活动未开始或已结束");
         }
 
         // 检查活动时间
         LocalDateTime now = LocalDateTime.now();
         if (now.isBefore(activity.getStartTime())) {
-            throw new RuntimeException("团购活动未开始");
+            throw new BusinessException("团购活动未开始");
         }
         if (now.isAfter(activity.getEndTime())) {
-            throw new RuntimeException("团购活动已结束");
+            throw new BusinessException("团购活动已结束");
         }
 
         // 检查库存
         if (activity.getStock() < request.getQuantity()) {
-            throw new RuntimeException("活动库存不足");
+            throw new BusinessException("活动库存不足");
         }
 
         // 2. 验证用户购买限制
@@ -74,7 +75,7 @@ public class GroupOrderService {
         int newTotal = currentTotal + request.getQuantity();
 
         if (newTotal > activity.getLimitPerUser()) {
-            throw new RuntimeException("超过限购数量，您最多可购买 " + activity.getLimitPerUser() + " 件，已购买 " + currentTotal + " 件");
+            throw new BusinessException("超过限购数量，您最多可购买 " + activity.getLimitPerUser() + " 件，已购买 " + currentTotal + " 件");
         }
 
         // 查询或创建参与者记录（用于统计）
@@ -86,13 +87,17 @@ public class GroupOrderService {
         // 3. 验证收货地址
         Address address = addressMapper.selectById(request.getAddressId());
         if (address == null || !address.getUserId().equals(userId)) {
-            throw new RuntimeException("收货地址不存在或不属于当前用户");
+            throw new BusinessException("收货地址不存在或不属于当前用户");
         }
 
         // 4. 获取商品信息
         Product product = productMapper.selectById(activity.getProductId());
         if (product == null) {
-            throw new RuntimeException("商品不存在");
+            throw new BusinessException("商品不存在");
+        }
+        // 与普通下单保持一致：已下架的商品不允许参团购买
+        if (product.getIsOnSale() == null || product.getIsOnSale() == 0) {
+            throw new BusinessException("该商品已下架，无法参团购买");
         }
 
         // 5. 创建订单主表记录

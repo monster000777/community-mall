@@ -1,5 +1,6 @@
 package com.community.mall.controller.admin;
 
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.service.AiAssistant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +31,8 @@ public class AiController {
             System.out.println("AI Response Copy: " + copy);
             return Result.success("生成成功", copy);
         } catch (Exception e) {
-            e.printStackTrace();
-            return Result.error("AI Generation failed: " + e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 }

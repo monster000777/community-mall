@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 
@@ -93,14 +93,29 @@ const cartStore = useCartStore()
 const product = ref(null)
 const quantity = ref(1)
 
-onMounted(async () => {
+async function loadProduct() {
   try {
     const res = await getProductDetail(route.params.id)
     product.value = res.data
   } catch (error) {
     console.error('加载商品详情失败', error)
   }
+}
+
+onMounted(() => {
+  loadProduct()
 })
+
+// 路由参数变化时（同组件复用）重新加载商品详情
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (newId && newId !== oldId) {
+      quantity.value = 1
+      loadProduct()
+    }
+  }
+)
 
 async function handleAddToCart() {
   if (!userStore.token) {

@@ -1,6 +1,7 @@
 package com.community.mall.controller.admin;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.entity.Product;
 import com.community.mall.service.ProductService;
@@ -59,7 +60,7 @@ public class AdminProductController {
             productService.updateProduct(product);
             return Result.success("商品更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -73,7 +74,7 @@ public class AdminProductController {
             productService.deleteProduct(id);
             return Result.success("商品删除成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 
@@ -89,7 +90,7 @@ public class AdminProductController {
             productService.updateProductStatus(id, isOnSale);
             return Result.success("商品状态更新成功");
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return ExceptionSupport.toResult(e);
         }
     }
 }

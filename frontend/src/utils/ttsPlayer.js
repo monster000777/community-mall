@@ -7,6 +7,7 @@ let currentPlayId = 0
 export const ttsPlayer = {
   isPlaying: false,
   onStatusChange: null,
+  currentObjectURL: null,
 
   _setStatus(status) {
     this.isPlaying = status
@@ -59,9 +60,14 @@ export const ttsPlayer = {
       const url = URL.createObjectURL(blob)
       const audio = new window.Audio(url)
       currentAudio = audio
+      // 记录当前 objectURL，供 stop() 统一释放
+      this.currentObjectURL = url
 
       const cleanup = () => {
         URL.revokeObjectURL(url)
+        if (this.currentObjectURL === url) {
+          this.currentObjectURL = null
+        }
         if (currentAudio === audio) {
           currentAudio = null
           this._setStatus(false)
@@ -141,8 +147,16 @@ export const ttsPlayer = {
   stop() {
     currentPlayId++
     if (currentAudio) {
+      // 置空事件回调，避免 pause 触发 onerror/onended 造成重复清理
+      currentAudio.onended = null
+      currentAudio.onerror = null
       currentAudio.pause()
       currentAudio = null
+    }
+    // 释放当前播放占用的 blob objectURL，防止内存泄漏
+    if (this.currentObjectURL) {
+      URL.revokeObjectURL(this.currentObjectURL)
+      this.currentObjectURL = null
     }
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel()

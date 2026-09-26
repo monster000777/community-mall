@@ -41,11 +41,18 @@ export const useUserStore = defineStore('user', () => {
     } catch (error) {
       console.error('退出登录失败', error)
     } finally {
-      token.value = ''
-      userInfo.value = null
-      localStorage.removeItem('satoken')
-      localStorage.removeItem('userInfo')
+      localLogout()
     }
+  }
+
+  // 仅清除本地登录态（不调后端接口）
+  // 供 401 拦截器在跳转登录页前同步调用：路由守卫在微任务中执行，
+  // 若等异步 logout() 清 token，守卫会因 token 尚存而把 /login 重定向回 /admin 或 /
+  function localLogout() {
+    token.value = ''
+    userInfo.value = null
+    localStorage.removeItem('satoken')
+    localStorage.removeItem('userInfo')
   }
 
   // 是否是管理员
@@ -68,6 +75,7 @@ export const useUserStore = defineStore('user', () => {
     userInfo,
     login,
     logout,
+    localLogout,
     isAdmin,
     updateUserInfo
   }

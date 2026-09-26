@@ -1,6 +1,7 @@
 package com.community.mall.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.entity.Product;
 import com.community.mall.service.ProductService;
@@ -36,7 +37,8 @@ public class ProductController {
             IPage<Product> page = productService.getProductList(current, size, categoryId, keyword, clientType);
             return Result.success(page);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -53,7 +55,8 @@ public class ProductController {
             }
             return Result.success(product);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 }

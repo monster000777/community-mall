@@ -280,28 +280,29 @@ async function loadCart() {
 
 async function increaseQuantity(record) {
   if (record.quantity < record.stock) {
-    record.quantity++
-    await handleQuantityChange(record)
+    await handleQuantityChange(record, record.quantity + 1)
   }
 }
 
 async function decreaseQuantity(record) {
   if (record.quantity > 1) {
-    record.quantity--
-    await handleQuantityChange(record)
+    await handleQuantityChange(record, record.quantity - 1)
   }
 }
 
-async function handleQuantityChange(record) {
+async function handleQuantityChange(record, newQuantity) {
+  // 先更新 UI 再请求
+  record.quantity = newQuantity
   try {
     await updateCartQuantity(record.id, record.quantity)
     // Update cart store to sync navigation bar count
     cartStore.loadCart()
     // message.success('更新成功') // Optional: remove success message to avoid spamming
   } catch (error) {
-    console.error('更新数量失败', error)
-    message.error('更新数量失败，请稍后重试')
-    // Revert on failure if needed, but for now simple is fine
+    // 失败提示已由请求拦截器统一弹出。
+    // 快速连点时本地回滚可能与相邻请求的成败交错覆盖（UI 与服务端失同步），
+    // 因此以服务端为准：重新拉取购物车数据
+    loadCart()
   }
 }
 

@@ -106,7 +106,13 @@
             />
             普通用户登录
           </AButton>
-          <AButton size="large" block class="quick-btn mt-3" @click="handleQuickLogin('admin')">
+          <AButton
+            v-if="isDev"
+            size="large"
+            block
+            class="quick-btn mt-3"
+            @click="handleQuickLogin('admin')"
+          >
             <AppIcon
               :size="18"
               :component="ShieldCheckmarkOutline"
@@ -154,6 +160,9 @@ const loginForm = reactive({
 })
 
 const loading = ref(false)
+
+// 管理员快捷登录仅在开发环境展示
+const isDev = import.meta.env.DEV
 
 const features = [
   { icon: SpeedometerOutline, text: '极速配送，新鲜到家' },

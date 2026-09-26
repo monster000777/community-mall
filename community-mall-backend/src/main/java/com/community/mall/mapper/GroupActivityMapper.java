@@ -18,5 +18,11 @@ public interface GroupActivityMapper extends BaseMapper<GroupActivity> {
      */
     @Update("UPDATE group_activity SET stock = stock - #{quantity} WHERE id = #{id} AND stock >= #{quantity}")
     int decreaseStock(@Param("id") Long id, @Param("quantity") Integer quantity);
+
+    /**
+     * 原子性恢复团购活动库存（取消/退款团购订单时调用），与 decreaseStock 对称，避免读-改-写丢失并发更新
+     */
+    @Update("UPDATE group_activity SET stock = stock + #{quantity} WHERE id = #{id}")
+    int increaseStock(@Param("id") Long id, @Param("quantity") Integer quantity);
 }
 

@@ -1,7 +1,6 @@
 package com.community.mall.config;
 
 import cn.dev33.satoken.stp.StpInterface;
-import cn.dev33.satoken.stp.StpUtil;
 import com.community.mall.entity.User;
 import com.community.mall.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -50,19 +49,23 @@ public class StpInterfaceImpl implements StpInterface {
 
     /**
      * 返回一个账号所拥有的角色标识集合
+     *
+     * 修复：改为实时查询数据库，而非读取登录时写入 Session 的角色快照。
+     * 此前管理员修改某用户角色或删除该用户后，其已签发 token（有效期最长 24 小时）
+     * 内的角色仍是旧值，被降权/删除的账号可继续以 admin 身份操作。
      */
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
         List<String> list = new ArrayList<>();
 
         try {
-            // 从 Session 中获取角色信息
-            Object role = StpUtil.getSessionByLoginId(loginId).get("role");
-            if (role != null) {
-                list.add(role.toString());
+            Long userId = Long.parseLong(loginId.toString());
+            User user = userMapper.selectById(userId);
+            if (user != null && Long.valueOf(1L).equals(user.getRoleId())) {
+                list.add("admin");
             }
         } catch (Exception e) {
-            // Session 不存在或获取失败，返回空列表
+            // 用户不存在或解析失败，返回空角色列表（访问将被权限校验拦截）
         }
 
         return list;

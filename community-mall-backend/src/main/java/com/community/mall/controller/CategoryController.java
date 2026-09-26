@@ -1,5 +1,6 @@
 package com.community.mall.controller;
 
+import com.community.mall.common.ExceptionSupport;
 import com.community.mall.common.Result;
 import com.community.mall.entity.Category;
 import com.community.mall.service.CategoryService;
@@ -32,7 +33,8 @@ public class CategoryController {
             List<Category> categories = categoryService.getAllCategories();
             return Result.success(categories);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 
@@ -47,7 +49,8 @@ public class CategoryController {
             List<Category> categories = categoryService.getCategoriesByParentId(parentId);
             return Result.success(categories);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            Result<Void> r = ExceptionSupport.toResult(e);
+            return Result.error(r.getCode(), r.getMessage());
         }
     }
 }
